@@ -38,25 +38,26 @@ const Header = () => {
       <div className="header-content-wrapper">
         <div className="header-content">
           <h1 className="header-title">
-            Find Drugs & Pharmacies <br /> Near You
+            Find Drugs & Pharmacies <br /> Near You ,in Bahir Dar
           </h1>
           <p className="header-subtitle">
             We have all the drugs your doctor prescribed for your health and
             what’s more, we can get it to you.{" "}
           </p>
           <SearchBar onSearch={handleSearch} />
-          {/* Frequently Searched Drugs Section */}
+          {/* Frequently Searched Drugs */}
           <div className="frequently-searched">
-            <h2 className="frequently-searched-title">
-              Frequently Searched Drugs
-            </h2>
+            <h2 className="frequently-searched-title">Frequently Searched Drugs</h2>
             <ul className="frequently-searched-list">
-              <li className="drug-item">Paracetamol</li>
-              <li className="drug-item">Ibuprofen</li>
-              <li className="drug-item">Amoxicillin</li>
-              <li className="drug-item">Metformin</li>
-              <li className="drug-item">Aspirin</li>
-              <li className="drug-item">Atorvastatin</li>
+              {["Paracetamol", "Ibuprofen", "Amoxicillin", "Metformin", "Aspirin"].map((drug) => (
+                <li
+                  key={drug}
+                  className="drug-item"
+                  onClick={() => handleSearch(drug)}
+                >
+                  {drug}
+                </li>
+              ))}
             </ul>
           </div>
         </div>
