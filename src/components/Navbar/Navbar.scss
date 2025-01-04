@@ -1,12 +1,51 @@
 .header {
     position: relative;
     height: 60vh;
-    background: url('../../assets/images/drugstore.jpg') no-repeat center center/cover;
+    background: url("../../assets/images/drugstore.jpg") no-repeat center center / cover;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
+    width: 100%;
+    * {
+      box-sizing: border-box;
+    }
   
-    .header-overlay {
+    .navbar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+      padding: 10px;
+  
+      .navbar-logo {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #fff;
+        margin-left: 5%;
+        margin-bottom: 20px;
+      }
+  
+      .navbar-links {
+        display: flex;
+        gap: 1.5rem;
+  
+        li {
+          list-style: none;
+  
+          .link {
+            color: #fff;
+            text-decoration: none;
+            font-size: 24px;
+            font-weight: 700;
+          }
+        }
+      }
+    }
+  
+    .header-content-wrapper {
       position: absolute;
       top: 0;
       left: 0;
@@ -15,19 +54,17 @@
       background: linear-gradient(
         96deg,
         rgba(22, 78, 187, 1) 0%,
-        rgba(4, 60, 170, 0.86) 44.41727697849274%,
+        rgba(4, 60, 170, 0.86) 44.4%,
         rgba(4, 60, 170, 0) 100%
-      );      
+      );
       display: flex;
       align-items: center;
-      justify-content: center;
-      text-align: center;
+      padding: 3rem;
   
       .header-content {
+        margin-left: 5%;
         color: #fff;
         max-width: 800px;
-        padding: 0 1rem;
-  
         .header-title {
           font-size: 3rem;
           font-weight: 700;
@@ -41,16 +78,16 @@
   
         .search-form {
           display: flex;
-          justify-content: center;
-          gap: 1rem;
   
           .search-input {
             padding: 0.8rem 1rem;
             font-size: 1rem;
             border: none;
-            border-radius: 5px;
+            border-radius: 10px; 
             flex: 1;
             max-width: 500px;
+            background: #fff;
+            color: black;
           }
   
           .search-button {
@@ -66,6 +103,159 @@
             &:hover {
               background-color: #16a085;
             }
+          }
+        }
+        .frequently-searched {
+            margin-top: 20px;
+          }
+          
+          .frequently-searched-title {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+          }
+          
+          .frequently-searched-list {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+          }
+          
+          .drug-item {
+            border: 1px solid #ccc;
+            padding: 5px 10px;
+            background-color: transparent;
+            border-radius: 20%;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+          }
+          
+        
+          
+      }
+  
+      .header-image-container {
+        background-color: transparent;
+        position: absolute;
+        bottom: 5px;
+        right: 5%; /* 20px from the right */
+        width: 20%;
+        .header-image {
+            background: transparent;
+        width: 100%; /* Adjust size as needed */
+          border-radius: 20px;
+        }
+      }
+    }
+  
+    /* Responsive Styles */
+    @media (max-width: 1024px) {
+      .header-content-wrapper {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 2rem;
+  
+        .header-content {
+          .header-title {
+            font-size: 2.5rem;
+          }
+  
+          .header-subtitle {
+            font-size: 1rem;
+          }
+  
+          .search-form {
+            flex-direction: column;
+            gap: 1rem;
+  
+            .search-input {
+              width: 100%;
+              max-width: none;
+            }
+  
+            .search-button {
+              width: 100%;
+            }
+          }
+        }
+  
+        .header-image-container {
+          position: relative;
+          bottom: auto;
+          right: auto;
+          margin-top: 2rem;
+  
+          .header-image {
+            max-width: 300px;
+          }
+        }
+      }
+    }
+  
+    @media (max-width: 768px) {
+      .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+  
+        .navbar-links {
+          flex-direction: column;
+          gap: 1rem;
+  
+          li .link {
+            font-size: 20px;
+          }
+        }
+      }
+  
+      .header-content-wrapper {
+        .header-content {
+          .header-title {
+            font-size: 2rem;
+          }
+  
+          .header-subtitle {
+            font-size: 0.9rem;
+          }
+        }
+      }
+    }
+  
+    @media (max-width: 480px) {
+      .navbar {
+        padding: 5px;
+  
+        .navbar-logo {
+          font-size: 1.2rem;
+        }
+  
+        .navbar-links {
+          li .link {
+            font-size: 16px;
+          }
+        }
+      }
+  
+      .header-content-wrapper {
+        padding: 1rem;
+  
+        .header-content {
+          .header-title {
+            font-size: 1.8rem;
+          }
+  
+          .header-subtitle {
+            font-size: 0.8rem;
+          }
+        }
+  
+        .header-image-container {
+          .header-image {
+            max-width: 200px;
           }
         }
       }
