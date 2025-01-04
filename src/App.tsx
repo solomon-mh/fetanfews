@@ -1,10 +1,11 @@
 
 import Footer from './components/Footer/Footer'
+import Header from './components/Navbar/Navbar'
 function App() {
 
   return (
     <>
-     
+     <Header/>
       <Footer/>
     </>
   )

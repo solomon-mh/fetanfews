@@ -1,0 +1,74 @@
+.header {
+    position: relative;
+    height: 60vh;
+    background: url('../../assets/images/drugstore.jpg') no-repeat center center/cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+    .header-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        96deg,
+        rgba(22, 78, 187, 1) 0%,
+        rgba(4, 60, 170, 0.86) 44.41727697849274%,
+        rgba(4, 60, 170, 0) 100%
+      );      
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+  
+      .header-content {
+        color: #fff;
+        max-width: 800px;
+        padding: 0 1rem;
+  
+        .header-title {
+          font-size: 3rem;
+          font-weight: 700;
+          margin-bottom: 1rem;
+        }
+  
+        .header-subtitle {
+          font-size: 1.2rem;
+          margin-bottom: 2rem;
+        }
+  
+        .search-form {
+          display: flex;
+          justify-content: center;
+          gap: 1rem;
+  
+          .search-input {
+            padding: 0.8rem 1rem;
+            font-size: 1rem;
+            border: none;
+            border-radius: 5px;
+            flex: 1;
+            max-width: 500px;
+          }
+  
+          .search-button {
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            background-color: #1abc9c;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+  
+            &:hover {
+              background-color: #16a085;
+            }
+          }
+        }
+      }
+    }
+  }
+  
