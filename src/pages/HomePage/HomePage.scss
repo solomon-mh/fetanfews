@@ -1,144 +1,166 @@
-// SCSS variables for theme customization
-$primary-color: #007bff;
-$secondary-color: #f8f9fa;
-$hover-color: #0056b3;
-$text-color: #555;
-$font-family: 'Arial', sans-serif;
-$background-color: #f4f4f4;
-$border-radius: 8px;
-$padding: 15px;
-$spacing: 20px;
-
-// Base styles
-
-
-
-
-// Home Page container
 .home-page {
+  padding: 100px;
+  font-family: Arial, sans-serif;
 
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: $spacing;
-  background-color: white;
-  border-radius: $border-radius;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  
   .section-title {
     font-size: 1.8rem;
     font-weight: bold;
-    margin-bottom: $spacing;
-    color: $primary-color;
+    color: #333;
+    margin: 20px 0;
+    border-bottom: 2px solid #007bff;
+    display: inline-block;
+    padding-bottom: 5px;
   }
 
-  // Browse by Medication Section
-  .browse-medication {
+  /* Categories List */
+  .categories-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
     margin-bottom: 30px;
+    list-style: none;
+    padding: 0;
 
-    .medication-categories {
-      display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
-      justify-content: center;
+    .category-item {
+      padding: 10px 20px;
+      border: 1px solid #ccc;
+      border-radius: 25px;
+      font-size: 1rem;
+      font-weight: 500;
+      color: #555;
+      background-color: #f9f9f9;
+      cursor: pointer;
+      transition: all 0.3s ease;
 
-      .medication-category-button {
-        padding: 12px 20px;
-        font-size: 1rem;
-        background-color: $primary-color;
+      &.active {
+        border-color: #007bff;
+        background-color: #007bff;
         color: white;
-        border: none;
-        border-radius: 30px;
-        cursor: pointer;
-        transition: background-color 0.3s ease, transform 0.2s ease;
-        margin: 5px;
-
-        &:hover {
-          background-color: $hover-color;
-          transform: scale(1.05);
-        }
-
-        &:active {
-          background-color: darken($primary-color, 10%);
-        }
-      }
-    }
-  }
-
-  // Pharmacies List Section
-  .pharmacies-list {
-    .pharmacy-item {
-      background-color: $secondary-color;
-      padding: $padding;
-      border-radius: $border-radius;
-      margin-bottom: 15px;
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-      transition: background-color 0.3s ease, box-shadow 0.2s ease;
-
-      h3 {
-        font-size: 1.2rem;
-        font-weight: bold;
-        color: $primary-color;
-        margin-bottom: 5px;
-      }
-
-      p {
-        color: $text-color;
-        font-size: 1rem;
       }
 
       &:hover {
-        background-color: #e9ecef;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        background-color: #007bff;
+        color: white;
+        border-color: #0056b3;
       }
-    }
-
-    p {
-      text-align: center;
-      font-size: 1.2rem;
-      color: #888;
     }
   }
 
-  // Search Results Section
-  .search-results {
-    margin-top: 30px;
-    text-align: center;
-    ul {
-      list-style: none;
-      padding: 0;
+  /* Pharmacies List */
+  .pharmacies-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 20px;
+    padding: 0;
+    list-style: none;
 
-      li {
-        padding: 12px;
-        border-bottom: 1px solid #ccc;
-        font-size: 1rem;
-        color: $text-color;
+    .pharmacy-item {
+      margin-bottom: 20px;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      background-color: #fff;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s ease;
 
-        &:last-child {
-          border-bottom: none;
+      &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+      }
+
+      .pharmacy-image {
+        width: 400px;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 10px;
+        margin-bottom: 15px;
+      }
+
+      h3 {
+        margin: 0 0 10px;
+        font-size: 1.5rem;
+        color: #333;
+      }
+
+      p {
+        margin: 5px 0;
+        color: #555;
+      }
+
+      h4 {
+        margin-top: 15px;
+        font-size: 1.2rem;
+        color: #007bff;
+      }
+
+      .drugs-list {
+        list-style: none;
+        padding: 0;
+        margin: 10px 0 0;
+
+        li {
+          margin-bottom: 5px;
+          padding: 5px;
+          border-left: 3px solid #007bff;
+          background-color: #f9f9f9;
+          border-radius: 3px;
+          padding-left: 10px;
+          color: #333;
         }
       }
     }
   }
-}
 
-// Responsive design: For smaller screens, adjust layout
-@media (max-width: 768px) {
-  .home-page {
-    padding: 10px;
-  }
+  /* Show All Button */
+  .show-all-button {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 25px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: white;
+    background-color: #007bff;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 
-  .browse-medication .medication-categories {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .pharmacies-list {
-    .pharmacy-item {
-      padding: 10px;
+    &:hover {
+      background-color: #0056b3;
+      transform: scale(1.05);
     }
   }
 
-  .section-title {
-    font-size: 1.6rem;
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .categories-list {
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .pharmacy-item {
+      padding: 15px;
+
+      .pharmacy-image {
+        height: 150px;
+      }
+
+      h3 {
+        font-size: 1.3rem;
+      }
+
+      p {
+        font-size: 0.9rem;
+      }
+
+      h4 {
+        font-size: 1rem;
+      }
+    }
+
+    .show-all-button {
+      font-size: 0.9rem;
+      padding: 8px 20px;
+    }
   }
 }

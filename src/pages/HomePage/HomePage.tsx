@@ -1,102 +1,81 @@
-import React, { useState, useEffect } from "react";
-import "./HomePage.scss"; 
-interface Pharmacy {
-  name: string;
-  distance: string;
-}
+// HomePage.tsx
+import React, { useState } from "react";
+import { pharmacies } from "../../data/pharmacies";
+import "./HomePage.scss";
 
 interface HomePageProps {}
 
 const HomePage: React.FC<HomePageProps> = () => {
-  const [location, setLocation] = useState<string>("");
-  const [searchResults, setSearchResults] = useState<any[]>([]); // Adjust based on your search results data structure
-  const [pharmacies, setPharmacies] = useState<Pharmacy[]>([]);
-  const [medications, setMedications] = useState<string[]>([]);
+  const [visibleCount, setVisibleCount] = useState(5);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
-  // Handle search functionality
-  const handleSearch = (query: string) => {
-    console.log("Searching for:", query, "in location:", location);
-    // Example: Fetch search results from an API
-    // fetchDrugs(query, location).then((results) => setSearchResults(results));
+  const categories = Array.from(
+    new Set(
+      pharmacies.flatMap((pharmacy) =>
+        pharmacy.available_drugs.map((drug) => drug.category)
+      )
+    )
+  );
+
+  const filteredPharmacies = selectedCategory
+    ? pharmacies.filter((pharmacy) =>
+        pharmacy.available_drugs.some((drug) => drug.category === selectedCategory)
+      )
+    : pharmacies;
+
+  const visiblePharmacies = filteredPharmacies.slice(0, visibleCount);
+
+  const calculateDistance = (latitude: number, longitude: number): string => {
+    return `${Math.round(Math.random() * 10 + 1)} km`;
   };
 
-  // Handle location change
-  const handleLocationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLocation(e.target.value);
+  const handleShowAll = () => {
+    setVisibleCount(filteredPharmacies.length);
   };
-
-  // Handle medication browsing
-  const handleBrowseMedication = (category: string) => {
-    console.log("Browsing medications in category:", category);
-    // Example: Fetch medications based on the selected category
-    // fetchMedications(category).then((results) => setMedications(results));
-  };
-
-  // Example: Fetch nearby pharmacies
-  const fetchNearbyPharmacies = () => {
-    const mockPharmacies = [
-      { name: "Pharmacy A", distance: "1.2 km" },
-      { name: "Pharmacy B", distance: "3.4 km" },
-      { name: "Pharmacy C", distance: "2.1 km" },
-    ];
-    setPharmacies(mockPharmacies);
-  };
-
-  // Example: Fetch medication categories
-  const fetchMedicationCategories = () => {
-    const mockCategories = [
-      "Painkillers",
-      "Antibiotics",
-      "Vitamins",
-      "Allergy Medications",
-      "Skin Care",
-    ];
-    setMedications(mockCategories);
-  };
-
-  // Load pharmacies and categories on component mount
-  useEffect(() => {
-    fetchNearbyPharmacies();
-    fetchMedicationCategories();
-  }, []);
 
   return (
     <div className="home-page">
-            <div className="browse-medication">
-        <h2 className="section-title">Browse by Medication</h2>
-        <div className="medication-categories">
-          {medications.map((category) => (
-            <button
-              key={category}
-              className="medication-category-button"
-              onClick={() => handleBrowseMedication(category)}
-            >
-              {category}
-            </button>
-          ))}
-        </div>
-      </div>
-      {/* Pharmacies List */}
-      <div className="pharmacies-list">
-        <h2 className="section-title">Nearby Pharmacies</h2>
-        <ul>
-          {pharmacies.length > 0 ? (
-            pharmacies.map((pharmacy, index) => (
-              <li key={index} className="pharmacy-item">
-                <h3>{pharmacy.name}</h3>
-                <p>{pharmacy.distance} away</p>
-              </li>
-            ))
-          ) : (
-            <p>No pharmacies found in your location.</p>
-          )}
-        </ul>
-      </div>
+      <h2 className="section-title">Browse by Medication Category</h2>
+      <ul className="categories-list">
+        {categories.map((category) => (
+          <li
+            key={category}
+            className={`category-item ${
+              selectedCategory === category ? "active" : ""
+            }`}
+            onClick={() => setSelectedCategory(category)}
+          >
+            {category}
+          </li>
+        ))}
+        <li
+          className={`category-item ${!selectedCategory ? "active" : ""}`}
+          onClick={() => setSelectedCategory(null)}
+        >
+          All Categories
+        </li>
+      </ul>
 
-      {/* Browse by Medication Categories */}
-
-
-   
+      <h2 className="section-title">Nearby Pharmacies</h2>
+      <ul className="pharmacies-list">
+        {visiblePharmacies.map((pharmacy) => (
+          <li key={pharmacy.pharmacy_id} className="pharmacy-item">
+            <img
+              src={pharmacy.image}
+              alt={pharmacy.pharmacy_name}
+              className="pharmacy-image"
+            />
+            <h3>{pharmacy.pharmacy_name}</h3>
+            <p>{pharmacy.address}</p>
+            <p>Distance: {calculateDistance(pharmacy.latitude, pharmacy.longitude)}</p>
+          </li>
+        ))}
+      </ul>
+      {visibleCount < filteredPharmacies.length && (
+        <button className="show-all-button" onClick={handleShowAll}>
+          Show All
+        </button>
+      )}
     </div>
   );
 };
