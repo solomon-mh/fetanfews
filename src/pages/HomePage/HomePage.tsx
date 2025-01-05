@@ -3,9 +3,15 @@ import React, { useState } from "react";
 import { pharmacies } from "../../data/pharmacies";
 import "./HomePage.scss";
 import WhyUseMedLocator from "../../components/common/WhyUseMedLocator";
+import SearchBar from "../../components/SearchBar/SearchBar";
+import pharmacistImage from "../../assets/images/pharmacist1.svg";
+
 interface HomePageProps {}
 
 const HomePage: React.FC<HomePageProps> = () => {
+  const handleSearch = (term: string) => {
+    console.log("Searching for:", term);
+  };
   const [visibleCount, setVisibleCount] = useState(5);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
@@ -19,7 +25,9 @@ const HomePage: React.FC<HomePageProps> = () => {
 
   const filteredPharmacies = selectedCategory
     ? pharmacies.filter((pharmacy) =>
-        pharmacy.available_drugs.some((drug) => drug.category === selectedCategory)
+        pharmacy.available_drugs.some(
+          (drug) => drug.category === selectedCategory
+        )
       )
     : pharmacies;
 
@@ -35,6 +43,49 @@ const HomePage: React.FC<HomePageProps> = () => {
 
   return (
     <div className="home-page">
+      <div className="hero-wrapper">
+        <div className="hero-container">
+
+        
+        <div className="hero-content">
+          <h1 className="hero-title">
+            Find Drugs & Pharmacies <br /> Near You ,in Bahir Dar
+          </h1>
+          <p className="hero-subtitle">
+            We have all the drugs your doctor prescribed for your health and
+            what’s more, we can get it to you.{" "}
+          </p>
+          <SearchBar onSearch={handleSearch} />
+          {/* Frequently Searched Drugs */}
+          <div className="frequently-searched">
+            <h2 className="frequently-searched-title">
+              Frequently Searched Drugs
+            </h2>
+            <ul className="frequently-searched-list">
+              {[
+                "Paracetamol",
+                "Ibuprofen",
+                "Amoxicillin",
+                "Metformin",
+                "Aspirin",
+              ].map((drug) => (
+                <li
+                  key={drug}
+                  className="drug-item"
+                  onClick={() => handleSearch(drug)}
+                >
+                  {drug}
+                </li>
+              ))}
+            </ul>
+          </div>
+          </div>
+          </div>
+        <div className="hero-image-container">
+          <img src={pharmacistImage} alt="Hero" className="hero-image" />
+        </div>
+      </div>
+
       <h2 className="section-title">Browse by Medication Category</h2>
       <ul className="categories-list">
         {categories.map((category) => (
@@ -67,7 +118,10 @@ const HomePage: React.FC<HomePageProps> = () => {
             />
             <h3>{pharmacy.pharmacy_name}</h3>
             <p>{pharmacy.address}</p>
-            <p>Distance: {calculateDistance(pharmacy.latitude, pharmacy.longitude)}</p>
+            <p>
+              Distance:{" "}
+              {calculateDistance(pharmacy.latitude, pharmacy.longitude)}
+            </p>
           </li>
         ))}
       </ul>

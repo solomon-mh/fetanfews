@@ -7,11 +7,17 @@ function App() {
 
   return (
     <Router>
+      <div className='header-section'>
       <Header />
+
+      </div>
+      <div className='main-content'>
       <Routes>
         <Route path="/" element={<HomePage/>} />
 
       </Routes>
+      </div>
+     
       <Footer/>
     </Router>
   )
