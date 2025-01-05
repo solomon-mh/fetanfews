@@ -5,6 +5,31 @@
   }
   font-family: Arial, sans-serif;
 
+  .loading-indicator {
+
+   margin: 50px auto;
+    height: 200px;
+      width: 200px;
+      p{
+        color: #007bff;
+      }
+    .circular-progress-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 200px;
+      width: 200px;
+    }
+  
+  }
+  
+
+  
+  
+
+
+  
+
 
   .browse-categories-wrapper{
     padding: 0 50px;

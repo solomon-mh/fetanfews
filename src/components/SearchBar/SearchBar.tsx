@@ -3,16 +3,16 @@ import { FiSearch, FiMapPin, FiTag } from "react-icons/fi"; // Importing relevan
 import "./SearchBar.scss";
 
 interface SearchBarProps {
-  onSearch: (searchCriteria: { name: string; location: string}) => void;
+  onSearch: (searchCriteria: { drugName: string; pharmacyName: string}) => void;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
-  const [name, setName] = useState<string>("");
-  const [location, setLocation] = useState<string>("");
+  const [drugName, setDrugName] = useState<string>("");
+  const [pharmacyName, setPharmacyName] = useState<string>("");
 
   const handleSearch = () => {
     if (onSearch) {
-      onSearch({ name, location });
+      onSearch({ drugName, pharmacyName });
     }
   };
 
@@ -32,8 +32,8 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
           type="text"
           className="search-input"
           placeholder="search with pharmacy's name"
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
+          value={pharmacyName}
+          onChange={(e) => setPharmacyName(e.target.value)}
           onKeyDown={handleKeyPress}
         />
       </div>
@@ -44,8 +44,8 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
           type="text"
           className="search-input"
           placeholder=" search with Medication or drug category"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          value={drugName}
+          onChange={(e) => setDrugName(e.target.value)}
           onKeyDown={handleKeyPress}
         />
       </div>

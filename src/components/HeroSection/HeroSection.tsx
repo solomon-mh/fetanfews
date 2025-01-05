@@ -4,8 +4,8 @@ import pharmacistImage from "../../assets/images/pharmacist1.svg"; // Update the
 import "./HeroSection.scss";
 
 interface HeroSectionProps {
-  onSearch: (query: string) => void;
-}
+    onSearch: (searchCriteria: { drugName: string; pharmacyName: string }) => void;
+  }
 
 const HeroSection: React.FC<HeroSectionProps> = ({ onSearch }) => {
   const frequentlySearchedDrugs = [
@@ -16,9 +16,9 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onSearch }) => {
     "Aspirin",
   ];
 
-  const handleSearch = (query: string) => {
-    onSearch(query);
-  };
+    const handleDrugSearch = (drug: string) => {
+        onSearch({ drugName: drug, pharmacyName: "" });
+    };
 
   return (
     <div className="hero-wrapper">
@@ -31,7 +31,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onSearch }) => {
             We have all the drugs your doctor prescribed for your health and
             what’s more, we can get it to you.
           </p>
-          <SearchBar onSearch={handleSearch} />
+          <SearchBar onSearch={onSearch} />
 
           {/* Frequently Searched Drugs */}
           <div className="frequently-searched">
@@ -41,7 +41,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onSearch }) => {
                 <li
                   key={drug}
                   className="drug-item"
-                  onClick={() => handleSearch(drug)}
+                  onClick={() => handleDrugSearch(drug)}
                 >
                   {drug}
                 </li>
