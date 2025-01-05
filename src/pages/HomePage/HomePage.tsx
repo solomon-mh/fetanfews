@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { pharmacies } from "../../data/pharmacies";
 import "./HomePage.scss";
-
+import WhyUseMedLocator from "../../components/common/WhyUseMedLocator";
 interface HomePageProps {}
 
 const HomePage: React.FC<HomePageProps> = () => {
@@ -55,7 +55,7 @@ const HomePage: React.FC<HomePageProps> = () => {
           All Categories
         </li>
       </ul>
-
+      <WhyUseMedLocator />
       <h2 className="section-title">Nearby Pharmacies</h2>
       <ul className="pharmacies-list">
         {visiblePharmacies.map((pharmacy) => (
