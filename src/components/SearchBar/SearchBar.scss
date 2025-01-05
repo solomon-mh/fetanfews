@@ -1,50 +1,56 @@
-*{
-    box-sizing: border-box;
+
+* {
+  box-sizing: border-box;
 }
+
 .search-bar {
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  border-radius: 30px;
+  gap: 20px;
+  .search-input-container {
+    padding: 30px 0 10px 0;
+    position: relative;
+    flex: 1;
     display: flex;
     align-items: center;
-  
-    .search-input-container {
-      position: relative;
-      flex: 1;
-      display: flex;
-      align-items: center;
-  
-      .search-icon {
-        position: absolute;
-        left: 0;
-        color: #aaa;
-        font-size: 20px;
-      }
-  
-      .search-input {
-        background-color: #fff;
-        padding: 15px;
-        width: 100%;
-        color: black;
-        border: 1px solid #ccc;
-        border-radius:  10px 0 0 10px   ;
-        font-size: 16px;
-        outline: none;
-     
-        &:focus {
-          border-color: #007bff;
-        }
+    
+    .input-icon {
+      position: absolute;
+      left: 10px;
+      color: #aaa;
+      font-size: 20px;
+    }
+
+    .search-input {
+      padding: 10px 10px 10px 30px; /* Adjust padding for icon spacing */
+      width: 100%;
+      border: none; /* Remove all borders */
+      border-bottom: 2px solid #ccc; /* Add bottom border */
+      font-size: 16px;
+      outline: none;
+      background-color: transparent; /* Optional: Makes the background transparent */
+    
+      &:focus {
+        border-color: #007bff; /* Change bottom border color on focus */
       }
     }
-  
-    .search-button {
-      padding: 15px;
-      background-color: hwb(130 0% 0% / 0.774);
-      color: #fff;
-      border: none;
-      border-radius: 0 10px  10px  0 ;
-      font-size: 16px;
-      cursor: pointer;
-      transition: background-color 0.3s;
-  
     
+  }
+
+  .search-button {
+    padding: 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 40%;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+
+    &:hover {
+      background-color: #0056b3;
     }
   }
-  
+}

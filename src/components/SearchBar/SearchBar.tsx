@@ -1,43 +1,56 @@
-import  React, { useState } from "react";
-import { FiSearch } from "react-icons/fi"; // Importing a search icon
-import './SearchBar.scss'
-interface SearchBarProps {
-    onSearch: (searchTerm: string) => void; // Type definition for the onSearch prop
-  }
-const SearchBar:React.FC<SearchBarProps> = ({ onSearch }) => {
-  const [searchTerm, setSearchTerm] = useState<string>("");
+import React, { useState } from "react";
+import { FiSearch, FiMapPin, FiTag } from "react-icons/fi"; // Importing relevant icons
+import "./SearchBar.scss";
 
-  const handleInputChange = (e:React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
-  };
+interface SearchBarProps {
+  onSearch: (searchCriteria: { name: string; location: string}) => void;
+}
+
+const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
+  const [name, setName] = useState<string>("");
+  const [location, setLocation] = useState<string>("");
 
   const handleSearch = () => {
     if (onSearch) {
-      onSearch(searchTerm);
+      onSearch({ name, location });
     }
   };
 
-  const handleKeyPress = (e:React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-        handleSearch();
-      }
+      handleSearch();
+    }
   };
 
   return (
     <div className="search-bar">
+    
+
       <div className="search-input-container">
-        <FiSearch className="search-icon" />
+        <FiMapPin className="input-icon" />
         <input
           type="text"
           className="search-input"
-          placeholder="Search for medacation name or drug name..."
-          value={searchTerm}
-          onChange={handleInputChange}
+          placeholder="search with pharmacy's name"
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+          onKeyDown={handleKeyPress}
+        />
+      </div>
+      <div className="search-input-container">
+      <FiTag className="input-icon" />
+
+        <input
+          type="text"
+          className="search-input"
+          placeholder=" search with Medication or drug category"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
           onKeyDown={handleKeyPress}
         />
       </div>
       <button className="search-button" onClick={handleSearch}>
-        Search
+        <FiSearch className="search-icon" />
       </button>
     </div>
   );
