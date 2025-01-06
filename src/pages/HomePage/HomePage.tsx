@@ -5,7 +5,8 @@ import WhyUseMedLocator from "../../components/common/WhyUseMedLocator";
 import HeroSection from "../../components/HeroSection/HeroSection";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css"; // Import the styles
-
+import PharmacyList from "../../components/PharmacyList/PharmacyList";
+import { calculateDistance } from "../../utils/calculations";
 interface Drug {
   name: string;
 }
@@ -35,21 +36,7 @@ const HomePage: React.FC = () => {
 
   const visiblePharmacies = filteredPharmacies.slice(0, visibleCount);
 
-  const calculateDistance = (latitude: number, longitude: number): string => {
-    const userLatitude = 0; // Replace with user's actual latitude
-    const userLongitude = 0; // Replace with user's actual longitude
-    const toRad = (value: number) => (value * Math.PI) / 180;
-    const R = 6371; // Earth radius in km
-    const dLat = toRad(latitude - userLatitude);
-    const dLon = toRad(longitude - userLongitude);
-    const a =
-      Math.sin(dLat / 2) ** 2 +
-      Math.cos(toRad(userLatitude)) *
-        Math.cos(toRad(latitude)) *
-        Math.sin(dLon / 2) ** 2;
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return `${(R * c).toFixed(2)} km`;
-  };
+ 
 
   const handleSearch = (searchCriteria: {
     drugName: string;
@@ -71,24 +58,22 @@ const HomePage: React.FC = () => {
       }
     }, 200);
 
-  
-      const results = pharmacies.filter((pharmacy) => {
-        const pharmacyNameMatch = pharmacyName
-          ? pharmacy.pharmacy_name
-              .toLowerCase()
-              .includes(pharmacyName.toLowerCase())
-          : true;
-        const drugNameMatch = drugName
-          ? pharmacy.available_drugs.some((drug) =>
-              drug.name.toLowerCase().includes(drugName.toLowerCase())
-            )
-          : true;
-        return pharmacyNameMatch && drugNameMatch;
-      });
-      setSearchResults(results);
-      setIsLoading(false);
-      clearInterval(progressTimer); 
-   
+    const results = pharmacies.filter((pharmacy) => {
+      const pharmacyNameMatch = pharmacyName
+        ? pharmacy.pharmacy_name
+            .toLowerCase()
+            .includes(pharmacyName.toLowerCase())
+        : true;
+      const drugNameMatch = drugName
+        ? pharmacy.available_drugs.some((drug) =>
+            drug.name.toLowerCase().includes(drugName.toLowerCase())
+          )
+        : true;
+      return pharmacyNameMatch && drugNameMatch;
+    });
+    setSearchResults(results);
+    setIsLoading(false);
+    clearInterval(progressTimer);
   };
 
   const handleShowAll = () => {
@@ -101,24 +86,13 @@ const HomePage: React.FC = () => {
 
       {searchResults.length > 0 ? (
         <div className="pharmacies-list-wrapper">
-          <h2 className="section-title">{ searchResults.length} pharmacies found</h2>
-          <ul className="pharmacies-list">
-            {searchResults.map((pharmacy) => (
-              <li key={pharmacy.pharmacy_id} className="pharmacy-item">
-                <img
-                  src={pharmacy.image}
-                  alt={pharmacy.pharmacy_name}
-                  className="pharmacy-image"
-                />
-                <h3>{pharmacy.pharmacy_name}</h3>
-                <p>{pharmacy.address}</p>
-                <p>
-                  Distance:{" "}
-                  {calculateDistance(pharmacy.latitude, pharmacy.longitude)}
-                </p>
-              </li>
-            ))}
-          </ul>
+          <h2 className="section-title">
+            {searchResults.length} pharmacies found
+          </h2>
+          <PharmacyList
+            pharmacies={searchResults}
+            calculateDistance={calculateDistance}
+          />
         </div>
       ) : (
         <p className="no-results">
@@ -145,64 +119,43 @@ const HomePage: React.FC = () => {
               />
             </div>
           ) : (
-            
-              <>
-               <div className="browse-categories-wrapper">
-            <h2 className="section-title">Browse by Medication Category</h2>
-            <ul className="categories-list">
-              {categories.map((category) => (
-                <li
-                  key={category}
-                  className={`category-item ${
-                    selectedCategory === category ? "active" : ""
-                  }`}
-                  onClick={() => setSelectedCategory(category)}
-                >
-                  {category}
-                </li>
-              ))}
-              <li
-                className={`category-item ${!selectedCategory ? "active" : ""}`}
-                onClick={() => setSelectedCategory(null)}
-              >
-                All Categories
-              </li>
-            </ul>
-          </div>
+            <>
+              <div className="browse-categories-wrapper">
+                <h2 className="section-title">Browse by Medication Category</h2>
+                <ul className="categories-list">
+                  {categories.map((category) => (
+                    <li
+                      key={category}
+                      className={`category-item ${
+                        selectedCategory === category ? "active" : ""
+                      }`}
+                      onClick={() => setSelectedCategory(category)}
+                    >
+                      {category}
+                    </li>
+                  ))}
+                  <li
+                    className={`category-item ${
+                      !selectedCategory ? "active" : ""
+                    }`}
+                    onClick={() => setSelectedCategory(null)}
+                  >
+                    All Categories
+                  </li>
+                </ul>
+              </div>
 
-          <WhyUseMedLocator />
-          <div className="pharmacies-list-wrapper">
-            <h2 className="section-title">Nearby Pharmacies</h2>
-            <ul className="pharmacies-list">
-              {visiblePharmacies.map((pharmacy) => (
-                <li key={pharmacy.pharmacy_id} className="pharmacy-item">
-                  <img
-                    src={pharmacy.image}
-                    alt={pharmacy.pharmacy_name}
-                    className="pharmacy-image"
-                  />
-                  <h3>{pharmacy.pharmacy_name}</h3>
-                  <p>{pharmacy.address}</p>
-                  <p>
-                    Distance:{" "}
-                    {calculateDistance(pharmacy.latitude, pharmacy.longitude)}
-                  </p>
-                </li>
-              ))}
-            </ul>
-            {visibleCount < filteredPharmacies.length && (
-              <button className="show-all-button" onClick={handleShowAll}>
-                Show All
-              </button>
-            )}
-          </div>
+              <WhyUseMedLocator />
+              <PharmacyList
+                pharmacies={visiblePharmacies}
+                calculateDistance={calculateDistance}
+                onShowAll={handleShowAll}
+                showAllButton={visibleCount < filteredPharmacies.length}
+              />
+            </>
+          )}
         </>
       )}
-              
-              </> 
-              
-          )}
-         
     </div>
   );
 };

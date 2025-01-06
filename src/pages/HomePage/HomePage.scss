@@ -23,14 +23,6 @@
   
   }
   
-
-  
-  
-
-
-  
-
-
   .browse-categories-wrapper{
     padding: 0 50px;
    
@@ -80,108 +72,6 @@
 
   }
   
-
- 
-
-  /* Pharmacies List */
-
-  .pharmacies-list-wrapper{
-   padding: 50px; 
-   .section-title {
-    font-size: 1.8rem;
-    font-weight: bold;
-    color: #333;
-    margin: 20px 0;
-    border-bottom: 2px solid #007bff;
-    display: inline-block;
-    padding-bottom: 5px;
-  }
-
-    .pharmacies-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-      gap: 20px;
-      padding: 0;
-      list-style: none;
-  
-      .pharmacy-item {
-        margin-bottom: 20px;
-        padding: 20px;
-        border: 1px solid #ddd;
-        border-radius: 10px;
-        background-color: #fff;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        transition: transform 0.2s ease;
-  
-        &:hover {
-          transform: translateY(-5px);
-          box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
-        }
-  
-        .pharmacy-image {
-          width: 400px;
-          height: 200px;
-          object-fit: cover;
-          border-radius: 10px;
-          margin-bottom: 15px;
-        }
-  
-        h3 {
-          margin: 0 0 10px;
-          font-size: 1.5rem;
-          color: #333;
-        }
-  
-        p {
-          margin: 5px 0;
-          color: #555;
-        }
-  
-        h4 {
-          margin-top: 15px;
-          font-size: 1.2rem;
-          color: #007bff;
-        }
-  
-        .drugs-list {
-          list-style: none;
-          padding: 0;
-          margin: 10px 0 0;
-  
-          li {
-            margin-bottom: 5px;
-            padding: 5px;
-            border-left: 3px solid #007bff;
-            background-color: #f9f9f9;
-            border-radius: 3px;
-            padding-left: 10px;
-            color: #333;
-          }
-        }
-      }
-    }
-    .show-all-button {
-      display: inline-block;
-      margin-top: 20px;
-      padding: 10px 25px;
-      font-size: 1rem;
-      font-weight: bold;
-      color: white;
-      background-color: #007bff;
-      border: none;
-      border-radius: 25px;
-      cursor: pointer;
-      transition: background-color 0.3s ease, transform 0.2s ease;
-  
-      &:hover {
-        background-color: #0056b3;
-        transform: scale(1.05);
-      }
-    }
-  }
-
-  /* Show All Button */
- 
 
   /* Responsive Design */
 
