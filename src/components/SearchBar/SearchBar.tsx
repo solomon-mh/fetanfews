@@ -1,12 +1,8 @@
 import React, { useState } from "react";
 import { FiSearch, FiMapPin, FiTag } from "react-icons/fi"; // Importing relevant icons
 import "./SearchBar.scss";
-
-interface SearchBarProps {
-  onSearch: (searchCriteria: { drugName: string; pharmacyName: string}) => void;
-}
-
-const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
+import { OnSearchProps } from "../../utils/interfaces";
+const SearchBar: React.FC<OnSearchProps> = ({ onSearch }) => {
   const [drugName, setDrugName] = useState<string>("");
   const [pharmacyName, setPharmacyName] = useState<string>("");
 
@@ -24,8 +20,6 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
 
   return (
     <div className="search-bar">
-    
-
       <div className="search-input-container">
         <FiMapPin className="input-icon" />
         <input
@@ -38,7 +32,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
         />
       </div>
       <div className="search-input-container">
-      <FiTag className="input-icon" />
+        <FiTag className="input-icon" />
 
         <input
           type="text"
