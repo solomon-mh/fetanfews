@@ -2,12 +2,8 @@ import React from "react";
 import SearchBar from "../SearchBar/SearchBar";
 import pharmacistImage from "../../assets/images/pharmacist1.svg"; // Update the path as needed
 import "./HeroSection.scss";
-
-interface HeroSectionProps {
-    onSearch: (searchCriteria: { drugName: string; pharmacyName: string }) => void;
-  }
-
-const HeroSection: React.FC<HeroSectionProps> = ({ onSearch }) => {
+import { OnSearchProps } from "../../utils/interfaces";
+const HeroSection: React.FC<OnSearchProps> = ({ onSearch }) => {
   const frequentlySearchedDrugs = [
     "Paracetamol",
     "Ibuprofen",
@@ -16,9 +12,9 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onSearch }) => {
     "Aspirin",
   ];
 
-    const handleDrugSearch = (drug: string) => {
-        onSearch({ drugName: drug, pharmacyName: "" });
-    };
+  const handleDrugSearch = (drug: string) => {
+    onSearch({ drugName: drug, pharmacyName: "" });
+  };
 
   return (
     <div className="hero-wrapper">
@@ -35,7 +31,9 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onSearch }) => {
 
           {/* Frequently Searched Drugs */}
           <div className="frequently-searched">
-            <h2 className="frequently-searched-title">Frequently Searched Drugs</h2>
+            <h2 className="frequently-searched-title">
+              Frequently Searched Drugs
+            </h2>
             <ul className="frequently-searched-list">
               {frequentlySearchedDrugs.map((drug) => (
                 <li
