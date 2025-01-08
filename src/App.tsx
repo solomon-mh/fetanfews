@@ -9,6 +9,7 @@ import { pharmacies } from "./data/pharmacies";
 import { calculateDistance } from "./utils/calculations";
 import MainLayout from "./layouts/MainLayout";
 import NotFound from "./pages/NotFound";
+import SearchResultsPage from "./pages/SearchResults/SearchResults";
 function App() {
   return (
     <Router>
@@ -29,7 +30,7 @@ function App() {
           />
           <Route path="/user/login" element={<Login />} />
           <Route path="/user/signup" element={<SignUp />} />
-          
+          <Route path="/search-results" element={<SearchResultsPage />} />
         </Route>
 
           {/* <Route path="/" element={<HomePage />} />
