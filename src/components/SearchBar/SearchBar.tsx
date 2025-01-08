@@ -89,14 +89,15 @@ const SearchBar: React.FC = () => {
           aria-autocomplete="list"
           aria-controls="pharmacy-suggestions"
           aria-expanded={pharmacySuggestions.length > 0}
-          aria-activedescendant=""
           value={pharmacyName}
           onChange={handleInputChange}
           onKeyDown={handleKeyPress}
           name="pharmacy"
         />
         {pharmacySuggestions.length > 0 && (
-          <ul className="suggestions">
+          <ul className="suggestions"
+          id="pharmacy-suggestions"
+          role="listbox">
             {pharmacySuggestions.map((pharmacy, index) => (
           <li
           key={index}
@@ -116,17 +117,29 @@ const SearchBar: React.FC = () => {
           type="text"
           className="search-input"
           placeholder=" search with Medication or drug category"
+          aria-autocomplete="list"
+          aria-controls="pharmacy-suggestions"
+          aria-expanded={drugSuggestions.length > 0}
           value={drugName}
           onChange={handleInputChange}
           onKeyDown={handleKeyPress}
           name="medication"
         />
         {drugSuggestions.length > 0 && (
-          <ul id="pharmacy-suggestions" role="listbox" className="suggestions">
-            {drugSuggestions.map((drug, index) => (
-              <li key={index} onClick={() => handleSuggestionClick(drug)}>
-                {drug.name}
-              </li>
+          <ul id="drug-suggestions"
+            role="listbox"
+            className="suggestions"
+          >
+            {drugSuggestions.map((drug) => (
+              <li  key={drug.drug_id}
+              id={drug.drug_id}
+              role="option"
+         
+                onClick={() => handleSuggestionClick(drug)}
+                dangerouslySetInnerHTML={{
+                  __html: highlightText(drug.name, drugName),
+                }}
+              />
             ))}
           </ul>
         )}
