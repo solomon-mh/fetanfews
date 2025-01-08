@@ -2,8 +2,11 @@ import React from "react";
 import SearchBar from "../SearchBar/SearchBar";
 import pharmacistImage from "../../assets/images/pharmacist1.svg"; // Update the path as needed
 import "./HeroSection.scss";
-import { OnSearchProps } from "../../utils/interfaces";
-const HeroSection: React.FC<OnSearchProps> = ({ onSearch }) => {
+import { useNavigate } from "react-router-dom";
+import { Search } from "../../utils/handleSearch";
+
+const HeroSection: React.FC = () => {
+  const navigate = useNavigate();
   const frequentlySearchedDrugs = [
     "Paracetamol",
     "Ibuprofen",
@@ -13,7 +16,9 @@ const HeroSection: React.FC<OnSearchProps> = ({ onSearch }) => {
   ];
 
   const handleDrugSearch = (drug: string) => {
-    onSearch({ drugName: drug, pharmacyName: "" });
+   const results= Search({ drugName: drug, pharmacyName: "" });
+    navigate("/search-results", { state: { searchResults: results } });
+
   };
 
   return (
@@ -27,7 +32,7 @@ const HeroSection: React.FC<OnSearchProps> = ({ onSearch }) => {
             We have all the drugs your doctor prescribed for your health and
             what’s more, we can get it to you.
           </p>
-          <SearchBar onSearch={onSearch} />
+          <SearchBar />
 
           {/* Frequently Searched Drugs */}
           <div className="frequently-searched">
