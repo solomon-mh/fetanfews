@@ -11,7 +11,7 @@ const PharmacyList: React.FC<PharmacyListProps> = ({
 }) => {
   return (
     <div className="pharmacies-list-wrapper">
-      {/* <h2 className="section-title">Nearby Pharmacies</h2> */}
+      {/* <h2 className="section-title">Featured Pharmacies</h2> */}
       <ul className="pharmacies-list">
         {pharmacies.map((pharmacy) => (
           <li key={pharmacy.pharmacy_id} className="pharmacy-item">
