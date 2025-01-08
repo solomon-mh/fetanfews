@@ -1,14 +1,14 @@
 import { pharmacies } from "../data/pharmacies";
 export const Search = (searchCriteria: {
-    drugName: string;
-    pharmacyName: string;
+    drugName: string|null;
+    pharmacyName: string|null;
   }) => {
 
     const { drugName, pharmacyName } = searchCriteria;
 
-    if (!drugName.trim() && !pharmacyName.trim()) {
+    if (!drugName?.trim() && !pharmacyName?.trim()) {
      
-      return;
+      return [];
     }
     const results = pharmacies.filter((pharmacy) => {
       const pharmacyNameMatch = pharmacyName
