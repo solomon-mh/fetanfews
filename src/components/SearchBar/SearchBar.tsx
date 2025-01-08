@@ -1,15 +1,16 @@
 import React, { useState } from "react";
 import { FiSearch, FiMapPin, FiTag } from "react-icons/fi"; // Importing relevant icons
 import "./SearchBar.scss";
-import { OnSearchProps } from "../../utils/interfaces";
-const SearchBar: React.FC<OnSearchProps> = ({ onSearch }) => {
+import { useNavigate } from "react-router-dom";
+import { Search } from "../../utils/handleSearch";
+const SearchBar: React.FC = () => {
+  const navigate = useNavigate();
   const [drugName, setDrugName] = useState<string>("");
   const [pharmacyName, setPharmacyName] = useState<string>("");
 
   const handleSearch = () => {
-    if (onSearch) {
-      onSearch({ drugName, pharmacyName });
-    }
+    const results = Search({ drugName, pharmacyName });
+    navigate("/search-results", { state: { searchResults: results } });
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
