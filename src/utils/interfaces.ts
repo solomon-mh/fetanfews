@@ -1,4 +1,13 @@
+export interface LoginCredentials {
+  phone: string;
+  password: string;
+}
 
+export interface SignUpData {
+  phone: string;
+  password: string;
+  confirmPassword: string;
+}
 
 export interface OnSearchProps {
     onSearch: (searchCriteria: { drugName: string; pharmacyName: string }) => void;
