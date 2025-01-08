@@ -3,10 +3,10 @@ import SearchBar from "../SearchBar/SearchBar";
 import pharmacistImage from "../../assets/images/pharmacist1.svg"; // Update the path as needed
 import "./HeroSection.scss";
 import { useNavigate } from "react-router-dom";
-import { Search } from "../../utils/handleSearch";
 
 const HeroSection: React.FC = () => {
   const navigate = useNavigate();
+  const queryParams = new URLSearchParams();
   const frequentlySearchedDrugs = [
     "Paracetamol",
     "Ibuprofen",
@@ -16,8 +16,8 @@ const HeroSection: React.FC = () => {
   ];
 
   const handleDrugSearch = (drug: string) => {
-   const results= Search({ drugName: drug, pharmacyName: "" });
-    navigate("/search-results", { state: { searchResults: results } });
+    if (drug) queryParams.append("medication", drug);
+   navigate(`/search-results/?${queryParams.toString()}`);
 
   };
 
