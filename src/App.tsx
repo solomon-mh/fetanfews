@@ -8,13 +8,15 @@ import PharmacyDetailPage from "./pages/PharmacyDetails/PharmacyDetails";
 import { pharmacies } from "./data/pharmacies";
 import { calculateDistance } from "./utils/calculations";
 import MainLayout from "./layouts/MainLayout";
+import NotFound from "./pages/NotFound";
 function App() {
   return (
     <Router>
  
         <Routes>
-
         <Route element={<MainLayout />}>
+        <Route path="*" element={<NotFound />} />
+
           <Route path="/" element={<HomePage />} />
           <Route
             path="/pharmacy/:pharmacyId"
@@ -25,8 +27,8 @@ function App() {
               />
             }
           />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<SignUp />} />
+          <Route path="/user/login" element={<Login />} />
+          <Route path="/user/signup" element={<SignUp />} />
           
         </Route>
 

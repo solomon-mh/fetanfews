@@ -3,6 +3,7 @@ import { AuthContext } from "../../contexts/AuthContext";
 import { LoginCredentials } from "../../utils/interfaces";
 import { login } from "../../api/auth";
 import "./Auth.scss";
+import drugStore from "../../assets/images/drugstore.jpg";
 
 const Login: React.FC = () => {
   const [formData, setFormData] = useState<LoginCredentials>({
@@ -29,42 +30,47 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="auth-container">
-      <h2>Login to Book Online!</h2>
-      <p>
-        LocateMed has a strong protocol that a user should use their own phone
-        number and password to login. If you are booking for someone else,
-        please use their phone number to register.
-      </p>
-      {error && <p className="error">{error}</p>}
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>Phone</label>
-          <input
-            type="text"
-            name="phone"
-            placeholder="Enter Phone"
-            value={formData.phone}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label>Password</label>
-          <input
-            type="password"
-            name="password"
-            placeholder="Enter Password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <button type="submit">Login</button>
-      </form>
-      <p>
-        Don't have an account? <a href="/signup">Sign Up</a>
-      </p>
+    <div className="auth-page">
+      <div className="auth-container">
+        <h2>Login to Book Online!</h2>
+        <p>
+          LocateMed has a strong protocol that a user should use their own phone
+          number and password to login. If you are booking for someone else,
+          please use their phone number to register.
+        </p>
+        {error && <p className="error">{error}</p>}
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label>Phone</label>
+            <input
+              type="text"
+              name="phone"
+              placeholder="Enter Phone"
+              value={formData.phone}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label>Password</label>
+            <input
+              type="password"
+              name="password"
+              placeholder="Enter Password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <button type="submit">Login</button>
+        </form>
+        <p>
+          Don't have an account? <a href="/user/signup">Sign Up</a>
+        </p>
+      </div>
+      <div className="auth-image">
+        <img src={drugStore} alt="drugStore image" />
+      </div>
     </div>
   );
 };

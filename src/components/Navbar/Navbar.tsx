@@ -7,7 +7,7 @@ const Header = () => {
         <div className="navbar-logo">PharmaFinder</div>
         <ul className="navbar-links">
           <li>
-            <Link className="link" to="#home">
+            <Link className="link" to="/">
               Home
             </Link>
           </li>
@@ -27,7 +27,7 @@ const Header = () => {
             </Link>
           </li>
           <li>
-            <Link className="link" to="/login">
+            <Link className="link" to="/user/login">
               Login
             </Link>
           </li>
