@@ -20,10 +20,10 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { Edit } from "@mui/icons-material";
 
 const ManagePharmacies: React.FC = () => {
-  const [searchQuery, setSearchQuery] = useState<string>(""); // Search query
-  const [pharmacies, setPharmacies] = useState(pharmacyData); // Pharmacy list
-  const [page, setPage] = useState(0); // Current page
-  const [rowsPerPage, setRowsPerPage] = useState(5); // Rows per page
+  const [searchQuery, setSearchQuery] = useState<string>(""); 
+  const [pharmacies, setPharmacies] = useState(pharmacyData); 
+  const [page, setPage] = useState(0); 
+  const [rowsPerPage, setRowsPerPage] = useState(5); 
 
   // Filter pharmacies based on search query
   const filteredPharmacies = pharmacies.filter(
@@ -34,8 +34,8 @@ const ManagePharmacies: React.FC = () => {
 
   // Paginate the filtered pharmacies
   const paginatedPharmacies = filteredPharmacies.slice(
-    page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage
+    page * rowsPerPage,//calculates the starting index of the current page
+    page * rowsPerPage + rowsPerPage //calculates the ending index of the current page
   );
 
   // Handle page change
