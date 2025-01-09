@@ -4,8 +4,13 @@ const Header = () => {
   return (
     <header className="header">
       <nav className="navbar">
-        <div className="navbar-logo">PharmaFinder</div>
+        <div className="navbar-logo">MedLocator</div>
         <ul className="navbar-links">
+        <li>
+            <Link className="link" to="/admin">
+              AdminPage
+            </Link>
+          </li>
           <li>
             <Link className="link" to="/">
               Home
