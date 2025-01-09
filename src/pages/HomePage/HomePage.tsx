@@ -1,23 +1,30 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { pharmacies } from "../../data/pharmacies";
 import "./HomePage.scss";
-// import { useNavigate } from "react-router-dom";
 import WhyUseMedLocator from "../../components/common/WhyUseMedLocator";
 import HeroSection from "../../components/HeroSection/HeroSection";
-import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
-import "react-circular-progressbar/dist/styles.css"; // Import the styles
 import PharmacyList from "../../components/PharmacyList/PharmacyList";
 import { calculateDistance } from "../../utils/calculations";
-// interface Drug {
-//   name: string;
-// }
 
 const HomePage: React.FC = () => {
-  // const [isLoading, setIsLoading] = useState<boolean>(false);
-  // const [loadingProgress, setLoadingProgress] = useState<number>(0); // State for progress bar
-  // const [searchResults, setSearchResults] = useState<any[]>([]);
   const [visibleCount, setVisibleCount] = useState(5);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
+
+  useEffect(() => {
+    // Get user geolocation
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        setUserLocation([latitude, longitude]);
+      },
+      (error) => {
+        console.error("Error getting user location", error);
+        setUserLocation([0, 0]); // Default location if geolocation fails
+      }
+    );
+  }, []);
 
   const categories = Array.from(
     new Set(
@@ -26,7 +33,6 @@ const HomePage: React.FC = () => {
       )
     )
   );
-  // const navigate = useNavigate();
 
   const filteredPharmacies = selectedCategory
     ? pharmacies.filter((pharmacy) =>
@@ -38,46 +44,6 @@ const HomePage: React.FC = () => {
 
   const visiblePharmacies = filteredPharmacies.slice(0, visibleCount);
 
-  // const handleSearch = (searchCriteria: {
-  //   drugName: string;
-  //   pharmacyName: string;
-  // }) => {
-  //   setIsLoading(true);
-  //   setLoadingProgress(0);
-
-  //   const { drugName, pharmacyName } = searchCriteria;
-
-  //   if (!drugName.trim() && !pharmacyName.trim()) {
-  //     setSearchResults([]);
-  //     setIsLoading(false);
-  //     return;
-  //   }
-
-  //   const progressTimer = setInterval(() => {
-  //     if (loadingProgress < 100) {
-  //       setLoadingProgress((prev) => prev + 10);
-  //     }
-  //   }, 200);
-
-  //   const results = pharmacies.filter((pharmacy) => {
-  //     const pharmacyNameMatch = pharmacyName
-  //       ? pharmacy.pharmacy_name
-  //           .toLowerCase()
-  //           .includes(pharmacyName.toLowerCase())
-  //       : true;
-  //     const drugNameMatch = drugName
-  //       ? pharmacy.available_drugs.some((drug) =>
-  //           drug.name.toLowerCase().includes(drugName.toLowerCase())
-  //         )
-  //       : true;
-  //     return pharmacyNameMatch && drugNameMatch;
-  //   });
-
-  //   clearInterval(progressTimer);
-
-  //   navigate("/search-results", { state: { searchResults: results } });
-  // };
-
   const handleShowAll = () => {
     setVisibleCount(filteredPharmacies.length);
   };
@@ -85,42 +51,7 @@ const HomePage: React.FC = () => {
   return (
     <div className="home-page">
       <HeroSection />
-      {/* 
-      {searchResults.length > 0 ? (
-        <div className="pharmacies-list-wrapper">
-          <h2 className="section-title">
-            {searchResults.length} pharmacies found
-          </h2>
-          <PharmacyList
-            pharmacies={searchResults}
-            calculateDistance={calculateDistance}
-          />
-        </div>
-      ) : (
-        <p className="no-results">
-          No results found. Please refine your search.
-        </p>
-      )}
 
-      {searchResults.length === 0 && (
-        <>
-          {isLoading ? (
-            <div className="loading-indicator">
-              <p>Searching...</p>
-              <CircularProgressbar
-                value={loadingProgress}
-                maxValue={100}
-                text={`${loadingProgress}%`}
-                styles={buildStyles({
-                  pathColor: "#4caf50",
-                  textColor: "#4caf50",
-                  trailColor: "#f3f3f3",
-                  strokeLinecap: "round",
-                  pathTransitionDuration: 0.5,
-                })}
-              />
-            </div>
-          ) : ( */}
       <div className="browse-categories-wrapper">
         <h2 className="section-title">Browse by Medication Category</h2>
         <ul className="categories-list">
@@ -144,14 +75,52 @@ const HomePage: React.FC = () => {
         </ul>
       </div>
       {!selectedCategory && <WhyUseMedLocator />}
-        <h2 className="section-title">Featured Pharmacies</h2>
-        <PharmacyList
+      <h2 className="section-title">Featured Pharmacies</h2>
+      <PharmacyList
         pharmacies={visiblePharmacies}
-        calculateDistance={calculateDistance}
+        calculateDistance={(lat, lon) =>
+          userLocation
+            ? calculateDistance(lat, lon, userLocation[0], userLocation[1])
+            : "Unknown"
+        }
         onShowAll={handleShowAll}
         showAllButton={visibleCount < filteredPharmacies.length}
       />
-  
+
+      {/* Map Section */}
+      {userLocation && (
+        <MapContainer
+          center={userLocation}
+          zoom={13}
+          style={{ height: "400px", width: "100%" }}
+        >
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+          />
+          <Marker position={userLocation}>
+            <Popup>Your Location</Popup>
+          </Marker>
+          {filteredPharmacies.map((pharmacy) => (
+            <Marker
+              key={pharmacy.pharmacy_id}
+              position={[pharmacy.latitude, pharmacy.longitude]}
+            >
+              <Popup>
+                {pharmacy.pharmacy_name}
+                <br />
+                Distance:{" "}
+                {calculateDistance(
+                  pharmacy.latitude,
+                  pharmacy.longitude,
+                  userLocation[0],
+                  userLocation[1]
+                )}
+              </Popup>
+            </Marker>
+          ))}
+        </MapContainer>
+      )}
     </div>
   );
 };

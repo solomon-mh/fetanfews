@@ -45,7 +45,7 @@ export const pharmacies: Pharmacy[] = [
     pharmacy_name: "Green pharmacy",
     latitude: 12.60746,
     longitude: 37.45204,
-    address: "Main Road, Gondar, Ethiopia",
+    address: "Keble 4, Bahir Dar",
     available_drugs: [
       { drug_id: 104, name: "Ciprofloxacin", category: "Antibiotic" },
       { drug_id: 105, name: "Metformin", category: "Diabetes" },
@@ -58,7 +58,7 @@ export const pharmacies: Pharmacy[] = [
     pharmacy_name: "Etse Pharmacy",
     latitude: 9.0054,
     longitude: 38.7636,
-    address: "Piazza, Addis Ababa, Ethiopia",
+    address: "Kebele 2, Bahir Dar",
     available_drugs: [
       { drug_id: 107, name: "Amlodipine", category: "Hypertension" },
       { drug_id: 108, name: "Losartan", category: "Hypertension" },
@@ -71,7 +71,7 @@ export const pharmacies: Pharmacy[] = [
     pharmacy_name: "Gizewa Pharmacy",
     latitude: 7.0622,
     longitude: 38.4763,
-    address: "Market Area, Hawassa, Ethiopia",
+    address: "Kebele 9, Bahir Dar",
     available_drugs: [
       { drug_id: 110, name: "Omeprazole", category: "Acid Reflux" },
       { drug_id: 111, name: "Lansoprazole", category: "Acid Reflux" },
@@ -84,7 +84,7 @@ export const pharmacies: Pharmacy[] = [
     pharmacy_name: "Gelila Pharmacy",
     latitude: 13.4979,
     longitude: 39.4691,
-    address: "Downtown, Mekelle, Ethiopia",
+    address: "Keele 8, Bahir Dar ",
     available_drugs: [
       { drug_id: 113, name: "Furosemide", category: "Diuretic" },
       { drug_id: 114, name: "Spironolactone", category: "Diuretic" },
@@ -97,7 +97,7 @@ export const pharmacies: Pharmacy[] = [
     pharmacy_name: "Doctor pharmacy",
     latitude: 9.588,
     longitude: 41.8619,
-    address: "Station Road, Dire Dawa, Ethiopia",
+    address: "Kebele 7, Bahir Dar",
     available_drugs: [
       { drug_id: 116, name: "Hydrochlorothiazide", category: "Diuretic" },
       { drug_id: 117, name: "Azithromycin", category: "Antibiotic" },
@@ -110,7 +110,7 @@ export const pharmacies: Pharmacy[] = [
     pharmacy_name: "Tena Pharmacy",
     latitude: 7.67344,
     longitude: 36.83509,
-    address: "University Road, Jimma, Ethiopia",
+    address: "Kebele 3, Bahir Dar",
     available_drugs: [
       { drug_id: 119, name: "Warfarin", category: "Blood Thinner" },
       { drug_id: 120, name: "Insulin", category: "Diabetes" },
@@ -123,7 +123,7 @@ export const pharmacies: Pharmacy[] = [
     pharmacy_name: "Enat AsFaW Pharmacy",
     latitude: 8.5469,
     longitude: 39.2682,
-    address: "Bole Road, Adama, Ethiopia",
+    address: "Kebele 10, Bahir Dar",
     available_drugs: [
       { drug_id: 122, name: "Fluconazole", category: "Antifungal" },
       { drug_id: 123, name: "Clotrimazole", category: "Antifungal" },
@@ -136,7 +136,7 @@ export const pharmacies: Pharmacy[] = [
     pharmacy_name: "Kidane Mihret Clinic",
     latitude: 7.2047,
     longitude: 38.5998,
-    address: "Central Avenue, Shashemene, Ethiopia",
+    address: "kebele 5 , Bahir Dar",
     available_drugs: [
       { drug_id: 125, name: "Captopril", category: "Hypertension" },
       { drug_id: 126, name: "Carvedilol", category: "Heart Failure" },
@@ -149,7 +149,7 @@ export const pharmacies: Pharmacy[] = [
     pharmacy_name: "Red Cross Pharmacy",
     latitude: 9.3075,
     longitude: 42.1226,
-    address: "Old Town, Harar, Ethiopia",
+    address: " Kebele 10 , Bahir Dar",
     available_drugs: [
       { drug_id: 128, name: "Ranitidine", category: "Acid Reflux" },
       { drug_id: 129, name: "Loratadine", category: "Allergy" },
