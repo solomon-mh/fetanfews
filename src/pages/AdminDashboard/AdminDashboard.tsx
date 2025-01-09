@@ -17,7 +17,7 @@ const AdminHome: React.FC = () => {
 
       <div className="quick-links">
         <div className="card">
-          <Link to="/admin/pharmacies" className="link">
+          <Link to="/admin/manage-pharmacies" className="link">
             <GroupIcon className="icon" />
             <h3>Manage Pharmacies</h3>
           </Link>
