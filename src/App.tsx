@@ -12,6 +12,7 @@ import AdminHome from "./pages/AdminDashboard/AdminDashboard";
 import { PharmacyContextProvider } from "./contexts/PharmacyContext";
 import { pharmacies } from "./data/pharmacies";
 import { calculateDistance } from "./utils/calculations";
+import ManagePharmacies from "./admin/managePharmacy/ManagePharmacies";
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
           }
         >
           <Route path="/admin" element={<AdminHome />} />
+          <Route path="/admin/manage-pharmacies" element={<ManagePharmacies />} />
         </Route>
       </Routes>
     </Router>
