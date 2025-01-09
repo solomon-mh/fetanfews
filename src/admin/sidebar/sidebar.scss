@@ -1,0 +1,85 @@
+$icon_color: #4665fdde;
+$text_color: #fff;
+
+.sidebar {
+	background-color:rgb(25, 25, 112);
+	padding: 20px 0;
+	height: calc(100vh - 70px);
+	border-right: 1px solid #f3efef;
+
+	&::-webkit-scrollbar {
+		display: none;
+	}
+
+	
+
+	.links {
+		margin: 15px 8px;
+		ul {
+			.spann {
+				text-transform: uppercase;
+				color: rgb(214, 209, 209);
+				margin: 10px 0px 5px;
+				font-size: 14px;
+			}
+
+			li {
+				display: flex;
+				align-items: center;
+				margin-left: 10px;
+				color: $text_color;
+				padding: 5px 10px;
+				font-weight: 500;
+				transition: all 0.2s ease;
+				border-radius: 4px;
+				cursor: pointer;
+				font-size: 18px;
+				&.active-link{
+					background-color: chocolate;
+					font-weight: bold;
+				}
+				&:hover {
+					background-color: chocolate;
+					color: white;
+				}
+				&:hover .icon {
+					color: white;
+				}
+				.icon {
+					color: $icon_color;
+					margin-right: 10px;
+					font-size: 18px;
+				}
+			}
+		}
+	}
+
+	.colorss {
+		display: flex;
+		margin: 20px 10px;
+		.color_option {
+			width: 20px;
+			height: 20px;
+			border-radius: 4px;
+			border: 1px solid #333;
+			margin: 5px;
+			cursor: pointer;
+
+			&:nth-child(1) {
+				background-color: whitesmoke;
+			}
+			&:nth-child(2) {
+				background-color: #333;
+			}
+		}
+	}
+}
+
+
+@media screen and (max-width: 992px) {
+	.sidebar {
+		.logo{
+			display: none;
+		}
+	}	
+}
