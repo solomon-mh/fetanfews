@@ -6,7 +6,7 @@ const Header = () => {
       <nav className="navbar">
         <div className="navbar-logo">MedLocator</div>
         <ul className="navbar-links">
-        <li>
+          <li>
             <Link className="link" to="/admin">
               AdminPage
             </Link>
@@ -21,11 +21,7 @@ const Header = () => {
               About
             </Link>
           </li>
-          <li>
-            <Link className="link" to="/services">
-              Services
-            </Link>
-          </li>
+
           <li>
             <Link className="link" to="/contact">
               Contact
@@ -38,7 +34,6 @@ const Header = () => {
           </li>
         </ul>
       </nav>
-     
     </header>
   );
 };
