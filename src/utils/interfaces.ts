@@ -10,9 +10,12 @@ export interface SignUpData {
 }
 
 export interface OnSearchProps {
-    onSearch: (searchCriteria: { drugName: string; pharmacyName: string }) => void;
+  onSearch: (searchCriteria: {
+    drugName: string;
+    pharmacyName: string;
+  }) => void;
 }
-  
+
 interface Drug {
   drug_id: number;
   name: string;
@@ -31,11 +34,38 @@ interface Pharmacy {
 
 export interface PharmacyDetailProps {
   pharmacies: Pharmacy[];
-  calculateDistance: (latitude: number, longitude: number,userLatitude:number,userLongitude:number) => string;
+  calculateDistance: (
+    latitude: number,
+    longitude: number,
+    userLatitude: number,
+    userLongitude: number
+  ) => string;
 }
 export interface PharmacyListProps {
   pharmacies: Pharmacy[];
-  calculateDistance: (latitude: number, longitude: number,userLatitude:number,userLongitude:number) => string;
+  calculateDistance: (
+    latitude: number,
+    longitude: number,
+    userLatitude: number,
+    userLongitude: number
+  ) => string;
   onShowAll?: () => void;
   showAllButton?: boolean;
+}
+export interface pharmacyFormData {
+  name: string;
+  address: string;
+  phone: string;
+  operating_hours: string;
+  latitude: string;
+  longitude: string;
+  website: string;
+  email: string;
+}
+export interface AddPharmacyModalPropse {
+  openForm: boolean;
+  handleCloseForm: () => void;
+  handleInputChange: (event: { target: { name: string; value: string } }) => void;
+  handleSubmit: () => void;
+  formData: pharmacyFormData;
 }
