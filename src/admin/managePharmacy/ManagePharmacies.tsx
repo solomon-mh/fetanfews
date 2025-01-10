@@ -14,16 +14,64 @@ import {
   TextField,
   Box,
   TablePagination,
+
 } from "@mui/material";
 import { pharmacies as pharmacyData } from "../../data/pharmacies";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Edit } from "@mui/icons-material";
+import AddPharmacyModal from "../modals/AddPharmacyModal";
 
 const ManagePharmacies: React.FC = () => {
-  const [searchQuery, setSearchQuery] = useState<string>(""); 
-  const [pharmacies, setPharmacies] = useState(pharmacyData); 
-  const [page, setPage] = useState(0); 
-  const [rowsPerPage, setRowsPerPage] = useState(5); 
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [pharmacies, setPharmacies] = useState(pharmacyData);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [openForm, setOpenForm] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    address: "",
+    phone: "",
+    email: "",
+    website: "",
+    operating_hours: "",
+    latitude: "",
+    longitude: "",
+  });
+
+  // Handle form open/close
+  const handleOpenForm = () => setOpenForm(true);
+  const handleCloseForm = () => {
+    setOpenForm(false);
+    setFormData({
+      name: "",
+      address: "",
+      phone: "",
+      email: "",
+      website: "",
+      operating_hours: "",
+      latitude: "",
+      longitude: "",
+    });
+  };
+
+  // Handle form input changes
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value, // Update the specific field
+    }));
+  };
+
+  // Handle form submission
+  const handleSubmit = () => {
+    if (formData.name && formData.address && formData.phone && formData.email) {
+      setPharmacies([...pharmacies, { ...formData, pharmacy_id: Date.now() }]);
+      handleCloseForm();
+    } else {
+      alert("Please fill in all required fields.");
+    }
+  };
 
   // Filter pharmacies based on search query
   const filteredPharmacies = pharmacies.filter(
@@ -34,8 +82,8 @@ const ManagePharmacies: React.FC = () => {
 
   // Paginate the filtered pharmacies
   const paginatedPharmacies = filteredPharmacies.slice(
-    page * rowsPerPage,//calculates the starting index of the current page
-    page * rowsPerPage + rowsPerPage //calculates the ending index of the current page
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
   );
 
   // Handle page change
@@ -57,7 +105,13 @@ const ManagePharmacies: React.FC = () => {
         <Typography className="title" variant="h4" gutterBottom>
           Manage Pharmacies
         </Typography>
-        <Button className="add-button" variant="contained" color="primary" size="large">
+        <Button
+          className="add-button"
+          variant="contained"
+          color="primary"
+          size="large"
+          onClick={handleOpenForm}
+        >
           Add Pharmacy
         </Button>
       </Box>
@@ -119,6 +173,11 @@ const ManagePharmacies: React.FC = () => {
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
+
+      {/* Form Modal */}
+    <AddPharmacyModal   openForm={openForm} handleCloseForm={handleCloseForm} handleInputChange={handleInputChange}
+  handleSubmit={handleSubmit}
+  formData={formData}/>
     </div>
   );
 };
