@@ -2,13 +2,20 @@ import React from "react";
 import "./PharmacyList.scss";
 import { Link } from "react-router-dom";
 import { PharmacyListProps } from "../../utils/interfaces";
-
+import { useGeoLocation, defaultCoordinates } from "../../hooks/useGeoLocation";
 const PharmacyList: React.FC<PharmacyListProps> = ({
   pharmacies,
   calculateDistance,
   onShowAll,
   showAllButton = false,
 }) => {
+  const userLocation = useGeoLocation();
+
+  const userCoordinates: [number, number] =
+    userLocation.latitude && userLocation.longitude
+      ? [userLocation.latitude, userLocation.longitude]
+      : defaultCoordinates;
+
   return (
     <div className="pharmacies-list-wrapper">
       {/* <h2 className="section-title">Featured Pharmacies</h2> */}
@@ -22,7 +29,6 @@ const PharmacyList: React.FC<PharmacyListProps> = ({
             />
 
             <h3>
-           
               <Link to={`/pharmacy/${pharmacy.pharmacy_id}`}>
                 {pharmacy.pharmacy_name}
               </Link>
@@ -30,7 +36,12 @@ const PharmacyList: React.FC<PharmacyListProps> = ({
             <p>{pharmacy.address}</p>
             <p>
               Distance:{" "}
-              {calculateDistance(pharmacy.latitude, pharmacy.longitude)}
+              {calculateDistance(
+                pharmacy.latitude,
+                pharmacy.longitude,
+                userCoordinates[0],
+                userCoordinates[1]
+              )}
             </p>
           </li>
         ))}
