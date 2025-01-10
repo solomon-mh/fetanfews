@@ -16,7 +16,7 @@ const SearchResultsPage: React.FC = () => {
     const pharmacyName = searchParams.get("pharmacy");
 
     if (!drugName?.trim() && !pharmacyName?.trim()) {
-      navigate("/"); 
+      navigate("/");
       return;
     }
 
