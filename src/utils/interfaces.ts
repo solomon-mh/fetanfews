@@ -31,11 +31,11 @@ interface Pharmacy {
 
 export interface PharmacyDetailProps {
   pharmacies: Pharmacy[];
-  calculateDistance: (latitude: number, longitude: number) => string;
+  calculateDistance: (latitude: number, longitude: number,userLatitude:number,userLongitude:number) => string;
 }
 export interface PharmacyListProps {
   pharmacies: Pharmacy[];
-  calculateDistance: (latitude: number, longitude: number) => string;
+  calculateDistance: (latitude: number, longitude: number,userLatitude:number,userLongitude:number) => string;
   onShowAll?: () => void;
   showAllButton?: boolean;
 }
