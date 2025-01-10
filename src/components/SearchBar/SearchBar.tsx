@@ -1,66 +1,71 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useCallback } from "react";
-import { FiSearch, FiMapPin, FiTag } from "react-icons/fi"; // Importing relevant icons
+import { FiSearch, FiMapPin, FiTag } from "react-icons/fi";
 import "./SearchBar.scss";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { pharmacies } from "../../data/pharmacies";
 import { debounce } from "../../utils/debounce";
 import { highlightText } from "../../utils/highlightText";
+
 const SearchBar: React.FC = () => {
   const navigate = useNavigate();
-  const [drugName, setDrugName] = useState<string>("");
-  const [pharmacyName, setPharmacyName] = useState<string>("");
+  const [searchParams] = useSearchParams();
+
+  const [drugName, setDrugName] = useState<string>(
+    searchParams.get("medication") || ""
+  );
+  const [pharmacyName, setPharmacyName] = useState<string>(
+    searchParams.get("pharmacy") || ""
+  );
   const [drugSuggestions, setDrugSuggestions] = useState<any[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [pharmacySuggestions, setPharmacySuggestions] = useState<any[]>([]);
 
   const queryParams = new URLSearchParams();
   if (pharmacyName) queryParams.append("pharmacy", pharmacyName);
   if (drugName) queryParams.append("medication", drugName);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const input = e.target.value;
+  const debouncedFilter = useCallback(
+    debounce((input: string, type: "pharmacy" | "drug") => {
+      if (input) {
+        if (type === "pharmacy") {
+          const filtered = pharmacies.filter((pharmacy) =>
+            pharmacy.pharmacy_name.toLowerCase().includes(input.toLowerCase())
+          );
+          setPharmacySuggestions(filtered);
+        } else if (type === "drug") {
+          const allDrugs = pharmacies.flatMap(
+            (pharmacy) => pharmacy.available_drugs
+          );
+          const filtered = allDrugs.filter((drug) =>
+            drug.name.toLowerCase().includes(input.toLowerCase())
+          );
+          setDrugSuggestions(filtered);
+        }
+      } else {
+        if (type === "pharmacy") {
+          setPharmacySuggestions([]);
+        } else {
+          setDrugSuggestions([]);
+        }
+      }
+    }, 300),
+    [pharmacies]
+  );
 
-    if (e.target.name === "pharmacy") {
-      setPharmacyName(input);
-      debouncedFilterPharmacy(input);
-    } else if (e.target.name === "medication") {
-      setDrugName(input);
-      debouncedFilterMedication(input);
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    if (name === "pharmacy") {
+      setPharmacyName(value);
+      debouncedFilter(value, "pharmacy");
+    } else if (name === "medication") {
+      setDrugName(value);
+      debouncedFilter(value, "drug");
     }
   };
 
-  const debouncedFilterPharmacy = useCallback(
-    debounce((input: string) => {
-      if (input) {
-        const filteredPharmacy = pharmacies.filter((pharmacy) =>
-          pharmacy.pharmacy_name.toLowerCase().includes(input.toLowerCase())
-        );
-        setPharmacySuggestions(filteredPharmacy);
-      } else {
-        setPharmacySuggestions([]);
-      }
-    }, 300),
-    [pharmacies] // Dependencies
-  );
-
-  const debouncedFilterMedication = useCallback(
-    debounce((input: string) => {
-      if (input) {
-        const allDrugs = pharmacies.flatMap(
-          (pharmacy) => pharmacy.available_drugs
-        );
-        const filteredDrug = allDrugs.filter((drug) =>
-          drug.name.toLowerCase().includes(input.toLowerCase())
-        );
-        setDrugSuggestions(filteredDrug);
-      } else {
-        setDrugSuggestions([]);
-      }
-    }, 300),
-    [pharmacies] // Dependencies
-  );
-
-  const handleSuggestionClick = (value: any) => {
-    if (value.pharmacy_name) {
+  const handleSuggestionClick = (value: any, type: "pharmacy" | "drug") => {
+    if (type === "pharmacy") {
       setPharmacyName(value.pharmacy_name);
       setPharmacySuggestions([]);
     } else {
@@ -68,82 +73,74 @@ const SearchBar: React.FC = () => {
       setDrugSuggestions([]);
     }
   };
-  const handleSearch = () => {
+
+  const handleSearch = () =>
     navigate(`/search-results/?${queryParams.toString()}`);
-  };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      handleSearch();
-    }
+    if (e.key === "Enter") handleSearch();
   };
+
+  const renderSuggestions = (
+    suggestions: any[],
+    type: "pharmacy" | "drug",
+    inputValue: string
+  ) =>
+    suggestions.length > 0 && (
+      <ul className="suggestions" role="listbox">
+        {suggestions.map((item) => (
+          <li
+            key={type === "pharmacy" ? item.pharmacy_id : item.drug_id}
+            role="option"
+            onClick={() => handleSuggestionClick(item, type)}
+            dangerouslySetInnerHTML={{
+              __html: highlightText(
+                type === "pharmacy" ? item.pharmacy_name : item.name,
+                inputValue
+              ),
+            }}
+          />
+        ))}
+      </ul>
+    );
 
   return (
     <div className="search-bar">
+      {/* Pharmacy Search Input */}
       <div className="search-input-container">
         <FiMapPin className="input-icon" />
         <input
           type="text"
           className="search-input"
-          placeholder="search with pharmacy's name"
-          aria-autocomplete="list"
-          aria-controls="pharmacy-suggestions"
-          aria-expanded={pharmacySuggestions.length > 0}
+          placeholder="Search with pharmacy's name"
           value={pharmacyName}
+          name="pharmacy"
           onChange={handleInputChange}
           onKeyDown={handleKeyPress}
-          name="pharmacy"
+          aria-autocomplete="list"
+          aria-expanded={pharmacySuggestions.length > 0}
         />
-        {pharmacySuggestions.length > 0 && (
-          <ul className="suggestions"
-          id="pharmacy-suggestions"
-          role="listbox">
-            {pharmacySuggestions.map((pharmacy, index) => (
-          <li
-          key={index}
-          onClick={() => handleSuggestionClick(pharmacy)}
-          dangerouslySetInnerHTML={{
-            __html: highlightText(pharmacy.pharmacy_name, pharmacyName),
-          }}
-        />
-            ))}
-          </ul>
-        )}
+        {renderSuggestions(pharmacySuggestions, "pharmacy", pharmacyName)}
       </div>
+
+      {/* Drug Search Input */}
       <div className="search-input-container">
         <FiTag className="input-icon" />
-
         <input
           type="text"
           className="search-input"
-          placeholder=" search with Medication or drug category"
-          aria-autocomplete="list"
-          aria-controls="pharmacy-suggestions"
-          aria-expanded={drugSuggestions.length > 0}
+          placeholder="Search with medication or drug category"
           value={drugName}
+          name="medication"
           onChange={handleInputChange}
           onKeyDown={handleKeyPress}
-          name="medication"
+          aria-autocomplete="list"
+          aria-expanded={drugSuggestions.length > 0}
         />
-        {drugSuggestions.length > 0 && (
-          <ul id="drug-suggestions"
-            role="listbox"
-            className="suggestions"
-          >
-            {drugSuggestions.map((drug) => (
-              <li  key={drug.drug_id}
-              id={drug.drug_id}
-              role="option"
-         
-                onClick={() => handleSuggestionClick(drug)}
-                dangerouslySetInnerHTML={{
-                  __html: highlightText(drug.name, drugName),
-                }}
-              />
-            ))}
-          </ul>
-        )}
+        {renderSuggestions(drugSuggestions, "drug", drugName)}
       </div>
+
+      {/* Search Button */}
       <button className="search-button" onClick={handleSearch}>
         <FiSearch className="search-icon" />
       </button>
