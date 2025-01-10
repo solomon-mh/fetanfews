@@ -10,7 +10,6 @@ import { highlightText } from "../../utils/highlightText";
 const SearchBar: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-
   const [drugName, setDrugName] = useState<string>(
     searchParams.get("medication") || ""
   );
@@ -18,7 +17,6 @@ const SearchBar: React.FC = () => {
     searchParams.get("pharmacy") || ""
   );
   const [drugSuggestions, setDrugSuggestions] = useState<any[]>([]);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [pharmacySuggestions, setPharmacySuggestions] = useState<any[]>([]);
 
   const queryParams = new URLSearchParams();
