@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { pharmacies } from "../../data/pharmacies";
 import "./HomePage.scss";
@@ -6,25 +6,12 @@ import WhyUseMedLocator from "../../components/common/WhyUseMedLocator";
 import HeroSection from "../../components/HeroSection/HeroSection";
 import PharmacyList from "../../components/PharmacyList/PharmacyList";
 import { calculateDistance } from "../../utils/calculations";
+import { useGeoLocation ,defaultCoordinates} from "../../hooks/useGeoLocation";
 
 const HomePage: React.FC = () => {
   const [visibleCount, setVisibleCount] = useState(5);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
-
-  useEffect(() => {
-    // Get user geolocation
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        setUserLocation([latitude, longitude]);
-      },
-      (error) => {
-        console.error("Error getting user location", error);
-        setUserLocation([0, 0]); // Default location if geolocation fails
-      }
-    );
-  }, []);
+  const userLocation = useGeoLocation();
 
   const categories = Array.from(
     new Set(
@@ -47,6 +34,12 @@ const HomePage: React.FC = () => {
   const handleShowAll = () => {
     setVisibleCount(filteredPharmacies.length);
   };
+
+  // Default coordinates for the map if geolocation fails
+  const userCoordinates: [number, number] =
+    userLocation.latitude && userLocation.longitude
+      ? [userLocation.latitude, userLocation.longitude]
+      : defaultCoordinates;
 
   return (
     <div className="home-page">
@@ -75,30 +68,35 @@ const HomePage: React.FC = () => {
         </ul>
       </div>
       {!selectedCategory && <WhyUseMedLocator />}
+
+      {userLocation.error && (
+        <p className="error-message">{userLocation.error}</p>
+      )}
+
       <h2 className="section-title">Featured Pharmacies</h2>
       <PharmacyList
         pharmacies={visiblePharmacies}
         calculateDistance={(lat, lon) =>
-          userLocation
-            ? calculateDistance(lat, lon, userLocation[0], userLocation[1])
-            : "Unknown"
+          calculateDistance(lat, lon, userCoordinates[0], userCoordinates[1])
         }
         onShowAll={handleShowAll}
         showAllButton={visibleCount < filteredPharmacies.length}
       />
 
       {/* Map Section */}
-      {userLocation && (
+      <h2 className="section-title">Find Pharmacies on Google Map</h2>
+      {userLocation.latitude && userLocation.longitude ? (
         <MapContainer
-          center={userLocation}
+          center={userCoordinates}
           zoom={13}
           style={{ height: "400px", width: "100%" }}
+          scrollWheelZoom={false} 
         >
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           />
-          <Marker position={userLocation}>
+          <Marker position={userCoordinates}>
             <Popup>Your Location</Popup>
           </Marker>
           {filteredPharmacies.map((pharmacy) => (
@@ -110,16 +108,20 @@ const HomePage: React.FC = () => {
                 {pharmacy.pharmacy_name}
                 <br />
                 Distance:{" "}
-                {calculateDistance(
-                  pharmacy.latitude,
-                  pharmacy.longitude,
-                  userLocation[0],
-                  userLocation[1]
-                )}
+                {userLocation.latitude && userLocation.longitude
+                  ? calculateDistance(
+                      pharmacy.latitude,
+                      pharmacy.longitude,
+                      userLocation.latitude,
+                      userLocation.longitude
+                    )
+                  : "Unknown"}
               </Popup>
             </Marker>
           ))}
         </MapContainer>
+      ) : (
+        <p>Please enable location services to view nearby pharmacies.</p>
       )}
     </div>
   );
