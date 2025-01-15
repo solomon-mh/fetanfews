@@ -6,7 +6,9 @@ export interface LoginCredentials {
 export interface SignUpData {
   phone: string;
   password: string;
-  confirmPassword: string;
+  email: string;
+  first_name: string;
+  last_name:string
 }
 
 export interface OnSearchProps {
@@ -75,4 +77,10 @@ export interface DelatePharmacyProps{
   handleDelete: () => void;
   onClose:()=> void;
 
+}
+
+export interface FormErrors {
+  [key: string]: {
+    message?: string;
+  };
 }
