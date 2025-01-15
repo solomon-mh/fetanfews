@@ -30,6 +30,12 @@ $text_color: hwb(252 85% 11%);
 
       text-align: center;
       color: $text_color;
+      .menu_icon {
+        display: none;
+        cursor: pointer;
+        color: #fff;
+
+      }
       .text_none {
         text-decoration: none;
         color: $text_color;
@@ -42,7 +48,9 @@ $text_color: hwb(252 85% 11%);
     .item_lists {
       display: flex;
       align-items: center;
-
+      em{
+        color: rgb(155, 226, 96);
+       }
       .item {
         margin-left: 15px;
         display: flex;
@@ -96,16 +104,16 @@ $text_color: hwb(252 85% 11%);
       padding: 15px 25px;
       border-bottom: 1px solid #eee;
 
-      .menu_logo {
+      .menu_icon {
         display: block !important;
         display: flex !important;
         align-items: center !important;
 
-        .text_none {
-          margin-left: 5px;
-          color: #4665fdde;
-        }
+       
       }
+      .text_none {
+        display: none;
+        }
     }
 
     .res_navbar {

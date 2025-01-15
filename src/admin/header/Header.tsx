@@ -56,11 +56,15 @@ function Header({ onToggleSidebar }) {
   useEffect(() => {
     fetchNotifications();
   }, []);
-
+  const handleLogout = () => {
+   return
+ }
   return (
     <div className="admin-navbar">
       <div className="navbar_main">
         <div className="logo">
+        <MenuIcon className="menu_icon" onClick={handleToggle} />
+
           <Link to="/admin" style={{ textDecoration: "none" }}>
             <h3 className="text_none">Admin Dashboard</h3>
           </Link>
@@ -75,10 +79,47 @@ function Header({ onToggleSidebar }) {
         </div> */}
 
         <div className="item_lists">
-          <div className="item item_lan">
+        {user ? (
+            <>
+            <div>
+                {/* <em>Well Come:{user?.username.toUpperCase()}</em> */}
+                <em>Well Come:{'jemberu'.toUpperCase()}</em>
+
+                      |
+            </div>
+          
+
+            <div>
+                <Link to="/logout" className="link" style={{ textDecoration: "none" }} onClick={handleLogout}>
+                <em>Logout </em>
+                  </Link>
+                |
+                <Link className="link" to="/change-pass" style={{ textDecoration: "none" }}>
+                <em>change password </em>
+                  </Link>
+                  
+              </div>
+
+              </>
+          ):(<>
+            <div>
+                <Link className="link" to="/login" style={{ textDecoration: "none" }}>
+                <em>Login </em>
+                  </Link>
+                  |
+            </div>
+            <div>
+               
+                  <Link className="link" to="/register" style={{ textDecoration: "none" }}>
+                <em>Sign Up </em>
+                </Link>
+             </div>
+             </>)
+        }
+          {/* <div className="item item_lan">
             <LanguageIcon className="item_icon" />
             <p>English</p>
-          </div>
+          </div> */}
           <div className="item">
             {!darkMode ? (
               <DarkModeIcon
@@ -93,7 +134,7 @@ function Header({ onToggleSidebar }) {
             )}
           </div>
           <div className="item">
-            <FullscreenExitIcon className="item_icon" />
+            <FullscreenExitIcon className="item_icon" onClick={onToggleSidebar } />
           </div>
 
           <div className="item">
