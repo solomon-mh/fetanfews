@@ -69,3 +69,10 @@ export interface AddPharmacyModalPropse {
   handleSubmit: () => void;
   formData: pharmacyFormData;
 }
+
+export interface DelatePharmacyProps{
+  isOpen: boolean;
+  handleDelete: () => void;
+  onClose:()=> void;
+
+}

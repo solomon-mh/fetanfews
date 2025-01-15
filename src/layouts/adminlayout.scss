@@ -15,7 +15,7 @@
       left: 0;
       width: 250px;
       height: 100vh;
-      z-index: 10;
+      z-index: 100;
       background-color: hsla(231, 28%, 91%, 0.959);
       transition: transform 0.3s ease;
       overflow-y: auto;
@@ -41,40 +41,28 @@
 }
 
 @media screen and (max-width: 992px) {
-  .home {
-    display: grid;
-    grid-template-columns: 100%;
-    justify-content: center;
-
-    .home_sidebar {
-      display: none;
-    }
-
+  .admin-home{
     .home_main {
-      padding-top: 60px; // Accounts for the fixed header
-      .bg_color {
-        // Adjustments for smaller screens if needed
+      display: grid;
+      grid-template-columns: 100%;
+      justify-content: center;
+  
+      .home_sidebar {
+        display: none ;
+      }
+  
+      .home_sidebar.visible {
+        display: block !important; // Ensure visibility is enforced
       }
     }
   }
+ 
 }
 
 @media screen and (max-width: 767px) {
-  .home {
-    .home_main {
-      .bg_color {
-        // Additional adjustments for smaller screens
-      }
-    }
-  }
+
 }
 
 @media screen and (max-width: 576px) {
-  .home {
-    .home_main {
-      .bg_color {
-        height: 100px;
-      }
-    }
-  }
+
 }
