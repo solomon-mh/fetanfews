@@ -9,7 +9,13 @@ import {
   Grid,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  useMapEvents,
+  Popup,
+} from "react-leaflet";
 import { AddPharmacyModalPropse } from "../../utils/interfaces";
 const AddPharmacyModal: React.FC<AddPharmacyModalPropse> = ({
   openForm,
@@ -19,7 +25,7 @@ const AddPharmacyModal: React.FC<AddPharmacyModalPropse> = ({
   formData,
 }) => {
   const [selectedLocation, setSelectedLocation] = useState({
-    lat:  11.5742, 
+    lat: 11.5742,
     lng: 37.3614,
   });
   const LocationMarker = React.memo(() => {
@@ -39,7 +45,11 @@ const AddPharmacyModal: React.FC<AddPharmacyModalPropse> = ({
       },
     });
 
-    return <Marker position={selectedLocation} />;
+    return (
+      <Marker position={selectedLocation}>
+        <Popup>Your Location</Popup>
+      </Marker>
+    );
   });
 
   return (
