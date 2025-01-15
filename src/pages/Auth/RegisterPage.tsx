@@ -1,83 +1,113 @@
 import React, { useState } from "react";
-import { SignUpData } from "../../utils/interfaces";
-import { signUp } from "../../api/auth";
+import { userRegister } from "../../api/auth";
 import "./Auth.scss";
-import drugStore from'../../assets/images/drugstore.jpg'
-
+import drugStore from "../../assets/images/drugstore.jpg";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import formSchema from "../../utils/validateForm";
+import { FormErrors } from "../../utils/interfaces";
 const SignUp: React.FC = () => {
-  const [formData, setFormData] = useState<SignUpData>({
-    phone: "",
-    password: "",
-    confirmPassword: "",
+
+  const [submissionMessage, setSubmissionMessage] = useState(" ");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(formSchema),
   });
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<boolean>(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
+  const onSubmit = async (data: any) => {
+    const formData = new FormData();
+    Object.keys(data).forEach((key) => {
+      if (key !== "confirmPassword") {
+        formData.append(key, data[key]);
+      }
+    });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
     try {
-      await signUp(formData);
-      setSuccess(true);
-    } catch (err: any) {
-      setError(err.response?.data?.message || "Sign-Up failed");
+     const response= await userRegister(formData);
+     setSubmissionMessage(response.data.message);
+    } catch (error) {
+      setSubmissionMessage("Error Creating user: "+error );
     }
   };
+
+ 
+
+  const renderError = (fieldName: keyof FormErrors) => {
+    return errors[fieldName] ? (
+      <p className="error">{errors[fieldName]?.message?.toString()}</p>
+    ) : null;
+  };
+
 
   return (
     <div className="auth-page">
-      <div className="auth-container">
+      <div className="auth-container ">
         <h2>Register to Book Online!</h2>
         <p>
           LocateMed has a strong protocol that a user should use their own phone
           number and password to login. If you are booking for someone else,
           please use their phone number to register.
         </p>
-        {error && <p className="error">{error}</p>}
-        {success && (
-          <p className="success">Registration Successful! Please login.</p>
+        {submissionMessage && (
+          <p className="error">{submissionMessage}</p>
         )}
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit(onSubmit)} className="signup-form">
+          <div className="form-group">
+            <label>First Name</label>
+            <input
+              type="text"
+              placeholder="Enter First Name"
+              {...register("first_name")}
+            />
+            {renderError("first_name")}
+          </div>
+          <div className="form-group">
+            <label>Last Name</label>
+            <input
+              type="text"
+              {...register("last_name")}
+              placeholder="Enter Last Name"
+            />
+            {renderError("last_name")}
+          </div>
+          <div className="form-group">
+            <label>Email</label>
+            <input
+              type="email"
+              {...register("email")}
+              placeholder="Enter Email Address"
+            />
+            {renderError("email")}
+          </div>
           <div className="form-group">
             <label>Phone</label>
             <input
               type="text"
-              name="phone"
+              {...register("phone")}
               placeholder="E.g. 0911xxxxxx or 0703xxxxxx"
-              value={formData.phone}
-              onChange={handleChange}
-              required
             />
+            {renderError("phone")}
           </div>
           <div className="form-group">
             <label>Password</label>
             <input
               type="password"
-              name="password"
               placeholder="Enter Password"
-              value={formData.password}
-              onChange={handleChange}
-              required
+              {...register("password")}
             />
+            {renderError("password")}
           </div>
           <div className="form-group">
             <label>Confirm Password</label>
             <input
               type="password"
-              name="confirmPassword"
+              {...register("confirmPassword")}
               placeholder="Enter Password again"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              required
             />
+            {renderError("confirmPassword")}
           </div>
           <div className="form-group">
             <label>
