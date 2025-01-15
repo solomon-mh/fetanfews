@@ -14,6 +14,7 @@ const AdminLayout: React.FC = () => {
   // Toggle sidebar visibility
   const handleToggleSidebar = () => {
     setIsSidebarVisible((prev) => !prev);
+    console.log(isSidebarVisible);
   };
 
   useEffect(() => {
