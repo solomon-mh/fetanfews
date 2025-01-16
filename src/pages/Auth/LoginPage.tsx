@@ -4,7 +4,7 @@ import { LoginCredentials } from "../../utils/interfaces";
 import { login } from "../../api/auth";
 import "./Auth.scss";
 import drugStore from "../../assets/images/drugstore.jpg";
-
+import { Link } from "react-router-dom";
 const Login: React.FC = () => {
   const [formData, setFormData] = useState<LoginCredentials>({
     phone: "",
@@ -65,7 +65,7 @@ const Login: React.FC = () => {
           <button type="submit">Login</button>
         </form>
         <p>
-          Don't have an account? <a href="/user/signup">Sign Up</a>
+          Don't have an account? <Link to="/user/signup">Sign Up</Link>
         </p>
       </div>
       <div className="auth-image">

@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { formSchema } from "../../utils/validateForm";
 import { FormErrors } from "../../utils/interfaces";
+import { Link } from "react-router-dom";
 const SignUp: React.FC = () => {
 
   const [submissionMessage, setSubmissionMessage] = useState(" ");
@@ -118,7 +119,7 @@ const SignUp: React.FC = () => {
           <button type="submit">Sign Up</button>
         </form>
         <p>
-          Already have an account? <a href="/user/login">Login</a>
+          Already have an account? <Link to="/user/login">Login</Link>
         </p>
       </div>
       <div className="auth-image">
