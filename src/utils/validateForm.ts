@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 // Zod schema for the form
-const formSchema = z
+export const formSchema = z
   .object({
     first_name: z
       .string()
@@ -35,4 +35,20 @@ const formSchema = z
     path: ["confirmPassword"], // Attach the error to the confirmPassword field
   });
 
-export default formSchema;
+
+
+export const pharmacyFormSchema = z.object({
+  name: z.string().nonempty("Name is required"),
+  address: z.string().nonempty("Address is required"),
+  phone: z.string().nonempty("Phone number is required"),
+  email: z.string().email("Invalid email").nonempty("Email is required"),
+  website: z.string().url("Invalid URL").optional(),
+  operating_hours: z.string().nonempty("Operating hours are required"),
+  image: z.any().optional(),
+  delivery_available: z.boolean({
+    required_error: "Please specify if delivery is available",
+  }),
+  latitude: z.number().nonnegative("Latitude is required"),
+  longitude: z.number().nonnegative("Longitude is required"),
+});
+

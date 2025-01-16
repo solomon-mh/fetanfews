@@ -4,7 +4,7 @@ import "./Auth.scss";
 import drugStore from "../../assets/images/drugstore.jpg";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import formSchema from "../../utils/validateForm";
+import { formSchema } from "../../utils/validateForm";
 import { FormErrors } from "../../utils/interfaces";
 const SignUp: React.FC = () => {
 
