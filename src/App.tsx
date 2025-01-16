@@ -13,6 +13,7 @@ import { PharmacyContextProvider } from "./contexts/PharmacyContext";
 import { pharmacies } from "./data/pharmacies";
 import { calculateDistance } from "./utils/calculations";
 import ManagePharmacies from "./admin/managePharmacy/ManagePharmacies";
+import PharmacyForm from "./pages/AddPharmacyForm/PharmcyPhorm";
 
 function App() {
   return (
@@ -33,6 +34,8 @@ function App() {
           <Route path="/user/login" element={<Login />} />
           <Route path="/user/signup" element={<SignUp />} />
           <Route path="/search-results" element={<SearchResultsPage />} />
+          <Route path="/pharmacy-registration" element={<PharmacyForm />} />
+
           <Route path="*" element={<NotFound />} />
         </Route>
 
