@@ -6,7 +6,7 @@ import { pharmacyFormSchema } from "../../utils/validateForm";
 import "./PharmacyForm.scss";
 import { FaPhone } from "react-icons/fa";
 import { MdMarkEmailRead } from "react-icons/md";
-
+import { addPharmacy } from "../../api/pharmacyService";
 interface PharmacyFormValues {
   name: string;
   address: string;
@@ -16,8 +16,6 @@ interface PharmacyFormValues {
   operating_hours: string;
   image?: FileList;
   delivery_available: boolean;
-  latitude: number;
-  longitude: number;
 }
 
 const PharmacyForm: React.FC = () => {
@@ -29,7 +27,7 @@ const PharmacyForm: React.FC = () => {
     resolver: zodResolver(pharmacyFormSchema),
   });
 
-  const onSubmit = (data: PharmacyFormValues) => {
+  const onSubmit = async (data: PharmacyFormValues) => {
     const formData = new FormData();
     Object.keys(data).forEach((key) => {
       if (key === "image") {
@@ -38,10 +36,19 @@ const PharmacyForm: React.FC = () => {
         formData.append(key, (data as any)[key]);
       }
     });
-
-    console.log("Form submitted:", formData);
-    // You can send formData to your API here
+  
+    try {
+      const response = await addPharmacy(formData);
+      console.log("Response:", response.data);
+      alert("Pharmacy registered successfully!");
+    } catch (error: any) {
+      const errorMessage =
+        error.response?.data?.detail || error.response?.data || "An error occurred. Please try again.";
+      console.error("Error:", errorMessage);
+      alert(`Failed to register pharmacy: ${errorMessage}`);
+    }
   };
+  
 
   return (
     <div className="container-wrapper">
@@ -205,16 +212,6 @@ const PharmacyForm: React.FC = () => {
       </div>
 
       <div className="need-help">
-        <h3>Need Help?</h3>
-        <p>
-          If you have any questions, feel free to contact our support team at
-        </p>
-        <p>
-          <FaPhone className="icon" /> 0970345323
-        </p>
-        <p>
-          <MdMarkEmailRead className="icon" /> support@gmail.com
-        </p>
         <h3>Other Benefits</h3>
         <ul>
           <li>
@@ -242,6 +239,16 @@ const PharmacyForm: React.FC = () => {
             innovative healthcare network.
           </li>
         </ul>
+        <h3>Need Help?</h3>
+        <p>
+          If you have any questions, feel free to contact our support team at
+        </p>
+        <p>
+          <FaPhone className="icon" /> 0970345323
+        </p>
+        <p>
+          <MdMarkEmailRead className="icon" /> support@gmail.com
+        </p>
       </div>
     </div>
   );
