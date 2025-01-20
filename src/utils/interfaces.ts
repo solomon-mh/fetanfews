@@ -1,5 +1,5 @@
 export interface LoginCredentials {
-  phone: string;
+  phone_or_email: string;
   password: string;
 }
 

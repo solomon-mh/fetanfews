@@ -17,11 +17,13 @@ export const formSchema = z
 
     email: z.string().email({ message: "Invalid email address." }),
 
-    phone: z
+    phone_number: z
       .string()
-      .max(15, { message: "Phone number must not exceed 15 characters." })
-      .regex(/^\+?\d*$/, { message: "Phone number must contain only numbers." }),
-
+      .max(13, { message: "Phone number must not exceed 13 characters." })
+      .regex(
+        /^(?:\+2519\d{8}|\+2517\d{8}|09\d{8}|07\d{8})$/,
+        { message: "Phone number must be in a valid Ethiopian format "}
+      ),
     password: z
       .string()
       .min(8, { message: "Password must be at least 8 characters long." })
@@ -43,9 +45,11 @@ export const pharmacyFormSchema = z.object({
   phone: z
     .string()
     .nonempty("Phone number is required")
-    .max(15, { message: "Phone number must not exceed 15 characters." })
-    .regex(/^\+?\d*$/, { message: "Phone number must contain only numbers." }),
-
+    .max(13, { message: "Phone number must not exceed 13 characters." })
+    .regex(
+      /^(?:\+2519\d{8}|\+2517\d{8}|09\d{8}|07\d{8})$/,
+      { message: "Phone number must be in a valid Ethiopian format "}
+    ),
   email: z.string().email("Invalid email").nonempty("Email is required"),
   website: z.string().url("Invalid URL").optional().or(z.literal("")),
   operating_hours: z.string().nonempty("Operating hours are required"),
@@ -53,7 +57,6 @@ export const pharmacyFormSchema = z.object({
   delivery_available: z.string({
     required_error: "Please specify if delivery is available",
   }),
-  // latitude: z.number().nonnegative("Latitude is required"),
-  // longitude: z.number().nonnegative("Longitude is required"),
+  
 });
 

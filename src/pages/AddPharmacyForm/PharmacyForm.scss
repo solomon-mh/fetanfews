@@ -29,7 +29,10 @@
       text-align: center;
       margin-bottom: 20px;
     }
-
+.error-message{
+  color:red;
+  text-align: center;
+}
     .pharmacy-form {
       display: flex;
       flex-direction: column;

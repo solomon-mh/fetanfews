@@ -8,7 +8,6 @@ import { formSchema } from "../../utils/validateForm";
 import { FormErrors } from "../../utils/interfaces";
 import { Link } from "react-router-dom";
 const SignUp: React.FC = () => {
-
   const [submissionMessage, setSubmissionMessage] = useState(" ");
   const {
     register,
@@ -27,14 +26,12 @@ const SignUp: React.FC = () => {
     });
 
     try {
-     const response= await userRegister(formData);
-     setSubmissionMessage(response.data.message);
+      const response = await userRegister(formData);
+      setSubmissionMessage(response.data.message);
     } catch (error) {
-      setSubmissionMessage("Error Creating user: "+error );
+      setSubmissionMessage("Error Creating user: " + error);
     }
   };
-
- 
 
   const renderError = (fieldName: keyof FormErrors) => {
     return errors[fieldName] ? (
@@ -42,19 +39,20 @@ const SignUp: React.FC = () => {
     ) : null;
   };
 
-
   return (
     <div className="auth-page">
       <div className="auth-container ">
         <h2>Register to Book Online!</h2>
         <p>
-          LocateMed has a strong protocol that a user should use their own phone
-          number and password to login. If you are booking for someone else,
-          please use their phone number to register.
+          Welcome to LocateMed! To ensure a seamless and secure experience,
+          every user must register with their own **unique phone number** or
+          **email address**. Please note: If you are booking on behalf of
+          someone else, use their phone number to create the account. Ensure
+          that all information provided is accurate, as it will be used for
+          account verification and booking confirmations.
         </p>
-        {submissionMessage && (
-          <p className="error">{submissionMessage}</p>
-        )}
+
+        {submissionMessage && <p className="error">{submissionMessage}</p>}
         <form onSubmit={handleSubmit(onSubmit)} className="signup-form">
           <div className="form-group">
             <label>First Name</label>
@@ -87,10 +85,10 @@ const SignUp: React.FC = () => {
             <label>Phone</label>
             <input
               type="text"
-              {...register("phone")}
+              {...register("phone_number")}
               placeholder="E.g. 0911xxxxxx or 0703xxxxxx"
             />
-            {renderError("phone")}
+            {renderError("phone_number")}
           </div>
           <div className="form-group">
             <label>Password</label>

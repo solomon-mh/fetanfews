@@ -63,8 +63,8 @@ api.interceptors.response.use(
   }
 );
 
-export const login = async (data: { email: string; password: string }) => {
-  const response = await api.post("/token/", data);
+export const login = async (data: { phone_or_email: string; password: string }) => {
+  const response = await axios.post("http://localhost:8000/api/accounts/token/", data);
   const { refresh, access } = response.data;
   // Store tokens in localStorage
   localStorage.setItem("token", access);
@@ -74,7 +74,7 @@ export const login = async (data: { email: string; password: string }) => {
 
 export const userRegister = async (data:SignUpData) => {
   try {
-      const response = await api.post('/accounts/register/', data);
+      const response = await axios.post('http://localhost:8000/api/accounts/register/', data);
       return response.data;
   } catch (error) {
         throw new Error(error.response.data.message);
