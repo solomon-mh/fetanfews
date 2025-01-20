@@ -40,15 +40,20 @@ export const formSchema = z
 export const pharmacyFormSchema = z.object({
   name: z.string().nonempty("Name is required"),
   address: z.string().nonempty("Address is required"),
-  phone: z.string().nonempty("Phone number is required"),
+  phone: z
+    .string()
+    .nonempty("Phone number is required")
+    .max(15, { message: "Phone number must not exceed 15 characters." })
+    .regex(/^\+?\d*$/, { message: "Phone number must contain only numbers." }),
+
   email: z.string().email("Invalid email").nonempty("Email is required"),
-  website: z.string().url("Invalid URL").optional(),
+  website: z.string().url("Invalid URL").optional().or(z.literal("")),
   operating_hours: z.string().nonempty("Operating hours are required"),
   image: z.any().optional(),
-  delivery_available: z.boolean({
+  delivery_available: z.string({
     required_error: "Please specify if delivery is available",
   }),
-  latitude: z.number().nonnegative("Latitude is required"),
-  longitude: z.number().nonnegative("Longitude is required"),
+  // latitude: z.number().nonnegative("Latitude is required"),
+  // longitude: z.number().nonnegative("Longitude is required"),
 });
 

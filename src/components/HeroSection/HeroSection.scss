@@ -107,3 +107,41 @@
       }
     }
   }
+
+  @media (max-width: 768px) {
+    .frequently-searched {
+      display: none;
+    }
+    .hero-wrapper {
+      .hero-content {
+        .hero-title {
+          font-size: 2rem;
+        }
+  
+        .hero-subtitle {
+          font-size: 0.9rem;
+        }
+      }
+    }
+  }
+  @media (max-width: 480px) {
+    .hero-content-wrapper {
+      padding: 1rem;
+
+      .hero-content {
+        .hero-title {
+          font-size: 1.8rem;
+        }
+
+        .hero-subtitle {
+          font-size: 0.8rem;
+        }
+      }
+
+      .hero-image-container {
+        .hero-image {
+          max-width: 200px;
+        }
+      }
+    }
+  }

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React from "react";
+import React,{useState} from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { pharmacyFormSchema } from "../../utils/validateForm";
@@ -7,6 +7,8 @@ import "./PharmacyForm.scss";
 import { FaPhone } from "react-icons/fa";
 import { MdMarkEmailRead } from "react-icons/md";
 import { addPharmacy } from "../../api/pharmacyService";
+import { useNavigate } from "react-router-dom";
+
 interface PharmacyFormValues {
   name: string;
   address: string;
@@ -15,7 +17,7 @@ interface PharmacyFormValues {
   website?: string;
   operating_hours: string;
   image?: FileList;
-  delivery_available: boolean;
+  delivery_available: string;
 }
 
 const PharmacyForm: React.FC = () => {
@@ -26,26 +28,35 @@ const PharmacyForm: React.FC = () => {
   } = useForm<PharmacyFormValues>({
     resolver: zodResolver(pharmacyFormSchema),
   });
+  const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const onSubmit = async (data: PharmacyFormValues) => {
+    setErrorMessage(null)
     const formData = new FormData();
+    console.log(formData);
+
     Object.keys(data).forEach((key) => {
+
       if (key === "image") {
         if (data.image?.[0]) formData.append(key, data.image[0]);
       } else {
         formData.append(key, (data as any)[key]);
       }
     });
+ 
   
     try {
+
       const response = await addPharmacy(formData);
       console.log("Response:", response.data);
-      alert("Pharmacy registered successfully!");
+      navigate("/pharmacy-registration/success");
     } catch (error: any) {
       const errorMessage =
-        error.response?.data?.detail || error.response?.data || "An error occurred. Please try again.";
+        error.response?.data?.detail || JSON.stringify(error.response?.data, null, 2) || "An error occurred. Please try again.";
+      setErrorMessage(`Failed to register pharmacy: ${errorMessage}`);
       console.error("Error:", errorMessage);
-      alert(`Failed to register pharmacy: ${errorMessage}`);
+
     }
   };
   
@@ -94,6 +105,7 @@ const PharmacyForm: React.FC = () => {
       </div>
       <div className="pharmacy-form-container">
         <h2>Register Pharmacy</h2>
+        {errorMessage && <p className="error-message">{errorMessage }</p>}
         <form onSubmit={handleSubmit(onSubmit)} className="pharmacy-form">
           <div className="form-group">
             <div>
