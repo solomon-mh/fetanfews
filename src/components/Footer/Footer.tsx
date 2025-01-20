@@ -1,6 +1,6 @@
 import "./Footer.scss";
 import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn, FaGithub } from "react-icons/fa";
-
+import { Link } from "react-router-dom";
 const Footer = () => {
   return (
     <footer className="footer">
@@ -24,17 +24,17 @@ const Footer = () => {
         <div className="footer-section">
           <h3>Quick Links</h3>
           <ul>
-            <li><a href="/about">About Us</a></li>
-            <li><a href="/services">Services</a></li>
-            <li><a href="/contact">Contact</a></li>
-            <li><a href="/privacy">Privacy Policy</a></li>
+         <li> <Link to="/about">About Us </Link></li>
+           <li><Link to="/contact">Contact</Link></li>
+            <li><Link to="/services">Services </Link></li>
+            <li><Link to="/privacy">Privacy Policy</Link></li>
           </ul>
         </div>
         <div className="footer-section">
           <h3>Contact Us</h3>
           <p>Email: support@medlocator.com</p>
-          <p>Phone: +123 456 7890</p>
-          <p>Address: Addis Ababa, Ethiopia</p>
+          <p>Phone: +251 95323 7890</p>
+          <p>Address: Bahir Dar, Ethiopia</p>
         </div>
         <div className="footer-section social-media">
           <h3>Follow Us</h3>

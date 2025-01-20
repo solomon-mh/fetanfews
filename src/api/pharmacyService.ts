@@ -60,6 +60,7 @@ api.interceptors.response.use(
 );
 
 export const addPharmacy = (data: any) => {
+  console.log('api data',data);
     return api.post("/pharmacies/", data, {
       headers: {
         "Content-Type": "multipart/form-data",
