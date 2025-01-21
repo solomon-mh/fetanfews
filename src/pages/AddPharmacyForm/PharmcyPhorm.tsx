@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React,{useState} from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { pharmacyFormSchema } from "../../utils/validateForm";
 import "./PharmacyForm.scss";
-import { FaPhone } from "react-icons/fa";
-import { MdMarkEmailRead } from "react-icons/md";
 import { addPharmacy } from "../../api/pharmacyService";
 import { useNavigate } from "react-router-dom";
+import { containerVariants ,itemVariants} from "../../utils/animateVariant";
+import { motion } from "framer-motion";
 
 interface PharmacyFormValues {
   name: string;
@@ -18,6 +18,8 @@ interface PharmacyFormValues {
   operating_hours: string;
   image?: FileList;
   delivery_available: string;
+  license_number: string;
+  license_image?: FileList;
 }
 
 const PharmacyForm: React.FC = () => {
@@ -32,81 +34,49 @@ const PharmacyForm: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const onSubmit = async (data: PharmacyFormValues) => {
-    setErrorMessage(null)
+    setErrorMessage(null);
     const formData = new FormData();
     console.log(formData);
 
-    Object.keys(data).forEach((key) => {
-
-      if (key === "image") {
-        if (data.image?.[0]) formData.append(key, data.image[0]);
-      } else {
-        formData.append(key, (data as any)[key]);
+    Object.entries(data).forEach(([key, value]) => {
+      if (key === "image" || key === "license_image") {
+        if (value?.[0]) {
+          formData.append(key, value[0]); // Append file
+        }
+      } else if (value !== null && value !== undefined) {
+        formData.append(key, value); // Append other fields
       }
     });
- 
-  
-    try {
 
+    try {
       const response = await addPharmacy(formData);
       console.log("Response:", response.data);
       navigate("/pharmacy-registration/success");
     } catch (error: any) {
       const errorMessage =
-        error.response?.data?.detail || JSON.stringify(error.response?.data, null, 2) || "An error occurred. Please try again.";
+        error.response?.data?.detail ||
+        JSON.stringify(error.response?.data, null, 2) ||
+        "An error occurred. Please try again.";
       setErrorMessage(`Failed to register pharmacy: ${errorMessage}`);
       console.error("Error:", errorMessage);
-
     }
   };
-  
 
   return (
     <div className="container-wrapper">
-      <div className="how-to-register">
-        <h3>How to Register</h3>
-        <ol>
-          <li>Fill out all the required fields in the form.</li>
-          <li>
-            Attach an image of your pharmacy (optional). This image will display
-            our site as your logo
-          </li>
-          <li>
-            {" "}
-            Provide a precise address, including Kebele, known building, and
-            exact location within Bahir Dar city. Avoid general addresses like
-            "Bahir Dar, Ethiopia" as the system supports only Bahir Dar city
-            currently.
-          </li>
-          <li>Click "Submit" to complete registration.</li>
-        </ol>
-        <h4>Benefits of Registering</h4>
-        <ul>
-          <li>
-            Gain visibility on our platform, reaching a broader customer base.
-          </li>
-          <li>
-            Enable delivery services for your customers, increasing convenience
-            and sales.
-          </li>
-          <li>
-            Provide accurate operating details to your customers, ensuring trust
-            and reliability.
-          </li>
-          <li>
-            Make your pharmacy easily discoverable through location-based drug
-            search functionality.
-          </li>
-          <li>
-            Allow customers to check real-time availability of medications at
-            your pharmacy.
-          </li>
-        </ul>
-      </div>
-      <div className="pharmacy-form-container">
-        <h2>Register Pharmacy</h2>
-        {errorMessage && <p className="error-message">{errorMessage }</p>}
-        <form onSubmit={handleSubmit(onSubmit)} className="pharmacy-form">
+      <motion.div
+        className="pharmacy-form-container"
+              initial="hidden"
+              animate="visible"
+              exit="hidden"
+              variants={containerVariants}
+      >
+        <motion.h2
+        variants={itemVariants}>Register Pharmacy</motion.h2>
+        {errorMessage && <p className="error-message">{errorMessage}</p>}
+        <motion.form onSubmit={handleSubmit(onSubmit)}
+          variants={itemVariants}
+          className="pharmacy-form">
           <div className="form-group">
             <div>
               <label htmlFor="name">Name:</label>
@@ -219,49 +189,37 @@ const PharmacyForm: React.FC = () => {
             )}
           </div>
 
-          <button type="submit">Submit</button>
-        </form>
-      </div>
+          <div className="form-group">
+            <div>
+              <label htmlFor="license_number">License Number:</label>
+              <input
+                id="license_number"
+                type="text"
+                placeholder="Enter license number"
+                {...register("license_number")}
+              />
+            </div>
+            {errors.license_number && (
+              <p className="error">{errors.license_number.message}</p>
+            )}
+          </div>
+          <div className="form-group">
+            <div>
+              <label htmlFor="license_image">License Image:</label>
+              <input
+                id="license_image"
+                type="file"
+                {...register("license_image")}
+              />
+            </div>
+            {errors.license_image && (
+              <p className="error">{errors.license_image.message}</p>
+            )}
+          </div>
 
-      <div className="need-help">
-        <h3>Other Benefits</h3>
-        <ul>
-          <li>
-            Build customer loyalty by offering a user-friendly experience
-            through online searches and purchases.
-          </li>
-          <li>
-            Receive analytics on customer searches to stock high-demand
-            medications effectively.
-          </li>
-          <li>
-            Reduce unnecessary inquiries by providing comprehensive information
-            about your offerings online.
-          </li>
-          <li>
-            Boost sales by attracting nearby customers actively looking for
-            specific medications.
-          </li>
-          <li>
-            Participate in platform promotions and highlight your services, such
-            as free delivery or discounts.
-          </li>
-          <li>
-            Strengthen your presence in the community by being part of an
-            innovative healthcare network.
-          </li>
-        </ul>
-        <h3>Need Help?</h3>
-        <p>
-          If you have any questions, feel free to contact our support team at
-        </p>
-        <p>
-          <FaPhone className="icon" /> 0970345323
-        </p>
-        <p>
-          <MdMarkEmailRead className="icon" /> support@gmail.com
-        </p>
-      </div>
+          <button type="submit">Submit</button>
+        </motion.form>
+      </motion.div>
     </div>
   );
 };

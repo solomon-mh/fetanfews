@@ -1,34 +1,34 @@
-import React, { createContext, useState, ReactNode, useEffect } from "react";
+import React, { createContext, useState, useContext, useEffect } from "react";
+import { getCurrentUser } from "../api/auth";
+import { CustomUser ,ChildrenProps} from "../utils/interfaces";
+const AuthContext = createContext<{ user: CustomUser | null }>({ user: null });
 
-interface AuthContextType {
-  user: string | null;
-  login: (phone: string) => void;
-  logout: () => void;
+export const useAuth = () => {
+    return useContext(AuthContext);
+
 }
+export const AuthProvider:React.FC<ChildrenProps> = ({ children }) => {
+    const [user, setUser] = useState(null);
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const response = await getCurrentUser();
+                setUser(response.data)
 
-export const AuthContext = createContext<AuthContextType | null>(null);
 
-export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<string | null>(null);
+            } catch (error) {
+                console.error('Error fetching user:', error);
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) setUser(storedUser);
-  }, []);
-
-  const login = (phone: string) => {
-    setUser(phone);
-    localStorage.setItem("user", phone);
-  };
-
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem("user");
-  };
-
-  return (
-    <AuthContext.Provider value={{ user, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
-};
+            }
+            
+        };
+        fetchUser();
+    }, [])
+  console.log('Fetching user',user)
+    return (
+        <AuthContext.Provider value={{ user}}>
+            {children}
+        </AuthContext.Provider>
+    )
+    
+}

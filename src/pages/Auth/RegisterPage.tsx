@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
 import { userRegister } from "../../api/auth";
 import "./Auth.scss";
@@ -6,7 +8,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { formSchema } from "../../utils/validateForm";
 import { FormErrors } from "../../utils/interfaces";
-import { Link } from "react-router-dom";
+import { Link ,useNavigate} from "react-router-dom";
 const SignUp: React.FC = () => {
   const [submissionMessage, setSubmissionMessage] = useState(" ");
   const {
@@ -16,20 +18,17 @@ const SignUp: React.FC = () => {
   } = useForm({
     resolver: zodResolver(formSchema),
   });
-
+  const navigate = useNavigate();
   const onSubmit = async (data: any) => {
-    const formData = new FormData();
-    Object.keys(data).forEach((key) => {
-      if (key !== "confirmPassword") {
-        formData.append(key, data[key]);
-      }
-    });
+    console.log("onsubmit calling")
+    const { confirmPassword, ...signUpData } = data;
 
     try {
-      const response = await userRegister(formData);
-      setSubmissionMessage(response.data.message);
-    } catch (error) {
-      setSubmissionMessage("Error Creating user: " + error);
+      const response = await userRegister(signUpData);
+      setSubmissionMessage("User created successfully!");
+      navigate('/');
+    } catch (error:any) {
+      setSubmissionMessage("Error Creating user: " + error.message);
     }
   };
 

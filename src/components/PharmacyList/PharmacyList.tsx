@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { PharmacyListProps } from "../../utils/interfaces";
 import { useGeoLocation, defaultCoordinates } from "../../hooks/useGeoLocation";
 import { motion, useInView } from "framer-motion";
-import { cardVariants } from "../../utils/cardVariant";
+import { cardVariants } from "../../utils/animateVariant";
 const PharmacyList: React.FC<PharmacyListProps> = ({
   pharmacies,
   calculateDistance,

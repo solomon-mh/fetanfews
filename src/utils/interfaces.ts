@@ -1,10 +1,11 @@
+import {ReactNode} from 'react';
 export interface LoginCredentials {
-  phone_or_email: string;
+  username: string;
   password: string;
 }
 
 export interface SignUpData {
-  phone: string;
+  phone_number: string;
   password: string;
   email: string;
   first_name: string;
@@ -83,4 +84,24 @@ export interface FormErrors {
   [key: string]: {
     message?: string;
   };
+}
+export enum UserRole {
+  ADMIN = "admin",
+  PHARMACIST = "pharmacist",
+  USER = "user",
+}
+export interface CustomUser {
+  id: number;  
+  email: string | null;
+  phone_number: string | null;
+  first_name: string;
+  last_name: string;
+  role: UserRole;  
+  is_staff: boolean;
+  is_active: boolean;
+  date_joined: string;  
+}
+
+export interface ChildrenProps {
+  children: ReactNode;
 }

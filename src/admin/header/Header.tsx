@@ -10,10 +10,10 @@ import React, { useContext, useEffect, useState } from "react";
 import { Modal, Button } from "@mui/material";
 import { ColorContext } from "../../contexts/ColorContext";
 
-import { AuthContext } from "../../contexts/AuthContext";
 // import sass file
 import "./header.scss";
 import { Link } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 
 // import images
 
@@ -26,7 +26,7 @@ function Header({ onToggleSidebar }) {
   const handleToggle = () => {
     onToggleSidebar(); // Call the prop function to toggle sidebar visibility
   };
-  const { user } = useContext(AuthContext);
+  const { user } = useAuth();
 
   // Fetch unread notifications count
   const fetchNotifications = async () => {
@@ -83,7 +83,7 @@ function Header({ onToggleSidebar }) {
             <>
             <div>
                 {/* <em>Well Come:{user?.username.toUpperCase()}</em> */}
-                <em>Well Come:{'jemberu'.toUpperCase()}</em>
+                <em>Well Come:{user?.first_name.toUpperCase()}</em>
 
                       |
             </div>

@@ -8,9 +8,13 @@ import { Link } from "react-router-dom";
 import "./itemList.scss";
 import { usePharmacyData } from "../../contexts/PharmacyContext";
 import { motion } from "framer-motion";
-import { cardVariants } from "../../utils/cardVariant";
+import { cardVariants } from "../../utils/animateVariant";
 interface ItemListsProps {
-  type: "totalPharmacies" | "approvedPharmacies" | "pendingPharmacies" | "rejectedPharmacies";
+  type:
+    | "totalPharmacies"
+    | "approvedPharmacies"
+    | "pendingPharmacies"
+    | "rejectedPharmacies";
 }
 
 const ItemLists: React.FC<ItemListsProps> = ({ type }) => {
@@ -112,7 +116,11 @@ const ItemLists: React.FC<ItemListsProps> = ({ type }) => {
   }
 
   if (loading) {
-    return <p><strong>Loading...</strong></p>;
+    return (
+      <p>
+        <strong>Loading...</strong>
+      </p>
+    );
   }
 
   return (
@@ -132,9 +140,7 @@ const ItemLists: React.FC<ItemListsProps> = ({ type }) => {
         </span>
       </div>
 
-      <div className="counts">
-        {data.count}
-      </div>
+      <div className="counts">{data.count}</div>
 
       <div className="see_item">
         <Link to={data.linkto}>

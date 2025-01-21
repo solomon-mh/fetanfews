@@ -1,6 +1,14 @@
 import "./Navbar.scss";
 import { Link } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
+import { Logout } from "../../api/auth";
 const Header = () => {
+  const { user } = useAuth();
+
+  const handleLogout = async () => {
+    await Logout()
+
+  }
   return (
     <header className="header">
       <nav className="navbar">
@@ -12,7 +20,7 @@ const Header = () => {
             </Link>
           </li>
           <li>
-            <Link className="link" to="/pharmacy-registration">
+            <Link className="link" to="/pharmacy-registration/help">
               Registor pharmacy
             </Link>
           </li>
@@ -28,14 +36,15 @@ const Header = () => {
           </li>
 
           <li>
-            <Link className="link" to="/contact">
-              Contact
-            </Link>
-          </li>
-          <li>
-            <Link className="link" to="/user/login">
-              Login
-            </Link>
+            {user ? (
+              <Link className="link" to='' onClick={handleLogout} title={user.first_name}>
+                Logout 
+              </Link>
+            ) : (
+              <Link className="link" to="/user/login">
+                Login
+              </Link>
+            )}
           </li>
         </ul>
       </nav>

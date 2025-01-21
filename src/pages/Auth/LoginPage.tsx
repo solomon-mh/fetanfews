@@ -1,21 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useContext } from "react";
-import { AuthContext } from "../../contexts/AuthContext";
+import React, { useState } from "react";
 import { LoginCredentials } from "../../utils/interfaces";
 import { login } from "../../api/auth";
 import "./Auth.scss";
 import drugStore from "../../assets/images/drugstore.jpg";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 
 const Login: React.FC = () => {
   const [formData, setFormData] = useState<LoginCredentials>({
-    phone_or_email: "",
+    username: "",
     password: "",
   });
   const [error, setError] = useState<string | null>(null);
   const [fieldError, setFieldError] = useState<string | null>(null);
-  const { login: loginUser } = useContext(AuthContext) || {};
-
+  const navigate = useNavigate();
   // Regex for email and phone validation
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const phoneRegex = /^\d{10,15}$/;
@@ -29,7 +27,7 @@ const Login: React.FC = () => {
     e.preventDefault();
 
     // Validation logic in handleSubmit
-    if (!emailRegex.test(formData.phone_or_email) && !phoneRegex.test(formData.phone_or_email)) {
+    if (!emailRegex.test(formData.username) && !phoneRegex.test(formData.username)) {
       setFieldError("Please enter a valid email or phone number");
       return;
     } else {
@@ -38,8 +36,8 @@ const Login: React.FC = () => {
 
     try {
       const response = await login(formData);
-      if (loginUser) loginUser(response.data.phone_or_email);
-      // Redirect to dashboard or home page
+      console.log(response.data);
+      navigate('/');
     } catch (err: any) {
       setError(err.response?.data?.message || "Login failed");
     }
@@ -60,9 +58,9 @@ const Login: React.FC = () => {
             <label>Email or Phone</label>
             <input
               type="text"
-              name="phone_or_email"
+              name="username"
               placeholder="Enter email or phone number"
-              value={formData.phone_or_email}
+              value={formData.username}
               onChange={handleChange}
               required
             />

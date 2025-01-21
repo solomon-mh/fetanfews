@@ -57,6 +57,13 @@ export const pharmacyFormSchema = z.object({
   delivery_available: z.string({
     required_error: "Please specify if delivery is available",
   }),
+  license_number: z.string().nonempty("License number is required"),
+  license_image: z
+    .any()
+    .refine((file) => file instanceof File, {
+      message: "Invalid file format",
+    })
+    .optional(),
   
 });
 

@@ -15,6 +15,7 @@ import { calculateDistance } from "./utils/calculations";
 import ManagePharmacies from "./admin/managePharmacy/ManagePharmacies";
 import PharmacyForm from "./pages/AddPharmacyForm/PharmcyPhorm";
 import PharmacyConfrimation from "./pages/Confrimation/PharmacyConfrimation";
+import PharmacyHelp from "./pages/PharmacyHelp/PharmacyHelp";
 function App() {
   return (
     <Router>
@@ -31,11 +32,12 @@ function App() {
               />
             }
           />
-          <Route path="/pharmacy-registration/success" element={<PharmacyConfrimation/>}/>
           <Route path="/user/login" element={<Login />} />
           <Route path="/user/signup" element={<SignUp />} />
           <Route path="/search-results" element={<SearchResultsPage />} />
-          <Route path="/pharmacy-registration" element={<PharmacyForm />} />
+          <Route path="/pharmacy-registration/form" element={<PharmacyForm />} />
+          <Route path="/pharmacy-registration/help" element={<PharmacyHelp />} />
+          <Route path="/pharmacy-registration/success" element={<PharmacyConfrimation/>}/>
 
           <Route path="*" element={<NotFound />} />
         </Route>
