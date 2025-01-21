@@ -11,14 +11,18 @@ export const AuthProvider:React.FC<ChildrenProps> = ({ children }) => {
     const [user, setUser] = useState(null);
     useEffect(() => {
         const fetchUser = async () => {
-            try {
-                const response = await getCurrentUser();
-                setUser(response.data)
-
-
-            } catch (error) {
-                console.error('Error fetching user:', error);
-
+            const token = localStorage.getItem('access_token');
+            if (token) {
+                try 
+                {
+                    const response = await getCurrentUser();
+                    setUser(response.data)
+    
+    
+                } catch (error) {
+                    console.error("Token expired or invalid:", error);
+    
+                }
             }
             
         };

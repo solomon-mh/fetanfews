@@ -4,7 +4,7 @@ import { LoginCredentials } from "../../utils/interfaces";
 import { login } from "../../api/auth";
 import "./Auth.scss";
 import drugStore from "../../assets/images/drugstore.jpg";
-import { Link,useNavigate } from "react-router-dom";
+import { Link,useNavigate,useLocation } from "react-router-dom";
 
 const Login: React.FC = () => {
   const [formData, setFormData] = useState<LoginCredentials>({
@@ -14,6 +14,7 @@ const Login: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [fieldError, setFieldError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const location = useLocation();
   // Regex for email and phone validation
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const phoneRegex = /^\d{10,15}$/;
@@ -33,11 +34,11 @@ const Login: React.FC = () => {
     } else {
       setFieldError(null);
     }
-
+    const from = location.state?.from?.pathname || "/";
     try {
       const response = await login(formData);
       console.log(response.data);
-      navigate('/');
+      navigate(from, { replace: true });
     } catch (err: any) {
       setError(err.response?.data?.message || "Login failed");
     }
