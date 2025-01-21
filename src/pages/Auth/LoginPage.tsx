@@ -15,6 +15,8 @@ const Login: React.FC = () => {
   const [fieldError, setFieldError] = useState<string | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const from = location.state?.from?.pathname || "/";
+
   // Regex for email and phone validation
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const phoneRegex = /^\d{10,15}$/;
@@ -34,7 +36,6 @@ const Login: React.FC = () => {
     } else {
       setFieldError(null);
     }
-    const from = location.state?.from?.pathname || "/";
     try {
       const response = await login(formData);
       console.log(response.data);
@@ -47,12 +48,24 @@ const Login: React.FC = () => {
   return (
     <div className="auth-page">
       <div className="auth-container">
-        <h2>Login to Book Online!</h2>
-        <p>
-          LocateMed has a strong protocol that a user should use their own phone
-          number or email address and password to login. If you are booking for someone else,
-          please use their phone number to register.
-        </p>
+        {
+          (from === "/") ? (
+            <>
+            <h2>Login to Book Online!</h2>
+            <p>
+              LocateMed has a strong protocol that a user should use their own phone
+              number or email address and password to login. If you are booking for someone else,
+              please use their phone number to register.
+            </p>
+            </>
+          ) : (
+              <h2>
+                User Login
+              </h2>
+          )
+        
+      
+}
         {error && <p className="error">{error}</p>}
         <form onSubmit={handleSubmit}>
           <div className="form-group">

@@ -7,12 +7,16 @@ export const useAuth = () => {
     return useContext(AuthContext);
 
 }
+
 export const AuthProvider:React.FC<ChildrenProps> = ({ children }) => {
     const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
+
     useEffect(() => {
         const fetchUser = async () => {
             const token = localStorage.getItem('access_token');
             if (token) {
+
                 try 
                 {
                     const response = await getCurrentUser();
@@ -23,12 +27,22 @@ export const AuthProvider:React.FC<ChildrenProps> = ({ children }) => {
                     console.error("Token expired or invalid:", error);
     
                 }
+                finally {
+                    setLoading(false);
+                  }
+            }
+            else {
+                setLoading(false);
+
             }
             
         };
         fetchUser();
     }, [])
-  console.log('Fetching user',user)
+    if (loading) {
+        return <div>Loading...</div>; 
+    }
+    
     return (
         <AuthContext.Provider value={{ user}}>
             {children}
