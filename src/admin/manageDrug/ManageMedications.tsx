@@ -19,7 +19,7 @@ import { medications as medicationData } from "../../data/medications";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Edit } from "@mui/icons-material";
 import AddMedicationModal from "../modals/AddMedicationModal";
-import DeleteModal from "../modals/DeleteMedicationModal";
+import DeleteMedicationModal from "../modals/DeleteMedicationModal";
 
 const ManageMedications: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -29,6 +29,7 @@ const ManageMedications: React.FC = () => {
   const [openForm, setOpenForm] = useState<boolean>(false);
   const [isDelModalOpen, setIsDelModalOpen] = useState<boolean>(false);
   const [deleteId, setDeleteId] = useState<number>(0);
+  const [medicationName, setMedicationName] = useState<string>('');
   const [formData, setFormData] = useState({
     name: "",
     price: "",
@@ -111,8 +112,9 @@ const ManageMedications: React.FC = () => {
     setPage(0);
   };
 
-  const handleDeleteClick = (id: number) => {
+  const handleDeleteClick = (id: number,name:string) => {
     setDeleteId(id);
+    setMedicationName(name);
     setIsDelModalOpen(true);
   };
 
@@ -188,7 +190,7 @@ const ManageMedications: React.FC = () => {
                     </Button>
                     <Button
                       className="delete"
-                      onClick={() => handleDeleteClick(medication.medication_id)}
+                      onClick={() => handleDeleteClick(medication.medication_id,medication.name)}
                       title={`Delete ${medication.name}`}
                     >
                       <DeleteIcon style={{ color: "red" }} />
@@ -211,16 +213,17 @@ const ManageMedications: React.FC = () => {
         {/* Form Modal */}
       </div>
       <AddMedicationModal
-        openForm={openForm}
-        handleCloseForm={handleCloseForm}
+        open={openForm}
+        handleClose={handleCloseForm}
         handleInputChange={handleInputChange}
         handleSubmit={handleSubmit}
         formData={formData}
       />
-      <DeleteModal
+      <DeleteMedicationModal
         isOpen={isDelModalOpen}
         onClose={handleDelModalClose}
         handleDelete={handleDelete}
+        medicationName={medicationName}
       />
     </>
   );
