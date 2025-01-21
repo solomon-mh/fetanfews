@@ -14,22 +14,24 @@ import {
   TextField,
   Box,
   TablePagination,
+  InputAdornment,
 } from "@mui/material";
 import { medications as medicationData } from "../../data/medications";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Edit } from "@mui/icons-material";
 import AddMedicationModal from "../modals/AddMedicationModal";
 import DeleteMedicationModal from "../modals/DeleteMedicationModal";
+import SearchIcon from "@mui/icons-material/Search";
 
 const ManageMedications: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [medications, setMedications] = useState(medicationData);
+  const [medications, setMedications] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [openForm, setOpenForm] = useState<boolean>(false);
   const [isDelModalOpen, setIsDelModalOpen] = useState<boolean>(false);
   const [deleteId, setDeleteId] = useState<number>(0);
-  const [medicationName, setMedicationName] = useState<string>('');
+  const [medicationName, setMedicationName] = useState<string>("");
   const [formData, setFormData] = useState({
     name: "",
     price: "",
@@ -79,7 +81,10 @@ const ManageMedications: React.FC = () => {
   // Handle form submission
   const handleSubmit = () => {
     if (formData.name && formData.price && formData.expiry_date) {
-      setMedications([...medications, { ...formData, medication_id: Date.now() }]);
+      setMedications([
+        ...medications,
+        { ...formData, medication_id: Date.now() },
+      ]);
       handleCloseForm();
     } else {
       alert("Please fill in all required fields.");
@@ -90,7 +95,9 @@ const ManageMedications: React.FC = () => {
   const filteredMedications = medications.filter(
     (medication) =>
       medication.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (medication.category || "").toLowerCase().includes(searchQuery.toLowerCase())
+      (medication.category || "")
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase())
   );
 
   // Paginate the filtered medications
@@ -112,7 +119,7 @@ const ManageMedications: React.FC = () => {
     setPage(0);
   };
 
-  const handleDeleteClick = (id: number,name:string) => {
+  const handleDeleteClick = (id: number, name: string) => {
     setDeleteId(id);
     setMedicationName(name);
     setIsDelModalOpen(true);
@@ -151,6 +158,13 @@ const ManageMedications: React.FC = () => {
           fullWidth
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+          }}
         />
         <TableContainer className="table-container" component={Paper}>
           <Table>
@@ -161,12 +175,20 @@ const ManageMedications: React.FC = () => {
                 <TableCell>Category</TableCell>
                 <TableCell>Price</TableCell>
                 <TableCell>Stock Status</TableCell>
+                <TableCell>Dosage Form</TableCell>
+                <TableCell>Dosage Strength</TableCell>
+                <TableCell>Manufacturer</TableCell>
+                <TableCell>Expiry Date</TableCell>
+                <TableCell>Prescription Required</TableCell>
+                <TableCell>Side Effects</TableCell>
+                <TableCell>Usage Instructions</TableCell>
+                <TableCell>Available Quantity</TableCell>
                 <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {paginatedMedications.map((medication) => (
-                <TableRow key={medication.medication_id}>
+                <TableRow key={medication.id}>
                   <TableCell>
                     <Avatar
                       src={medication.image}
@@ -176,10 +198,20 @@ const ManageMedications: React.FC = () => {
                   </TableCell>
                   <TableCell>{medication.name}</TableCell>
                   <TableCell>{medication.category}</TableCell>
-                  <TableCell>${medication.price}</TableCell>
+                  <TableCell>{medication.price} Birr</TableCell>
                   <TableCell>
                     {medication.stock_status ? "In Stock" : "Out of Stock"}
                   </TableCell>
+                  <TableCell>{medication.dosage_form}</TableCell>
+                  <TableCell>{medication.dosage_strength}</TableCell>
+                  <TableCell>{medication.manufacturer}</TableCell>
+                  <TableCell>{medication.expiry_date}</TableCell>
+                  <TableCell>
+                    {medication.prescription_required ? "Yes" : "NO"}
+                  </TableCell>
+                  <TableCell>{medication.side_effects}</TableCell>
+                  <TableCell>{medication.usage_instructions}</TableCell>
+                  <TableCell>{medication.quantity_available}</TableCell>
                   <TableCell className="action-buttons">
                     <Button
                       className="edit"
@@ -190,7 +222,12 @@ const ManageMedications: React.FC = () => {
                     </Button>
                     <Button
                       className="delete"
-                      onClick={() => handleDeleteClick(medication.medication_id,medication.name)}
+                      onClick={() =>
+                        handleDeleteClick(
+                          medication.medication_id,
+                          medication.name
+                        )
+                      }
                       title={`Delete ${medication.name}`}
                     >
                       <DeleteIcon style={{ color: "red" }} />

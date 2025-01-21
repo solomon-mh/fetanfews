@@ -17,6 +17,7 @@ import PharmacyForm from "./pages/AddPharmacyForm/PharmcyPhorm";
 import PharmacyConfrimation from "./pages/Confrimation/PharmacyConfrimation";
 import PharmacyHelp from "./pages/PharmacyHelp/PharmacyHelp";
 import PrivateRoute from "./components/PrivateRoute";
+import ManageMedications from "./admin/manageDrug/ManageMedications";
 function App() {
   return (
     <Router>
@@ -68,6 +69,10 @@ function App() {
           <Route
             path="/admin/manage-pharmacies"
             element={<ManagePharmacies />}
+          />
+          <Route
+            path="/admin/manage-drugs"
+            element={<ManageMedications />}
           />
         </Route>
       </Routes>
