@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect } from "react";
 import {
   TableContainer,
@@ -12,16 +13,16 @@ import {
   TextField,
   Box,
   Typography,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { Edit, Delete } from "@mui/icons-material";
-import axios from "axios";
 import {
-    fetchCategoriesData,
-    addCategroyData,
-    deleteCategroy,
-    editCategroy,
-    
- } from "../../api/pharmacyService";
+  fetchCategoriesData,
+  addCategroyData,
+  deleteCategroy,
+  editCategroy,
+} from "../../api/pharmacyService";
 
 type Category = {
   id: number;
@@ -40,13 +41,18 @@ const ManageCategories: React.FC = () => {
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [formData, setFormData] = useState<FormData>({ name: "", description: "" });
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    type: "success" as "success" | "error",
+  });
 
   const fetchCategories = async () => {
     try {
-        const response = await fetchCategoriesData();
-        setCategories(response.data);
+      const data = await fetchCategoriesData();
+      setCategories(data);
     } catch (error) {
-      console.error("Error fetching categories:", error);
+      showSnackbar("Failed to fetch categories.", "error");
     }
   };
 
@@ -77,25 +83,36 @@ const ManageCategories: React.FC = () => {
     try {
       if (isEdit && selectedCategory) {
         await editCategroy(selectedCategory, formData);
+        showSnackbar("Category updated successfully.", "success");
       } else {
         await addCategroyData(formData);
+        showSnackbar("Category added successfully.", "success");
       }
       fetchCategories();
       handleCloseModal();
     } catch (error) {
-      console.error("Error submitting form:", error);
+      showSnackbar("Failed to submit the category form.", "error");
     }
   };
 
   const handleDelete = async (id: number) => {
     if (window.confirm("Are you sure you want to delete this category?")) {
       try {
-        await axios.delete(`/api/categories/${id}/`);
+        await deleteCategroy(id);
+        showSnackbar("Category deleted successfully.", "success");
         fetchCategories();
       } catch (error) {
-        console.error("Error deleting category:", error);
+        showSnackbar("Failed to delete the category.", "error");
       }
     }
+  };
+
+  const showSnackbar = (message: string, type: "success" | "error") => {
+    setSnackbar({ open: true, message, type });
+  };
+
+  const closeSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
   };
 
   useEffect(() => {
@@ -104,12 +121,34 @@ const ManageCategories: React.FC = () => {
 
   return (
     <div>
-      <Typography variant="h4" gutterBottom>
-        Manage Categories
-      </Typography>
-      <Button variant="contained" color="primary" onClick={() => handleOpenModal()}>
-        Add Category
-      </Button>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 2,
+          padding: "1rem",
+          border: "1px solid #ccc",
+          borderRadius: "4px",
+          background: "white",
+        }}
+      >
+        <Typography variant="h4">Drug Categories</Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => handleOpenModal()}
+          sx={{
+            backgroundColor: "green",
+            color: "#fff",
+            padding: "8px 16px",
+            fontWeight: "bold",
+            borderRadius: "8px",
+          }}
+        >
+          Add Category
+        </Button>
+      </Box>
       <TableContainer>
         <Table>
           <TableHead>
@@ -161,6 +200,7 @@ const ManageCategories: React.FC = () => {
             value={formData.name}
             onChange={handleInputChange}
             margin="normal"
+            required
           />
           <TextField
             fullWidth
@@ -171,6 +211,7 @@ const ManageCategories: React.FC = () => {
             margin="normal"
             multiline
             rows={4}
+            required
           />
           <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
             <Button onClick={handleCloseModal} sx={{ mr: 1 }}>
@@ -182,6 +223,17 @@ const ManageCategories: React.FC = () => {
           </Box>
         </Box>
       </Modal>
+      {/* Snackbar */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={9000}
+        onClose={closeSnackbar}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert onClose={closeSnackbar} severity={snackbar.type} sx={{ width: "100%" }}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };
