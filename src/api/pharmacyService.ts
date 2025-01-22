@@ -9,7 +9,18 @@ export const addPharmacy = (data: any) => {
         "Content-Type": "multipart/form-data",
       },
     });
-  };
+};
+export const fetchPharmacyData = async () => {
+    const response = await api.get("/pharmacies/");
+    return response.data;
+}
+export const editPharmacy = (id: number, data: any) => {
+  return api.put(`/pharmacies/${id}/`, data);
+
+}
+export const deletePharmacy = (id: number) => {
+  return api.delete(`/pharmacies/${id}/`)
+}
   
 export const addMedicationData=(data: any) => {
   return api.post('/medications/', data, {
@@ -18,8 +29,16 @@ export const addMedicationData=(data: any) => {
     },
   });
 }
-export const fetchMedicationsData = () => {
-  return api.get("/medications/");
+export const fetchMedicationsData = async () => {
+  const response = await api.get("/medications/");
+  return response.data; 
+
+}
+export const editMedication = async (id: number, data: any) => { 
+  return api.put(`/medications/${id}/`, data);
+}
+export const deleteMedication = (id: number) => {
+  return api.delete(`/medications/${id}/`);
 }
 
 export const fetchPharmaciesData = () => {

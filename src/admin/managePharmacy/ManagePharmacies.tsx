@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState ,useEffect} from "react";
 import "./ManagePharmacies.scss";
 import {
   Table,
@@ -13,6 +13,8 @@ import {
   Button,
   TextField,
   Box,
+  InputAdornment,
+
   TablePagination,
 } from "@mui/material";
 import { pharmacies as pharmacyData } from "../../data/pharmacies";
@@ -20,6 +22,13 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { Edit } from "@mui/icons-material";
 import AddPharmacyModal from "../modals/AddPharmacyModal";
 import DeleteModal from "../modals/DeletePharmacy";
+import SearchIcon from "@mui/icons-material/Search";
+import { pharmacyFormData, pharmacyType } from "../../utils/interfaces";
+import {
+  addPharmacy, fetchPharmacyData,
+  editPharmacy,deletePharmacy,
+  
+} from "../../api/pharmacyService";
 const ManagePharmacies: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [pharmacies, setPharmacies] = useState(pharmacyData);
@@ -28,21 +37,87 @@ const ManagePharmacies: React.FC = () => {
   const [openForm, setOpenForm] = useState<boolean>(false);
   const [isDelModalOpen, setIsDelModalOpen] = useState<boolean>(false);
   const [deleteId, setDeleteId] = useState<number>(0);
-  const [formData, setFormData] = useState({
+  const [isEdit, setIsEdit] = useState<boolean>(false);
+  const [selectedPharmacy, setSelectedPharmacy] = useState<pharmacyType | null>(null);
+    const [snackbar, setSnackbar] = useState({
+      open: false,
+      message: "",
+      type: "success" as "success" | "error",
+    });
+    const showSnackbar = (message: string, type: "success" | "error") => {
+      setSnackbar({ open: true, message, type });
+    };
+    const closeSnackbar = () => {
+      setSnackbar({ ...snackbar, open: false });
+    };
+  
+  const [formData, setFormData] = useState<pharmacyFormData>({
     name: "",
     address: "",
     phone: "",
     email: "",
     website: "",
     operating_hours: "",
+    delivery_available:false,
     latitude: "",
     longitude: "",
+    image:null,
+
   });
 
+
+    const fetchPharmacy = async () => {
+      try {
+        const data = await fetchPharmacyData();
+        setPharmacies(data);
+      } catch (error) {
+        showSnackbar("Failed to fetch medications.", "error");
+      }
+    };
   // Handle form open/close
-  const handleOpenForm = () => setOpenForm(true);
+  const handleOpenForm = (pharmacy: pharmacyType | null = null) => {
+    if (pharmacy) {
+      setIsEdit(true);
+      setSelectedPharmacy(pharmacy);
+  
+      // Populate formData with the selected pharmacy details
+      setFormData({
+        name: pharmacy.name || "",
+        address: pharmacy.address || "",
+        phone: pharmacy.phone || "",
+        email: pharmacy.email || "",
+        website: pharmacy.website || "",
+        operating_hours: pharmacy.operating_hours || "",
+        delivery_available: pharmacy.delivery_available || false,
+        latitude: pharmacy.latitude || "",
+        longitude: pharmacy.longitude || "",
+        image: pharmacy.image || null,
+      });
+    } else {
+      setIsEdit(false);
+      setSelectedPharmacy(null);
+  
+      // Clear formData for a new entry
+      setFormData({
+        name: "",
+        address: "",
+        phone: "",
+        email: "",
+        website: "",
+        operating_hours: "",
+        delivery_available: false,
+        latitude: "",
+        longitude: "",
+        image: null,
+      });
+    }
+    setOpenForm(true);
+  };
+  
   const handleCloseForm = () => {
     setOpenForm(false);
+  
+    // Reset formData to its initial state
     setFormData({
       name: "",
       address: "",
@@ -50,32 +125,47 @@ const ManagePharmacies: React.FC = () => {
       email: "",
       website: "",
       operating_hours: "",
+      delivery_available: false,
       latitude: "",
       longitude: "",
+      image: null,
     });
   };
-
-  // Handle form input changes
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
+  const handleInputChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const { name, value, checked, type, files } = event.target;
+  
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value, // Update the specific field
+      [name]: type === "checkbox"
+        ? checked
+        : type === "file"
+        ? files?.[0] // Save the file object for file inputs
+        : value,
     }));
   };
+  
 
   // Handle form submission
-  const handleSubmit = () => {
-    if (formData.name && formData.address && formData.phone && formData.email) {
-      setPharmacies([...pharmacies, { ...formData, pharmacy_id: Date.now() }]);
-      handleCloseForm();
-    } else {
-      alert("Please fill in all required fields.");
-    }
+  const handleSubmit = async () => {
+    try {
+       if (isEdit && selectedPharmacy) {
+         await editPharmacy(selectedPharmacy.id, formData);
+         showSnackbar("Pharmacy updated successfully.", "success");
+       } else {
+         await addPharmacy(formData);
+         showSnackbar("Pharmacy added successfully.", "success");
+       }
+       fetchPharmacy();
+       handleCloseForm();
+     } catch (error) {
+       showSnackbar("Failed to submit the Pharmacy data.", "error");
+     }
   };
 
   // Filter pharmacies based on search query
-  const filteredPharmacies = pharmacies.filter(
+  const filteredPharmacies = pharmacyData.filter(
     (pharmacy) =>
       pharmacy.pharmacy_name
         .toLowerCase()
@@ -108,11 +198,21 @@ const ManagePharmacies: React.FC = () => {
   const handleDelModalClose = () => {
     setIsDelModalOpen(false);
   };
-  const handleDelete = () => {
-    setIsDelModalOpen(false);
-
-    alert(`${deleteId} delated successfully`);
+  const handleDelete = async () => {
+    try {
+        await deletePharmacy(deleteId);
+        showSnackbar("Pharmacy deleted successfully.", "success");
+        fetchPharmacy();
+      } catch (error) {
+        showSnackbar("Failed to delete the pharmacy.", "error");
+      }
+      setIsDelModalOpen(false);
   };
+
+
+    useEffect(() => {
+      fetchPharmacy();
+    }, []);
   return (
     <>
       <div className="manage-pharmacies">
@@ -120,24 +220,32 @@ const ManagePharmacies: React.FC = () => {
           <Typography className="title" variant="h4" gutterBottom>
             Manage Pharmacies
           </Typography>
-          <Button
-            className="add-button"
-            variant="contained"
-            color="primary"
-            size="large"
-            onClick={handleOpenForm}
-          >
-            Add Pharmacy
-          </Button>
-        </Box>
-        <TextField
+          <TextField
           className="search-bar"
           label="Search Pharmacies"
           variant="outlined"
           fullWidth
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
         />
+          <Button
+            className="add-button"
+            variant="contained"
+            color="primary"
+            size="large"
+            onClick={()=>handleOpenForm()}
+          >
+            Add Pharmacy
+          </Button>
+        </Box>
+      
         <TableContainer className="table-container" component={Paper}>
           <Table>
             <TableHead>
@@ -165,6 +273,7 @@ const ManagePharmacies: React.FC = () => {
                       className="edit"
                       style={{ marginRight: "5px" }}
                       title={`Edit ${pharmacy.pharmacy_name}`}
+                      onClick={() => handleOpenForm(pharmacy)}
                     >
                       <Edit />
                     </Button>
@@ -198,6 +307,8 @@ const ManagePharmacies: React.FC = () => {
         handleInputChange={handleInputChange}
         handleSubmit={handleSubmit}
         formData={formData}
+        isEdit={isEdit}
+
       />
       <DeleteModal
         isOpen={isDelModalOpen}

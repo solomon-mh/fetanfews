@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from "react";
+import React, { useState ,useEffect} from "react";
 import {
   Modal,
   Box,
@@ -14,35 +14,39 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { medicationSchema } from "../../utils/validateForm";
-
+import { medicationType } from "../../utils/interfaces";
+import { CategoryType } from "../../utils/interfaces";
+import { fetchCategoriesData } from "../../api/pharmacyService";
 interface AddMedicationModalProps {
   open: boolean;
   handleClose: () => void;
   handleSubmit: (validatedData: any) => void;
-  categories: { id: number; name: string }[];
+  medication: medicationType | null;
+  isEdit: boolean;
 }
-
+type FormData = {
+  name: string;
+  price: string;
+  description: string;
+  category: string;
+  dosage_form: string;
+  dosage_strength: string;
+  manufacturer: string;
+  expiry_date: string;
+  prescription_required: boolean;
+  side_effects: string;
+  usage_instructions: string;
+  quantity_available: string;
+  image: File | null;
+}
 const AddMedicationModal: React.FC<AddMedicationModalProps> = ({
   open,
   handleClose,
   handleSubmit,
-  categories,
+  medication,
+  isEdit,
 }) => {
-  const [formData, setFormData] = useState<{
-    name: string;
-    price: string;
-    description: string;
-    category: string;
-    dosage_form: string;
-    dosage_strength: string;
-    manufacturer: string;
-    expiry_date: string;
-    prescription_required: boolean;
-    side_effects: string;
-    usage_instructions: string;
-    quantity_available: string;
-    image: File | null;
-  }>({
+  const [formData, setFormData] = useState<FormData>({
     name: "",
     price: "",
     description: "",
@@ -59,6 +63,38 @@ const AddMedicationModal: React.FC<AddMedicationModalProps> = ({
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [categories, setCategories] = useState<CategoryType[]>([])
+  useEffect(() => {
+  const fetchCategories = async () => {
+      try {
+        const data = await fetchCategoriesData();
+        setCategories(data);
+      } catch (error) {
+        alert("Failed to fetch categories.", "error");
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  if (isEdit) {
+    if (medication) {
+      setFormData({
+        name: medication.name,
+        price: medication.price.toString(),
+        description: medication.description,
+        category: medication.category.toString(),
+        dosage_form: medication.dosage_form,
+        dosage_strength: medication.dosage_strength,
+        manufacturer: medication.manufacturer,
+        expiry_date: medication.expiry_date,
+        prescription_required: medication.prescription_required,
+        side_effects: medication.side_effects,
+        usage_instructions: medication.usage_instructions,
+        quantity_available: medication.quantity_available.toString(),
+        image: null,
+      });
+    }
+  }
 
   const handleInputChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>

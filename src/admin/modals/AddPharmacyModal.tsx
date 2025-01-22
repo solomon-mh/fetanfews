@@ -9,7 +9,8 @@ import {
 } from "@mui/material";
 import Grid from "@mui/material/Grid";
 
-
+import Checkbox from "@mui/material/Checkbox";
+import FormControlLabel from "@mui/material/FormControlLabel";
 import CloseIcon from "@mui/icons-material/Close";
 import {
   MapContainer,
@@ -25,6 +26,8 @@ const AddPharmacyModal: React.FC<AddPharmacyModalPropse> = ({
   handleInputChange,
   handleSubmit,
   formData,
+  isEdit,
+
 }) => {
   const [selectedLocation, setSelectedLocation] = useState({
     lat: 11.5742,
@@ -166,6 +169,46 @@ const AddPharmacyModal: React.FC<AddPharmacyModalPropse> = ({
                 value={formData.operating_hours}
                 onChange={handleInputChange}
               />
+            </Grid>
+          </Grid>
+
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={formData.delivery_available}
+                    onChange={handleInputChange}
+                    name="delivery_available"
+                    color="primary"
+                  />
+                }
+                label="Delivery Available"
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Typography variant="subtitle1" gutterBottom>
+                Pharmacy Logo
+              </Typography>
+              <Button
+                variant="outlined"
+                component="label"
+                sx={{ mt: 1, textTransform: "none" }}
+              >
+                <input
+                  type="file"
+                  accept="image/*"
+                  name="image"
+                  
+                  onChange={handleInputChange}
+
+                />
+              </Button>
+              {formData.image && (
+                <Typography variant="body2" sx={{ mt: 1 }}>
+                  Selected File: {formData.image.name}
+                </Typography>
+              )}
             </Grid>
           </Grid>
 

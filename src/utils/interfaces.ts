@@ -64,6 +64,21 @@ export interface pharmacyFormData {
   longitude: string;
   website: string;
   email: string;
+  delivery_available: boolean;
+  image:File | null,
+}
+export interface pharmacyType{
+  id: number;
+  name: string;
+  address: string;
+  phone: string;
+  operating_hours: string;
+  latitude: string;
+  longitude: string;
+  website: string;
+  email: string;
+  delivery_available: boolean;
+  image:File | null,
 }
 export interface AddPharmacyModalPropse {
   openForm: boolean;
@@ -71,6 +86,8 @@ export interface AddPharmacyModalPropse {
   handleInputChange: (event: { target: { name: string; value: string } }) => void;
   handleSubmit: () => void;
   formData: pharmacyFormData;
+  isEdit: boolean;
+
 }
 
 export interface DelatePharmacyProps{
@@ -105,3 +122,27 @@ export interface CustomUser {
 export interface ChildrenProps {
   children: ReactNode;
 }
+
+
+export interface medicationType{
+    id: number;
+    name: string;
+    price: string;
+    description: string;
+    category: string;
+    dosage_form: string;
+    dosage_strength: string;
+    manufacturer: string;
+    expiry_date: string;
+    prescription_required: boolean;
+    side_effects: string;
+    usage_instructions: string;
+    quantity_available: string;
+  image: File | null;
+  stock_status: boolean;
+}
+export type CategoryType = {
+  id: number;
+  name: string;
+  description: string;
+};

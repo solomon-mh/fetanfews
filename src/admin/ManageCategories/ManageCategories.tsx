@@ -15,6 +15,7 @@ import {
   Typography,
   Snackbar,
   Alert,
+  InputAdornment,
 } from "@mui/material";
 import { Edit, Delete } from "@mui/icons-material";
 import {
@@ -23,12 +24,9 @@ import {
   deleteCategroy,
   editCategroy,
 } from "../../api/pharmacyService";
-
-type Category = {
-  id: number;
-  name: string;
-  description: string;
-};
+import SearchIcon from "@mui/icons-material/Search";
+import { CategoryType } from "../../utils/interfaces";
+import SnackbarComponent from "../modals/SnackbarComponent";
 
 type FormData = {
   name: string;
@@ -36,11 +34,17 @@ type FormData = {
 };
 
 const ManageCategories: React.FC = () => {
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [categories, setCategories] = useState<CategoryType[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [isEdit, setIsEdit] = useState<boolean>(false);
-  const [formData, setFormData] = useState<FormData>({ name: "", description: "" });
+  const [formData, setFormData] = useState<FormData>({
+    name: "",
+    description: "",
+  });
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+  const [errors, setErrors] = useState({ name: "", description: "" });
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
@@ -56,7 +60,8 @@ const ManageCategories: React.FC = () => {
     }
   };
 
-  const handleOpenModal = (category: Category | null = null) => {
+  const handleOpenModal = (category: CategoryType | null = null) => {
+    setErrors({ name: "", description: "" });
     if (category) {
       setIsEdit(true);
       setSelectedCategory(category.id);
@@ -74,24 +79,28 @@ const ManageCategories: React.FC = () => {
     setFormData({ name: "", description: "" });
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
   const handleSubmit = async () => {
-    try {
-      if (isEdit && selectedCategory) {
-        await editCategroy(selectedCategory, formData);
-        showSnackbar("Category updated successfully.", "success");
-      } else {
-        await addCategroyData(formData);
-        showSnackbar("Category added successfully.", "success");
+    if (validateInputs()) {
+      try {
+        if (isEdit && selectedCategory) {
+          await editCategroy(selectedCategory, formData);
+          showSnackbar("Category updated successfully.", "success");
+        } else {
+          await addCategroyData(formData);
+          showSnackbar("Category added successfully.", "success");
+        }
+        fetchCategories();
+        handleCloseModal();
+      } catch (error) {
+        showSnackbar("Failed to submit the category form.", "error");
       }
-      fetchCategories();
-      handleCloseModal();
-    } catch (error) {
-      showSnackbar("Failed to submit the category form.", "error");
     }
   };
 
@@ -119,6 +128,38 @@ const ManageCategories: React.FC = () => {
     fetchCategories();
   }, []);
 
+  const validateInputs = () => {
+    let valid = true;
+    const tempErrors = { name: "", description: "" };
+
+    if (!formData.name) {
+      tempErrors.name = "Name is required";
+      valid = false;
+    } else if (formData.name.length < 3) {
+      tempErrors.name = "Name must be at least 3 characters";
+      valid = false;
+    } else if (formData.name.length > 50) {
+      tempErrors.name = "Name must be less than 50 characters";
+      valid = false;
+    }
+
+    if (!formData.description) {
+      tempErrors.description = "Description is required";
+      valid = false;
+    } else if (formData.description.length < 10) {
+      tempErrors.description = "Description must be at least 10 characters";
+      valid = false;
+    } else if (formData.description.length > 200) {
+      tempErrors.description = "Description must be less than 200 characters";
+      valid = false;
+    }
+    setErrors(tempErrors);
+    return valid;
+  };
+  const filteredCategories = categories.filter((category) =>
+    category.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div>
       <Box
@@ -134,6 +175,27 @@ const ManageCategories: React.FC = () => {
         }}
       >
         <Typography variant="h4">Drug Categories</Typography>
+        <TextField
+          className="search-bar"
+          label="Search "
+          variant="outlined"
+          fullWidth
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+          }}
+          sx={{
+            marginRight: "1rem",
+            marginLeft: "auto",
+            background: "white",
+            width: "30%",
+          }}
+        />
         <Button
           variant="contained"
           color="primary"
@@ -141,14 +203,17 @@ const ManageCategories: React.FC = () => {
           sx={{
             backgroundColor: "green",
             color: "#fff",
-            padding: "8px 16px",
-            fontWeight: "bold",
-            borderRadius: "8px",
+            fontSize: "1rem",
+            fontWeight: "500",
+            textTransform: "uppercase",
+            padding: "10px 20px",
+            borderRadius: "50px",
           }}
         >
           Add Category
         </Button>
       </Box>
+
       <TableContainer>
         <Table>
           <TableHead>
@@ -159,15 +224,21 @@ const ManageCategories: React.FC = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {categories.map((category) => (
+            {filteredCategories.map((category) => (
               <TableRow key={category.id}>
                 <TableCell>{category.name}</TableCell>
                 <TableCell>{category.description}</TableCell>
                 <TableCell>
-                  <IconButton color="primary" onClick={() => handleOpenModal(category)}>
+                  <IconButton
+                    color="primary"
+                    onClick={() => handleOpenModal(category)}
+                  >
                     <Edit />
                   </IconButton>
-                  <IconButton color="secondary" onClick={() => handleDelete(category.id)}>
+                  <IconButton
+                    color="secondary"
+                    onClick={() => handleDelete(category.id)}
+                  >
                     <Delete />
                   </IconButton>
                 </TableCell>
@@ -201,6 +272,8 @@ const ManageCategories: React.FC = () => {
             onChange={handleInputChange}
             margin="normal"
             required
+            error={!!errors.name}
+            helperText={errors.name}
           />
           <TextField
             fullWidth
@@ -212,6 +285,8 @@ const ManageCategories: React.FC = () => {
             multiline
             rows={4}
             required
+            error={!!errors.description}
+            helperText={errors.description}
           />
           <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
             <Button onClick={handleCloseModal} sx={{ mr: 1 }}>
@@ -224,16 +299,12 @@ const ManageCategories: React.FC = () => {
         </Box>
       </Modal>
       {/* Snackbar */}
-      <Snackbar
+      <SnackbarComponent
         open={snackbar.open}
-        autoHideDuration={9000}
+        message={snackbar.message}
+        type={snackbar.type}
         onClose={closeSnackbar}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-      >
-        <Alert onClose={closeSnackbar} severity={snackbar.type} sx={{ width: "100%" }}>
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
+      />
     </div>
   );
 };
