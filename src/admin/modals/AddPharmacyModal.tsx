@@ -6,8 +6,10 @@ import {
   TextField,
   Typography,
   IconButton,
-  Grid,
 } from "@mui/material";
+import Grid from "@mui/material/Grid";
+
+
 import CloseIcon from "@mui/icons-material/Close";
 import {
   MapContainer,

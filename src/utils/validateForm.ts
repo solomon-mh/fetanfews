@@ -67,3 +67,18 @@ export const pharmacyFormSchema = z.object({
   
 });
 
+
+export const medicationSchema = z.object({
+  name: z.string().nonempty("Name is required"),
+  price: z.number().min(0, "Price must be a positive number"),
+  description: z.string().optional(),
+  category: z.string().nonempty("Category is required"),
+  dosage_form: z.string().nonempty("Dosage form is required"),
+  dosage_strength: z.string().nonempty("Dosage strength is required"),
+  manufacturer: z.string().nonempty("Manufacturer is required"),
+  expiry_date: z.string().nonempty("Expiry date is required"),
+  side_effects: z.string().optional(),
+  usage_instructions: z.string().optional(),
+  quantity_available: z.number().min(1, "Quantity must be at least 1"),
+  image: z.any().optional(),
+});

@@ -48,6 +48,15 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick }) => {
 
           <p className="spann">Drugs</p>
           <Link
+            to="/admin/manage-categories"
+            style={{ textDecoration: "none" }}
+            onClick={onLinkClick}
+          >
+            <li className={pathname === "/admin/manage-categories" ? "active-link" : ""}>
+              <EditIcon className="icon" /> Drug Category
+            </li>
+          </Link>
+          <Link
             to="/admin/manage-drugs"
             style={{ textDecoration: "none" }}
             onClick={onLinkClick}

@@ -32,63 +32,50 @@ const ManageMedications: React.FC = () => {
   const [isDelModalOpen, setIsDelModalOpen] = useState<boolean>(false);
   const [deleteId, setDeleteId] = useState<number>(0);
   const [medicationName, setMedicationName] = useState<string>("");
-  const [formData, setFormData] = useState({
-    name: "",
-    price: "",
-    stock_status: true,
-    description: "",
-    category: "",
-    dosage_form: "",
-    dosage_strength: "",
-    manufacturer: "",
-    expiry_date: "",
-    prescription_required: false,
-    side_effects: "",
-    usage_instructions: "",
-    quantity_available: 0,
-  });
+  // const [formData, setFormData] = useState({
+  //   name: "",
+  //   price: "",
+  //   stock_status: true,
+  //   description: "",
+  //   category: "",
+  //   dosage_form: "",
+  //   dosage_strength: "",
+  //   manufacturer: "",
+  //   expiry_date: "",
+  //   prescription_required: false,
+  //   side_effects: "",
+  //   usage_instructions: "",
+  //   quantity_available: 0,
+  // });
 
   // Handle form open/close
   const handleOpenForm = () => setOpenForm(true);
   const handleCloseForm = () => {
     setOpenForm(false);
-    setFormData({
-      name: "",
-      price: "",
-      stock_status: true,
-      description: "",
-      category: "",
-      dosage_form: "",
-      dosage_strength: "",
-      manufacturer: "",
-      expiry_date: "",
-      prescription_required: false,
-      side_effects: "",
-      usage_instructions: "",
-      quantity_available: 0,
-    });
+    // setFormData({
+    //   name: "",
+    //   price: "",
+    //   stock_status: true,
+    //   description: "",
+    //   category: "",
+    //   dosage_form: "",
+    //   dosage_strength: "",
+    //   manufacturer: "",
+    //   expiry_date: "",
+    //   prescription_required: false,
+    //   side_effects: "",
+    //   usage_instructions: "",
+    //   quantity_available: 0,
+    // });
   };
 
-  // Handle form input changes
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
+ 
 
   // Handle form submission
-  const handleSubmit = () => {
-    if (formData.name && formData.price && formData.expiry_date) {
-      setMedications([
-        ...medications,
-        { ...formData, medication_id: Date.now() },
-      ]);
+  const handleSubmit = (data:any) => {
+      setMedications(data);
       handleCloseForm();
-    } else {
-      alert("Please fill in all required fields.");
-    }
+   
   };
 
   // Filter medications based on search query
@@ -252,9 +239,8 @@ const ManageMedications: React.FC = () => {
       <AddMedicationModal
         open={openForm}
         handleClose={handleCloseForm}
-        handleInputChange={handleInputChange}
         handleSubmit={handleSubmit}
-        formData={formData}
+        categories={[]}
       />
       <DeleteMedicationModal
         isOpen={isDelModalOpen}
