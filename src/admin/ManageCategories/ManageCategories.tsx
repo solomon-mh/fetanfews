@@ -13,9 +13,10 @@ import {
   TextField,
   Box,
   Typography,
-  Snackbar,
-  Alert,
+ 
   InputAdornment,
+  TablePagination,
+
 } from "@mui/material";
 import { Edit, Delete } from "@mui/icons-material";
 import {
@@ -36,7 +37,8 @@ type FormData = {
 const ManageCategories: React.FC = () => {
   const [categories, setCategories] = useState<CategoryType[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
-
+   const [page, setPage] = useState(0); 
+  const [rowsPerPage, setRowsPerPage] = useState(5);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [formData, setFormData] = useState<FormData>({
@@ -115,7 +117,19 @@ const ManageCategories: React.FC = () => {
       }
     }
   };
+ const handleChangePage = (
+    event: React.MouseEvent<HTMLButtonElement> | null,
+    newPage: number
+  ) => {
+    setPage(newPage);
+  };
 
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0); // Reset page to 0 when rows per page changes
+  };
   const showSnackbar = (message: string, type: "success" | "error") => {
     setSnackbar({ open: true, message, type });
   };
@@ -224,7 +238,8 @@ const ManageCategories: React.FC = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredCategories.map((category) => (
+            {filteredCategories.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              .map((category) => (
               <TableRow key={category.id}>
                 <TableCell>{category.name}</TableCell>
                 <TableCell>{category.description}</TableCell>
@@ -247,6 +262,15 @@ const ManageCategories: React.FC = () => {
           </TableBody>
         </Table>
       </TableContainer>
+        <TablePagination
+              rowsPerPageOptions={[5, 10, 25]}
+              component="div"
+              count={filteredCategories.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
       {/* Add/Edit Modal */}
       <Modal open={modalOpen} onClose={handleCloseModal}>
         <Box

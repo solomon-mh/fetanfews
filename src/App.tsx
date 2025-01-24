@@ -19,6 +19,7 @@ import PharmacyHelp from "./pages/PharmacyHelp/PharmacyHelp";
 import PrivateRoute from "./components/PrivateRoute";
 import ManageMedications from "./admin/manageDrug/ManageMedications";
 import ManageCategories from "./admin/ManageCategories/ManageCategories";
+import ManagePharmacists from "./admin/ManagePharmacists/ManagePharmacists";
 function App() {
   return (
     <Router>
@@ -75,7 +76,8 @@ function App() {
             path="/admin/manage-drugs"
             element={<ManageMedications />}
           />
-          <Route path='/admin/manage-categories' element={<ManageCategories/>}/>
+          <Route path='/admin/manage-categories' element={<ManageCategories />} />
+          <Route path='/admin/manage-pharmacists' element={<ManagePharmacists/>}/>
         </Route>
       </Routes>
     </Router>
