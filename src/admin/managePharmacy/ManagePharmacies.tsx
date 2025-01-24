@@ -1,4 +1,4 @@
-import React, { useState ,useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import "./ManagePharmacies.scss";
 import {
   Table,
@@ -14,10 +14,8 @@ import {
   TextField,
   Box,
   InputAdornment,
-
   TablePagination,
 } from "@mui/material";
-import { pharmacies as pharmacyData } from "../../data/pharmacies";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Edit } from "@mui/icons-material";
 import AddPharmacyModal from "../modals/AddPharmacyModal";
@@ -25,32 +23,37 @@ import DeleteModal from "../modals/DeletePharmacy";
 import SearchIcon from "@mui/icons-material/Search";
 import { pharmacyFormData, pharmacyType } from "../../utils/interfaces";
 import {
-  addPharmacy, fetchPharmacyData,
-  editPharmacy,deletePharmacy,
-  
+  addPharmacy,
+  fetchPharmacyData,
+  editPharmacy,
+  deletePharmacy,
 } from "../../api/pharmacyService";
+
+import SnackbarComponent from "../modals/SnackbarComponent";
 const ManagePharmacies: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [pharmacies, setPharmacies] = useState(pharmacyData);
+  const [pharmacies, setPharmacies] = useState();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [openForm, setOpenForm] = useState<boolean>(false);
   const [isDelModalOpen, setIsDelModalOpen] = useState<boolean>(false);
   const [deleteId, setDeleteId] = useState<number>(0);
   const [isEdit, setIsEdit] = useState<boolean>(false);
-  const [selectedPharmacy, setSelectedPharmacy] = useState<pharmacyType | null>(null);
-    const [snackbar, setSnackbar] = useState({
-      open: false,
-      message: "",
-      type: "success" as "success" | "error",
-    });
-    const showSnackbar = (message: string, type: "success" | "error") => {
-      setSnackbar({ open: true, message, type });
-    };
-    const closeSnackbar = () => {
-      setSnackbar({ ...snackbar, open: false });
-    };
-  
+  const [selectedPharmacy, setSelectedPharmacy] = useState<pharmacyType | null>(
+    null
+  );
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    type: "success" as "success" | "error",
+  });
+  const showSnackbar = (message: string, type: "success" | "error") => {
+    setSnackbar({ open: true, message, type });
+  };
+  const closeSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
+
   const [formData, setFormData] = useState<pharmacyFormData>({
     name: "",
     address: "",
@@ -58,28 +61,28 @@ const ManagePharmacies: React.FC = () => {
     email: "",
     website: "",
     operating_hours: "",
-    delivery_available:false,
+    delivery_available: false,
+    status:"",
     latitude: "",
     longitude: "",
-    image:null,
-
+    image: null,
   });
 
-
-    const fetchPharmacy = async () => {
-      try {
-        const data = await fetchPharmacyData();
-        setPharmacies(data);
-      } catch (error) {
-        showSnackbar("Failed to fetch medications.", "error");
-      }
-    };
+  const fetchPharmacy = async () => {
+    try {
+      const data = await fetchPharmacyData();
+      setPharmacies(data);
+      console.log("pharmacy data", data);
+    } catch (error) {
+      showSnackbar("Failed to fetch medications.", "error");
+    }
+  };
   // Handle form open/close
   const handleOpenForm = (pharmacy: pharmacyType | null = null) => {
     if (pharmacy) {
       setIsEdit(true);
       setSelectedPharmacy(pharmacy);
-  
+
       // Populate formData with the selected pharmacy details
       setFormData({
         name: pharmacy.name || "",
@@ -89,6 +92,7 @@ const ManagePharmacies: React.FC = () => {
         website: pharmacy.website || "",
         operating_hours: pharmacy.operating_hours || "",
         delivery_available: pharmacy.delivery_available || false,
+        status:pharmacy.status ||"",
         latitude: pharmacy.latitude || "",
         longitude: pharmacy.longitude || "",
         image: pharmacy.image || null,
@@ -96,7 +100,7 @@ const ManagePharmacies: React.FC = () => {
     } else {
       setIsEdit(false);
       setSelectedPharmacy(null);
-  
+
       // Clear formData for a new entry
       setFormData({
         name: "",
@@ -109,14 +113,15 @@ const ManagePharmacies: React.FC = () => {
         latitude: "",
         longitude: "",
         image: null,
+        status:"",
       });
     }
     setOpenForm(true);
   };
-  
+
   const handleCloseForm = () => {
     setOpenForm(false);
-  
+
     // Reset formData to its initial state
     setFormData({
       name: "",
@@ -129,49 +134,48 @@ const ManagePharmacies: React.FC = () => {
       latitude: "",
       longitude: "",
       image: null,
+      status:"",
+
     });
   };
-  const handleInputChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, checked, type, files } = event.target;
-  
+
     setFormData((prevData) => ({
       ...prevData,
-      [name]: type === "checkbox"
-        ? checked
-        : type === "file"
-        ? files?.[0] // Save the file object for file inputs
-        : value,
+      [name]:
+        type === "checkbox"
+          ? checked
+          : type === "file"
+          ? files?.[0] // Save the file object for file inputs
+          : value,
     }));
   };
-  
 
   // Handle form submission
   const handleSubmit = async () => {
     try {
-       if (isEdit && selectedPharmacy) {
-         await editPharmacy(selectedPharmacy.id, formData);
-         showSnackbar("Pharmacy updated successfully.", "success");
-       } else {
-         await addPharmacy(formData);
-         showSnackbar("Pharmacy added successfully.", "success");
-       }
-       fetchPharmacy();
-       handleCloseForm();
-     } catch (error) {
-       showSnackbar("Failed to submit the Pharmacy data.", "error");
-     }
+      if (isEdit && selectedPharmacy) {
+        await editPharmacy(selectedPharmacy.id, formData);
+        showSnackbar("Pharmacy updated successfully.", "success");
+      } else {
+        await addPharmacy(formData);
+        showSnackbar("Pharmacy added successfully.", "success");
+      }
+      fetchPharmacy();
+      handleCloseForm();
+    } catch (error) {
+      showSnackbar("Failed to submit the Pharmacy data.", "error");
+    }
   };
 
   // Filter pharmacies based on search query
-  const filteredPharmacies = pharmacyData.filter(
+  const filteredPharmacies = (pharmacies || []).filter(
     (pharmacy) =>
-      pharmacy.pharmacy_name
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase()) ||
+      pharmacy.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       pharmacy.address.toLowerCase().includes(searchQuery.toLowerCase())
   );
+  
 
   // Paginate the filtered pharmacies
   const paginatedPharmacies = filteredPharmacies.slice(
@@ -200,19 +204,18 @@ const ManagePharmacies: React.FC = () => {
   };
   const handleDelete = async () => {
     try {
-        await deletePharmacy(deleteId);
-        showSnackbar("Pharmacy deleted successfully.", "success");
-        fetchPharmacy();
-      } catch (error) {
-        showSnackbar("Failed to delete the pharmacy.", "error");
-      }
-      setIsDelModalOpen(false);
+      await deletePharmacy(deleteId);
+      showSnackbar("Pharmacy deleted successfully.", "success");
+      fetchPharmacy();
+    } catch (error) {
+      showSnackbar("Failed to delete the pharmacy.", "error");
+    }
+    setIsDelModalOpen(false);
   };
 
-
-    useEffect(() => {
-      fetchPharmacy();
-    }, []);
+  useEffect(() => {
+    fetchPharmacy();
+  }, []);
   return (
     <>
       <div className="manage-pharmacies">
@@ -221,11 +224,11 @@ const ManagePharmacies: React.FC = () => {
             Manage Pharmacies
           </Typography>
           <TextField
-          className="search-bar"
-          label="Search Pharmacies"
-          variant="outlined"
-          fullWidth
-          value={searchQuery}
+            className="search-bar"
+            label="Search Pharmacies"
+            variant="outlined"
+            fullWidth
+            value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             InputProps={{
               startAdornment: (
@@ -234,18 +237,18 @@ const ManagePharmacies: React.FC = () => {
                 </InputAdornment>
               ),
             }}
-        />
+          />
           <Button
             className="add-button"
             variant="contained"
             color="primary"
             size="large"
-            onClick={()=>handleOpenForm()}
+            onClick={() => handleOpenForm()}
           >
             Add Pharmacy
           </Button>
         </Box>
-      
+
         <TableContainer className="table-container" component={Paper}>
           <Table>
             <TableHead>
@@ -253,34 +256,54 @@ const ManagePharmacies: React.FC = () => {
                 <TableCell>Image</TableCell>
                 <TableCell>Pharmacy Name</TableCell>
                 <TableCell>Address</TableCell>
+                <TableCell>Phone Number</TableCell>
+
+                <TableCell>email</TableCell>
+                <TableCell>Status</TableCell>
+                
+                <TableCell>Oprating hour</TableCell>
+                <TableCell>Delivery avliable</TableCell>
+                <TableCell>Latitude</TableCell>
+                <TableCell>Logitude</TableCell>
+                <TableCell>Web Site</TableCell>
                 <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {paginatedPharmacies.map((pharmacy) => (
-                <TableRow key={pharmacy.pharmacy_id}>
+                <TableRow key={pharmacy.id}>
                   <TableCell>
                     <Avatar
                       src={pharmacy.image}
-                      alt={pharmacy.pharmacy_name}
+                      alt={pharmacy.name}
                       sx={{ width: 56, height: 56 }}
                     />
                   </TableCell>
-                  <TableCell>{pharmacy.pharmacy_name}</TableCell>
+                  <TableCell>{pharmacy.name}</TableCell>
                   <TableCell>{pharmacy.address}</TableCell>
+
+                  <TableCell>{pharmacy.phone}</TableCell>
+
+                  <TableCell>{pharmacy.email}</TableCell>
+                  <TableCell>{pharmacy.status}</TableCell>
+                  <TableCell>{pharmacy.operating_hours}</TableCell>
+                  <TableCell>{pharmacy.delivery_available?"Yes":"No"}</TableCell>
+                  <TableCell>{pharmacy.latitude}</TableCell>
+                  <TableCell>{pharmacy.longitude}</TableCell>
+                  <TableCell>{pharmacy.website}</TableCell>
                   <TableCell className="action-buttons">
                     <Button
                       className="edit"
                       style={{ marginRight: "5px" }}
-                      title={`Edit ${pharmacy.pharmacy_name}`}
+                      title={`Edit ${pharmacy.name}`}
                       onClick={() => handleOpenForm(pharmacy)}
                     >
                       <Edit />
                     </Button>
                     <Button
                       className="delete"
-                      onClick={() => handleDeleteClick(pharmacy.pharmacy_id)}
-                      title={`Delete ${pharmacy.pharmacy_name}`}
+                      onClick={() => handleDeleteClick(pharmacy.id)}
+                      title={`Delete ${pharmacy.name}`}
                     >
                       <DeleteIcon style={{ color: "red" }} />
                     </Button>
@@ -308,12 +331,18 @@ const ManagePharmacies: React.FC = () => {
         handleSubmit={handleSubmit}
         formData={formData}
         isEdit={isEdit}
-
       />
       <DeleteModal
         isOpen={isDelModalOpen}
         onClose={handleDelModalClose}
         handleDelete={handleDelete}
+      />
+
+      <SnackbarComponent
+        open={snackbar.open}
+        message={snackbar.message}
+        type={snackbar.type}
+        onClose={closeSnackbar}
       />
     </>
   );

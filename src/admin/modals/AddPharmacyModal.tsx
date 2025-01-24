@@ -6,6 +6,7 @@ import {
   TextField,
   Typography,
   IconButton,
+  MenuItem
 } from "@mui/material";
 import Grid from "@mui/material/Grid";
 
@@ -19,8 +20,8 @@ import {
   useMapEvents,
   Popup,
 } from "react-leaflet";
-import { AddPharmacyModalPropse } from "../../utils/interfaces";
-const AddPharmacyModal: React.FC<AddPharmacyModalPropse> = ({
+import { AddPharmacyModalProps } from "../../utils/interfaces";
+const AddPharmacyModal: React.FC<AddPharmacyModalProps> = ({
   openForm,
   handleCloseForm,
   handleInputChange,
@@ -33,20 +34,17 @@ const AddPharmacyModal: React.FC<AddPharmacyModalPropse> = ({
     lat: 11.5742,
     lng: 37.3614,
   });
-  const LocationMarker = React.memo(() => {
+
+  const statuses=["Pending","Approved","Rejected"]
+  const LocationMarker = () => {
     useMapEvents({
       click(e) {
         const lat = e.latlng.lat;
         const lng = e.latlng.lng;
         setSelectedLocation({ lat, lng });
 
-        handleInputChange({
-          target: { name: "latitude", value: lat.toString() },
-        });
-
-        handleInputChange({
-          target: { name: "longitude", value: lng.toString() },
-        });
+        handleInputChange({ target: { name: "latitude", value: lat.toString() } });
+        handleInputChange({ target: { name: "longitude", value: lng.toString() } });
       },
     });
 
@@ -55,7 +53,7 @@ const AddPharmacyModal: React.FC<AddPharmacyModalPropse> = ({
         <Popup>Your Location</Popup>
       </Marker>
     );
-  });
+  };
 
   return (
     <Modal open={openForm} onClose={handleCloseForm}>
@@ -98,7 +96,7 @@ const AddPharmacyModal: React.FC<AddPharmacyModalPropse> = ({
           }}
         >
           <Typography variant="h6" component="h2" gutterBottom>
-            Add Pharmacy
+          {isEdit ? "Edit Pharmacy" : "Add Pharmacy"}
           </Typography>
 
           {/* Basic Details Section */}
@@ -173,6 +171,29 @@ const AddPharmacyModal: React.FC<AddPharmacyModalPropse> = ({
           </Grid>
 
           <Grid container spacing={2}>
+
+          <Grid item xs={12} sm={6}>
+            <TextField
+              label="status"
+              name="status"
+              select
+              value={formData.status}
+              onChange={handleInputChange}
+                fullWidth
+                
+           
+            >
+              {statuses && statuses.length > 0 ? (
+                statuses.map((status,index) => (
+                  <MenuItem key={index} value={status}>
+                    {status}
+                  </MenuItem>
+                ))
+              ) : (
+                <MenuItem disabled>No status available</MenuItem>
+              )}
+            </TextField>
+          </Grid>
             <Grid item xs={12} sm={6}>
               <FormControlLabel
                 control={
@@ -210,7 +231,9 @@ const AddPharmacyModal: React.FC<AddPharmacyModalPropse> = ({
                 </Typography>
               )}
             </Grid>
+
           </Grid>
+         
 
           {/* Location Details Section */}
           <Typography variant="subtitle1" gutterBottom sx={{ mt: 3 }}>
@@ -279,7 +302,7 @@ const AddPharmacyModal: React.FC<AddPharmacyModalPropse> = ({
               Cancel
             </Button>
             <Button onClick={handleSubmit} variant="contained" color="primary">
-              Submit
+            {isEdit ? "Update" : "Add"}
             </Button>
           </Box>
         </Box>
