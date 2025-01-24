@@ -3,8 +3,6 @@ import axios from "axios";
 
 import {SignUpData } from "../utils/interfaces";
 
-
-
 const URL = "http://localhost:8000/api";
 
 export const api = axios.create({
@@ -107,3 +105,8 @@ export const Logout = async () => {
 
   }
 }
+export const fetchUsers = async () => {
+  const response = await api.get('/accounts/users');
+  return response.data;
+}
+  

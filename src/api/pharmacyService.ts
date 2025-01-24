@@ -41,9 +41,7 @@ export const deleteMedication = (id: number) => {
   return api.delete(`/medications/${id}/`);
 }
 
-export const fetchPharmaciesData = () => {
-  return api.get("/pharmacies/");
-}
+
 // Fetch categories
 export const fetchCategoriesData = async () => {
 
@@ -75,6 +73,36 @@ export const editCategroy = async (id: number, data: any) => {
  
 };
 
+
+export const fetchPharmacistsData = async () => {
+  const response = await api.get("/pharmacists/");
+  return response.data; 
+  
+}
+export const addPharmacistData = async (data: any)=>{
+  const response = await api.post("/pharmacists/", data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  }
+  );
+  return response.data; 
+}
+
+
+
+export const deletePharmacist = async (id: number) => {
+ 
+  const response = await api.delete(`/pharmacists/${id}/`);
+  return response.data; 
+
+};
+
+export const editPharmacist = async (id: number, data: any) => {
+  const response = await api.put(`/pharmacists/${id}/`, data);
+  return response.data; 
+
+};
 // const handleApiError = (error: any, defaultMessage: string) => {
 //   if (axios.isAxiosError(error)) {
 //     const message = error.response?.data?.message || error.message || defaultMessage;

@@ -45,6 +45,15 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick }) => {
               <GroupIcon className="icon" /> Manage Pharmacies
             </li>
           </Link>
+          <Link
+            to="/admin/manage-pharmacists"
+            style={{ textDecoration: "none" }}
+            onClick={onLinkClick}
+          >
+            <li  className={pathname === "/admin/manage-pharmacists" ? "active-link" : ""}>
+              <GroupIcon className="icon" /> Pharmicists
+            </li>
+          </Link>
 
           <p className="spann">Drugs</p>
           <Link
