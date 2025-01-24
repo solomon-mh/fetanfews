@@ -65,7 +65,8 @@ export interface pharmacyFormData {
   website: string;
   email: string;
   delivery_available: boolean;
-  image:File | null,
+  image: File | null,
+  status:string,
 }
 export interface pharmacyType{
   id: number;
@@ -78,16 +79,18 @@ export interface pharmacyType{
   website: string;
   email: string;
   delivery_available: boolean;
+  status: string;
   image:File | null,
 }
-export interface AddPharmacyModalPropse {
+export interface AddPharmacyModalProps {
   openForm: boolean;
   handleCloseForm: () => void;
-  handleInputChange: (event: { target: { name: string; value: string } }) => void;
+  handleInputChange: (
+    event: React.ChangeEvent<HTMLInputElement> | { target: { name: string; value: string } }
+  ) => void;
   handleSubmit: () => void;
   formData: pharmacyFormData;
   isEdit: boolean;
-
 }
 
 export interface DelatePharmacyProps{

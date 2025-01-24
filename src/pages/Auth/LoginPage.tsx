@@ -5,12 +5,14 @@ import { login } from "../../api/auth";
 import "./Auth.scss";
 import drugStore from "../../assets/images/drugstore.jpg";
 import { Link,useNavigate,useLocation } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 
 const Login: React.FC = () => {
   const [formData, setFormData] = useState<LoginCredentials>({
     username: "",
     password: "",
   });
+  const { setLoggedin } = useAuth();
   const [error, setError] = useState<string | null>(null);
   const [fieldError, setFieldError] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -39,6 +41,7 @@ const Login: React.FC = () => {
     try {
       const response = await login(formData);
       console.log(response.data);
+      setLoggedin(true);
       navigate(from, { replace: true });
     } catch (err: any) {
       setError(err.response?.data?.message || "Login failed");

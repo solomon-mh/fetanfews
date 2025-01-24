@@ -3,10 +3,11 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { Logout } from "../../api/auth";
 const Header = () => {
-  const { user } = useAuth();
+  const { user,setLoggedin,loggedin } = useAuth();
 
   const handleLogout = async () => {
     await Logout()
+    setLoggedin(false);
 
   }
   return (
@@ -36,8 +37,8 @@ const Header = () => {
           </li>
 
           <li>
-            {user ? (
-              <Link className="link" to='' onClick={handleLogout} title={user.first_name}>
+            {loggedin ? (
+              <Link className="link" to='' onClick={handleLogout} title={user?.first_name}>
                 Logout 
               </Link>
             ) : (

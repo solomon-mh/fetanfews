@@ -1,7 +1,11 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import { getCurrentUser } from "../api/auth";
 import { CustomUser ,ChildrenProps} from "../utils/interfaces";
-const AuthContext = createContext<{ user: CustomUser | null }>({ user: null });
+const AuthContext = createContext<{
+    user: CustomUser | null,
+    loggedin: boolean,
+    setLoggedin: React.Dispatch<React.SetStateAction<boolean>>,
+ }>({ user: null, loggedin: false, setLoggedin: () => {} });
 
 export const useAuth = () => {
     return useContext(AuthContext);
@@ -11,6 +15,7 @@ export const useAuth = () => {
 export const AuthProvider:React.FC<ChildrenProps> = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [loggedin, setLoggedin] = useState(false);
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -44,7 +49,7 @@ export const AuthProvider:React.FC<ChildrenProps> = ({ children }) => {
     }
     
     return (
-        <AuthContext.Provider value={{ user}}>
+        <AuthContext.Provider value={{ user,loggedin,setLoggedin}}>
             {children}
         </AuthContext.Provider>
     )
