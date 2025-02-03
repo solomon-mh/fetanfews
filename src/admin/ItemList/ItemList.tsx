@@ -8,18 +8,20 @@ import "./itemList.scss";
 import { usePharmacyData } from "../../contexts/PharmacyContext";
 import { motion } from "framer-motion";
 import { cardVariants } from "../../utils/animateVariant";
+import { useNavigate } from "react-router-dom";
+
 interface ItemListsProps {
   type:
     | "totalPharmacies"
     | "approvedPharmacies"
     | "pendingPharmacies"
     | "rejectedPharmacies";
-  setSelectedStatus: (
-    status:string
-  ) => void;
+  setSelectedStatus: (status: string) => void;
 }
 
 const ItemLists: React.FC<ItemListsProps> = ({ type, setSelectedStatus }) => {
+  const navigate = useNavigate();
+
   const {
     numberOfPharmacies,
     pendingPharmacies,
@@ -33,7 +35,7 @@ const ItemLists: React.FC<ItemListsProps> = ({ type, setSelectedStatus }) => {
     count: number;
     icon: JSX.Element | null;
     link: string;
-    status: string 
+    status: string;
   };
 
   // Dynamically change the UI content
@@ -128,13 +130,10 @@ const ItemLists: React.FC<ItemListsProps> = ({ type, setSelectedStatus }) => {
       </p>
     );
   }
-  const handleClick=(status:string) => {
+  const handleClick = (status: string) => {
     setSelectedStatus(status);
-    const newUrl = `/admin/pharmacies?status=${data.status.toLowerCase()}`;
-    window.history.pushState(null, "", newUrl);
-
-
-}
+    navigate(`/admin/pharmacies?status=${status.toLowerCase()}`);
+  };
   return (
     <motion.div
       className="item_listss"
@@ -155,7 +154,7 @@ const ItemLists: React.FC<ItemListsProps> = ({ type, setSelectedStatus }) => {
       <div className="counts">{data.count}</div>
 
       <div className="see_item">
-        <button onClick={()=>handleClick(data.status)}>
+        <button style={{border:"none"}} onClick={() => handleClick(data.status)}>
           <p>{data.link}</p>
         </button>
         {data.icon}

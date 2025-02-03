@@ -69,7 +69,9 @@ function App() {
             </PharmacyContextProvider>
           }
         >
+          <Route path="/admin/pharmacies" element={<AdminHome />} />
           <Route path="/admin" element={<AdminHome />} />
+
           <Route
             path="/admin/manage-pharmacies"
             element={<ManagePharmacies />}

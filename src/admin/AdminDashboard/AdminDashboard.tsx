@@ -1,5 +1,5 @@
 import React,{useState} from "react";
-import { Link } from "react-router-dom";
+import { Link,useLocation } from "react-router-dom";
 import "./AdminDashboard.scss";
 import {
   Group as GroupIcon,
@@ -13,7 +13,9 @@ import PharmacyTable from "../tableList/PharmacyTable";
 
 const AdminHome: React.FC = () => {
   const [selectedStatus, setSelectedStatus] = useState<string>('');
-   
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const status = queryParams.get("status");
 
   return (
     <div className="dashboard-index">
@@ -26,7 +28,7 @@ const AdminHome: React.FC = () => {
         <ItemLists setSelectedStatus={ setSelectedStatus} type="rejectedPharmacies" />
       </div>
       <>
-        {selectedStatus ? (
+        {status? (
           <PharmacyTable status={selectedStatus} />
         ) : (<>
           <p className="subtitle">

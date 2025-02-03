@@ -35,7 +35,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick }) => {
             </li>
           </Link>
           <Link to="/admin" style={{ textDecoration: "none" }} onClick={onLinkClick}>
-            <li className={pathname === "/admin" ? "active-link" : ""}>
+            <li className={pathname === "/admin" || pathname === "/admin/pharmacies" ? "active-link" : ""}>
               <DashboardIcon className="icon" /> Dashboard
             </li>
           </Link>
