@@ -16,7 +16,7 @@ const Header = () => {
         <div className="navbar-logo">MedLocator</div>
         <ul className="navbar-links">
           <li>
-            <Link className="link" to="/admin">
+            <Link className="link" to="/admin/dashboard">
               AdminPage
             </Link>
           </li>

@@ -35,7 +35,11 @@ export const fetchMedicationsData = async () => {
 
 }
 export const editMedication = async (id: number, data: any) => { 
-  return api.put(`/medications/${id}/`, data);
+  return api.put(`/medications/${id}/`, data,{
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
 }
 export const deleteMedication = (id: number) => {
   return api.delete(`/medications/${id}/`);
