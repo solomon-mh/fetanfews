@@ -20,11 +20,14 @@ import PrivateRoute from "./components/PrivateRoute";
 import ManageMedications from "./admin/manageDrug/ManageMedications";
 import ManageCategories from "./admin/ManageCategories/ManageCategories";
 import ManagePharmacists from "./admin/ManagePharmacists/ManagePharmacists";
+import AdminLogin from "./admin/AdminAuth/AdminLogin";
 function App() {
   return (
     <Router>
       <Routes>
         {/* Main Layout Routes */}
+        <Route path="/admin/login" element={<AdminLogin />} />
+
         <Route element={<MainLayout />}>
           <Route path="/" element={<HomePage />} />
           <Route
@@ -70,7 +73,7 @@ function App() {
           }
         >
           <Route path="/admin/pharmacies" element={<AdminHome />} />
-          <Route path="/admin" element={<AdminHome />} />
+          <Route path="admin/dashboard" element={<AdminHome />} />
 
           <Route
             path="/admin/manage-pharmacies"
