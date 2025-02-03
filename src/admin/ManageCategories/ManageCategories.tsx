@@ -24,6 +24,8 @@ import {
   editCategroy,
 } from "../../api/pharmacyService";
 import SearchIcon from "@mui/icons-material/Search";
+import CloseIcon from "@mui/icons-material/Close";
+
 import { CategoryType } from "../../utils/interfaces";
 import SnackbarComponent from "../modals/SnackbarComponent";
 import DeleteModal from "../modals/DeleteModal";
@@ -259,14 +261,14 @@ const ManageCategories: React.FC = () => {
                     >
                       <Edit />
                     </IconButton>
-                    <IconButton
-                      color="secondary"
+                    <Button
+                      style={{ color:"red" }}
                       onClick={() =>
                         handleDeleteClick(category.id, category.name)
                       }
                     >
                       <Delete />
-                    </IconButton>
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}
@@ -296,6 +298,18 @@ const ManageCategories: React.FC = () => {
             p: 4,
           }}
         >
+            <IconButton
+          aria-label="close"
+          onClick={handleCloseModal}
+          sx={{
+            position: "absolute",
+            top: 8,
+            right: 8,
+            color: (theme) => theme.palette.error.main,
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
           <Typography variant="h6" gutterBottom>
             {isEdit ? "Edit Category" : "Add Category"}
           </Typography>
@@ -324,7 +338,7 @@ const ManageCategories: React.FC = () => {
             helperText={errors.description}
           />
           <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
-            <Button onClick={handleCloseModal} sx={{ mr: 1 }}>
+            <Button onClick={handleCloseModal} sx={{ mr: 1,color:"red" }}>
               Cancel
             </Button>
             <Button variant="contained" color="primary" onClick={handleSubmit}>

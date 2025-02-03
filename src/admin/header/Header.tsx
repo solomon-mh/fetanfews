@@ -14,6 +14,8 @@ import { ColorContext } from "../../contexts/ColorContext";
 import "./header.scss";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
+import { Logout } from "../../api/auth";
+import { useNavigate } from "react-router-dom";
 
 // import images
 
@@ -21,12 +23,13 @@ function Header({ onToggleSidebar }) {
   const [unreadNotifications, setUnreadNotifications] = useState(0);
   const [notificationList, setNotificationList] = useState([]);
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
   // color state management using react context
   const { darkMode, dispatch } = useContext(ColorContext);
   const handleToggle = () => {
     onToggleSidebar(); // Call the prop function to toggle sidebar visibility
   };
-  const { user } = useAuth();
+  const { user,setLoggedin } = useAuth();
 
   // Fetch unread notifications count
   const fetchNotifications = async () => {
@@ -56,16 +59,20 @@ function Header({ onToggleSidebar }) {
   useEffect(() => {
     fetchNotifications();
   }, []);
-  const handleLogout = () => {
-   return
- }
+  const handleLogout = async () => {
+    await Logout()
+    setLoggedin(false);
+    navigate("/admin/login")
+
+
+  }
   return (
     <div className="admin-navbar">
       <div className="navbar_main">
         <div className="logo">
         <MenuIcon className="menu_icon" onClick={handleToggle} />
 
-          <Link to="/admin" style={{ textDecoration: "none" }}>
+          <Link to="admin/dashboard" style={{ textDecoration: "none" }}>
             <h3 className="text_none">Admin Dashboard</h3>
           </Link>
         </div>
@@ -83,19 +90,22 @@ function Header({ onToggleSidebar }) {
             <>
             <div>
                 {/* <em>Well Come:{user?.username.toUpperCase()}</em> */}
-                <em>Well Come:{user?.first_name.toUpperCase()}</em>
+                <em>WELCOME, {user?.first_name.toUpperCase()} </em>
 
-                      |
+                      /
             </div>
           
-
-            <div>
-                <Link to="/logout" className="link" style={{ textDecoration: "none" }} onClick={handleLogout}>
-                <em>Logout </em>
+            <Link to="/" className="link" style={{ textDecoration: "none" }}>
+                <em>  VEIW SITE  </em>
                   </Link>
-                |
+                /
+            <div>
+                <Link to=" " className="link" style={{ textDecoration: "none" }} onClick={handleLogout}>
+                <em> LOGOUT  </em>
+                  </Link>
+                /
                 <Link className="link" to="/change-pass" style={{ textDecoration: "none" }}>
-                <em>change password </em>
+                <em> CHANGE PASSWORD  </em>
                   </Link>
                   
               </div>
@@ -104,9 +114,9 @@ function Header({ onToggleSidebar }) {
           ):(<>
             <div>
                 <Link className="link" to="/login" style={{ textDecoration: "none" }}>
-                <em>Login </em>
+                <em> Login </em>
                   </Link>
-                  |
+                  /
             </div>
             <div>
                

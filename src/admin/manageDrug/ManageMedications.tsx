@@ -11,7 +11,6 @@ import {
   TableRow,
   Paper,
   Typography,
-  Avatar,
   Button,
   TextField,
   Box,
@@ -63,6 +62,7 @@ const ManageMedications: React.FC = () => {
 
   const handleOpenForm = (medication: medicationType | null = null) => {
     if (medication) {
+      
       setIsEdit(true);
       setSelectedMedication(medication);
     } else {
@@ -79,6 +79,7 @@ const ManageMedications: React.FC = () => {
     try {
       const data = await fetchMedicationsData();
       setMedications(data);
+      console.log("medaction from manage", data);
     } catch (error) {
       showSnackbar("Failed to fetch medications.", "error");
     }
@@ -231,11 +232,13 @@ const ManageMedications: React.FC = () => {
                 <TableRow key={medication.id}>
                   <TableCell>
                     <img
-                      src={
-                        medication.image
-                         
-                      }
+                      src={`http://127.0.0.1:8000${medication.image}`} // Ensure full URL
                       alt="No image"
+                      style={{
+                        width: "50px",
+                        height: "50px",
+                        objectFit: "cover",
+                      }}
                     />
                   </TableCell>
                   <TableCell>{medication.name}</TableCell>
