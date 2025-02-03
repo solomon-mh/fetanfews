@@ -77,8 +77,9 @@ const AddMedicationModal: React.FC<AddMedicationModalProps> = ({
     fetchCategories();
   }, []);
 
-  if (isEdit) {
-    if (medication) {
+  useEffect(() => {
+    if (isEdit && medication) {
+      console.log("editing medication", medication);
       setFormData({
         name: medication.name,
         price: Number(medication.price),
@@ -95,7 +96,25 @@ const AddMedicationModal: React.FC<AddMedicationModalProps> = ({
         image: null,
       });
     }
-  }
+    else {
+      setFormData({
+        name: "",
+        price: 1,
+        description: "",
+        category: "",
+        dosage_form: "",
+        dosage_strength: "",
+        manufacturer: "",
+        expiry_date: "",
+        prescription_required: false,
+        side_effects: "",
+        usage_instructions: "",
+        quantity_available: 1,
+        image: null,
+      });
+    }
+  }, [isEdit, medication]); // Run only when `isEdit` or `medication` changes
+  
 
   const handleInputChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -154,7 +173,7 @@ const AddMedicationModal: React.FC<AddMedicationModalProps> = ({
     <Modal open={open} onClose={handleClose}>
       <Box sx={style}>
         <Typography variant="h6" component="h2" marginBottom={2}>
-          Add Medication
+          {isEdit?"Edit Medication" :"Add Medication"} 
         </Typography>
         <IconButton
           aria-label="close"

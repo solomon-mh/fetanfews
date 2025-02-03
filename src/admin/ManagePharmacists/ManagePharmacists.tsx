@@ -27,6 +27,9 @@ import {
 import { fetchUsers } from "../../api/auth";
 import SnackbarComponent from "../modals/SnackbarComponent";
 import SearchIcon from "@mui/icons-material/Search";
+import CloseIcon from "@mui/icons-material/Close";
+
+import DeleteModal from "../modals/DeleteModal";
 
 type FormData = {
   user: string;
@@ -40,6 +43,7 @@ const ManagePharmacists: React.FC = () => {
   const [filteredPharmacists, setFilteredPharmacists] = useState([]);
   const [users, setUsers] = useState([]);
   const [pharmacies, setPharmacies] = useState([]);
+  const[pharmacistName,setPharmacistName]=useState<string>('')
   const [modalOpen, setModalOpen] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [formData, setFormData] = useState<FormData>({
@@ -59,6 +63,7 @@ const ManagePharmacists: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState(""); 
   const [page, setPage] = useState(0); 
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [isDelModalOpen, setIsDelModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
     fetchPharmacists();
@@ -157,11 +162,18 @@ const ManagePharmacists: React.FC = () => {
       showSnackbar(`Failed to submit pharmacist data. ${error.response?.data?.message || error.message}`, "error");
     }
   };
-
-  const handleDelete = async (id: number) => {
-    if (window.confirm("Are you sure you want to delete this pharmacist?")) {
+  const handleDeleteClick = (id: number, name: string) => {
+    setSelectedPharmacist(id);
+    setPharmacistName(name);
+    setIsDelModalOpen(true);
+  };
+  const handleDelModalClose = () => {
+    setIsDelModalOpen(false);
+  };
+  const handleDelete = async () => {
+    if (selectedPharmacist) {
       try {
-        await deletePharmacist(id);
+        await deletePharmacist(selectedPharmacist);
         showSnackbar("Pharmacist deleted successfully.", "success");
         fetchPharmacists();
       } catch (error) {
@@ -254,12 +266,20 @@ const ManagePharmacists: React.FC = () => {
                   <TableCell>{pharmacist.pharmacy_name}</TableCell>
                   <TableCell>{pharmacist.license_number}</TableCell>
                   <TableCell>
-                    <IconButton onClick={() => handleOpenModal(pharmacist)}>
+                    <Button
+                      onClick={() => handleOpenModal(pharmacist)}
+                      title={`Edit ${pharmacist.user_name}`}
+                    >
                       <Edit />
-                    </IconButton>
-                    <IconButton onClick={() => handleDelete(pharmacist.id)}>
+                    </Button>
+                    <Button
+                      style={{
+                        color: "red",
+                      }}
+                      onClick={() => handleDeleteClick(pharmacist.id, pharmacist.user_name)}
+                      title={`Delete ${pharmacist.user_name}`}>
                       <Delete />
-                    </IconButton>
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}
@@ -295,6 +315,18 @@ const ManagePharmacists: React.FC = () => {
             gap: 2, // Spacing between elements
           }}
         >
+            <IconButton
+          aria-label="close"
+          onClick={handleCloseModal}
+          sx={{
+            position: "absolute",
+            top: 8,
+            right: 8,
+            color: (theme) => theme.palette.error.main,
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
           <Typography
             variant="h6"
             sx={{
@@ -432,7 +464,7 @@ const ManagePharmacists: React.FC = () => {
             <Button
               onClick={handleCloseModal}
               sx={{
-                color: "text.secondary",
+                color: "red",
                 textTransform: "none",
               }}
             >
@@ -458,6 +490,12 @@ const ManagePharmacists: React.FC = () => {
         message={snackbar.message}
         type={snackbar.type}
         onClose={() => setSnackbar({ ...snackbar, open: false })}
+      />
+        <DeleteModal
+        isOpen={isDelModalOpen}
+        onClose={handleDelModalClose}
+        handleDelete={handleDelete}
+        itemName={pharmacistName}
       />
     </div>
   );

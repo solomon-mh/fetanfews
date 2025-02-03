@@ -18,7 +18,7 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Edit } from "@mui/icons-material";
 import AddPharmacyModal from "../modals/AddPharmacyModal";
-import DeleteModal from "../modals/DeletePharmacy";
+import DeleteModal from "../modals/DeleteModal";
 import SearchIcon from "@mui/icons-material/Search";
 import { pharmacyFormData, pharmacyType } from "../../utils/interfaces";
 import {
@@ -37,6 +37,8 @@ const ManagePharmacies: React.FC = () => {
   const [openForm, setOpenForm] = useState<boolean>(false);
   const [isDelModalOpen, setIsDelModalOpen] = useState<boolean>(false);
   const [deleteId, setDeleteId] = useState<number>(0);
+  const [pharmacyName, setPharmacyName] = useState<string>("");
+
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [selectedPharmacy, setSelectedPharmacy] = useState<pharmacyType | null>(
     null
@@ -61,7 +63,7 @@ const ManagePharmacies: React.FC = () => {
     website: "",
     operating_hours: "",
     delivery_available: false,
-    status:"",
+    status: "",
     latitude: "",
     longitude: "",
     image: null,
@@ -91,7 +93,7 @@ const ManagePharmacies: React.FC = () => {
         website: pharmacy.website || "",
         operating_hours: pharmacy.operating_hours || "",
         delivery_available: pharmacy.delivery_available || false,
-        status:pharmacy.status ||"",
+        status: pharmacy.status || "",
         latitude: pharmacy.latitude || "",
         longitude: pharmacy.longitude || "",
         image: pharmacy.image || null,
@@ -112,7 +114,7 @@ const ManagePharmacies: React.FC = () => {
         latitude: "",
         longitude: "",
         image: null,
-        status:"",
+        status: "",
       });
     }
     setOpenForm(true);
@@ -133,8 +135,7 @@ const ManagePharmacies: React.FC = () => {
       latitude: "",
       longitude: "",
       image: null,
-      status:"",
-
+      status: "",
     });
   };
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -174,7 +175,6 @@ const ManagePharmacies: React.FC = () => {
       pharmacy.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       pharmacy.address.toLowerCase().includes(searchQuery.toLowerCase())
   );
-  
 
   // Paginate the filtered pharmacies
   const paginatedPharmacies = filteredPharmacies.slice(
@@ -194,8 +194,9 @@ const ManagePharmacies: React.FC = () => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
-  const handleDeleteClick = (id: number) => {
+  const handleDeleteClick = (id: number, name: string) => {
     setDeleteId(id);
+    setPharmacyName(name);
     setIsDelModalOpen(true);
   };
   const handleDelModalClose = () => {
@@ -259,7 +260,7 @@ const ManagePharmacies: React.FC = () => {
 
                 <TableCell>email</TableCell>
                 <TableCell>Status</TableCell>
-                
+
                 <TableCell>Oprating hour</TableCell>
                 <TableCell>Delivery avliable</TableCell>
                 <TableCell>Latitude</TableCell>
@@ -272,10 +273,7 @@ const ManagePharmacies: React.FC = () => {
               {paginatedPharmacies.map((pharmacy) => (
                 <TableRow key={pharmacy.id}>
                   <TableCell>
-                    <img
-                      src={pharmacy.image}
-                      alt="No Image"
-                    />
+                    <img src={pharmacy.image} alt="No Image" />
                   </TableCell>
                   <TableCell>{pharmacy.name}</TableCell>
                   <TableCell>{pharmacy.address}</TableCell>
@@ -285,7 +283,9 @@ const ManagePharmacies: React.FC = () => {
                   <TableCell>{pharmacy.email}</TableCell>
                   <TableCell>{pharmacy.status}</TableCell>
                   <TableCell>{pharmacy.operating_hours}</TableCell>
-                  <TableCell>{pharmacy.delivery_available?"Yes":"No"}</TableCell>
+                  <TableCell>
+                    {pharmacy.delivery_available ? "Yes" : "No"}
+                  </TableCell>
                   <TableCell>{pharmacy.latitude}</TableCell>
                   <TableCell>{pharmacy.longitude}</TableCell>
                   <TableCell>{pharmacy.website}</TableCell>
@@ -300,7 +300,9 @@ const ManagePharmacies: React.FC = () => {
                     </Button>
                     <Button
                       className="delete"
-                      onClick={() => handleDeleteClick(pharmacy.id)}
+                      onClick={() =>
+                        handleDeleteClick(pharmacy.id, pharmacy.name)
+                      }
                       title={`Delete ${pharmacy.name}`}
                     >
                       <DeleteIcon style={{ color: "red" }} />
@@ -334,6 +336,7 @@ const ManagePharmacies: React.FC = () => {
         isOpen={isDelModalOpen}
         onClose={handleDelModalClose}
         handleDelete={handleDelete}
+        itemName={pharmacyName}
       />
 
       <SnackbarComponent
