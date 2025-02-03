@@ -8,12 +8,22 @@ import {
   AccountCircle as AccountCircleIcon,
   SettingsRounded as SettingsRoundedIcon,
 } from "@mui/icons-material";
+import ItemLists from "../ItemList/ItemList";
 
 const AdminHome: React.FC = () => {
   return (
     <div className="dashboard-index">
       <h1 className="welcome">Welcome to Admin Dashboard</h1>
-      <p className="subtitle">Manage pharmacies, drugs, users, and analytics effectively.</p>
+
+      <div className="home_items">
+        <ItemLists type="totalPharmacies" />
+        <ItemLists type="approvedPharmacies" />
+        <ItemLists type="pendingPharmacies" />
+        <ItemLists type="rejectedPharmacies" />
+      </div>
+      <p className="subtitle">
+        Manage pharmacies, drugs, users, and analytics effectively.
+      </p>
 
       <div className="quick-links">
         <div className="card">

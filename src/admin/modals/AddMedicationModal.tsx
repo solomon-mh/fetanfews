@@ -11,6 +11,7 @@ import {
   IconButton,
   Switch,
   FormControlLabel,
+  Autocomplete,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { medicationSchema } from "../../utils/validateForm";
@@ -26,9 +27,9 @@ interface AddMedicationModalProps {
 }
 type FormData = {
   name: string;
-  price: string;
+  price: number;
   description: string;
-  category: string;
+  category: string | number;
   dosage_form: string;
   dosage_strength: string;
   manufacturer: string;
@@ -36,7 +37,7 @@ type FormData = {
   prescription_required: boolean;
   side_effects: string;
   usage_instructions: string;
-  quantity_available: string;
+  quantity_available: number;
   image: File | null;
 }
 const AddMedicationModal: React.FC<AddMedicationModalProps> = ({
@@ -48,7 +49,7 @@ const AddMedicationModal: React.FC<AddMedicationModalProps> = ({
 }) => {
   const [formData, setFormData] = useState<FormData>({
     name: "",
-    price: "",
+    price: 1,
     description: "",
     category: "",
     dosage_form: "",
@@ -58,7 +59,7 @@ const AddMedicationModal: React.FC<AddMedicationModalProps> = ({
     prescription_required: false,
     side_effects: "",
     usage_instructions: "",
-    quantity_available: "",
+    quantity_available: 1,
     image: null,
   });
 
@@ -80,9 +81,9 @@ const AddMedicationModal: React.FC<AddMedicationModalProps> = ({
     if (medication) {
       setFormData({
         name: medication.name,
-        price: medication.price.toString(),
+        price: Number(medication.price),
         description: medication.description,
-        category: medication.category.toString(),
+        category: medication.category,
         dosage_form: medication.dosage_form,
         dosage_strength: medication.dosage_strength,
         manufacturer: medication.manufacturer,
@@ -90,7 +91,7 @@ const AddMedicationModal: React.FC<AddMedicationModalProps> = ({
         prescription_required: medication.prescription_required,
         side_effects: medication.side_effects,
         usage_instructions: medication.usage_instructions,
-        quantity_available: medication.quantity_available.toString(),
+        quantity_available: Number(medication.quantity_available),
         image: null,
       });
     }
@@ -181,27 +182,27 @@ const AddMedicationModal: React.FC<AddMedicationModalProps> = ({
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
-              label="Category"
-              name="category"
-              select
-              value={formData.category}
-              onChange={handleInputChange}
-              fullWidth
-              error={!!errors.category}
-              helperText={errors.category}
-            >
-              {categories && categories.length > 0 ? (
-                categories.map((category) => (
-                  <MenuItem key={category.id} value={category.id}>
-                    {category.name}
-                  </MenuItem>
-                ))
-              ) : (
-                <MenuItem disabled>No categories available</MenuItem>
-              )}
-            </TextField>
-          </Grid>
+  <Autocomplete
+    options={categories}
+    getOptionLabel={(option) => option.name || ""}
+    isOptionEqualToValue={(option, value) => option.id === value.id}
+    value={categories.find((cat) => cat.id === formData.category) || null}
+    onChange={(event, newValue) => {
+      setFormData({
+        ...formData,
+        category: newValue ? newValue.id : "", 
+      });
+    }}
+    renderInput={(params) => (
+      <TextField
+        {...params}
+        label="Category"
+        error={!!errors.category}
+        helperText={errors.category}
+      />
+    )}
+  />
+</Grid>
           <Grid item xs={12} sm={6}>
             <TextField
               label="Price"

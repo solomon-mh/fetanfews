@@ -37,7 +37,7 @@ const Header = () => {
           </li>
 
           <li>
-            {loggedin ? (
+            {user || loggedin ? (
               <Link className="link" to='' onClick={handleLogout} title={user?.first_name}>
                 Logout 
               </Link>

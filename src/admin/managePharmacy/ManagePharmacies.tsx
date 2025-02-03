@@ -273,10 +273,9 @@ const ManagePharmacies: React.FC = () => {
               {paginatedPharmacies.map((pharmacy) => (
                 <TableRow key={pharmacy.id}>
                   <TableCell>
-                    <Avatar
+                    <img
                       src={pharmacy.image}
-                      alt={pharmacy.name}
-                      sx={{ width: 56, height: 56 }}
+                      alt="No Image"
                     />
                   </TableCell>
                   <TableCell>{pharmacy.name}</TableCell>

@@ -19,6 +19,7 @@ const Login: React.FC = () => {
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
 
+
   // Regex for email and phone validation
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const phoneRegex = /^\d{10,15}$/;
@@ -30,6 +31,7 @@ const Login: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("from",from)
 
     // Validation logic in handleSubmit
     if (!emailRegex.test(formData.username) && !phoneRegex.test(formData.username)) {

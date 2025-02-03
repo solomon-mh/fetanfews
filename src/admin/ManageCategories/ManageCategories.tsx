@@ -13,10 +13,8 @@ import {
   TextField,
   Box,
   Typography,
- 
   InputAdornment,
   TablePagination,
-
 } from "@mui/material";
 import { Edit, Delete } from "@mui/icons-material";
 import {
@@ -28,6 +26,7 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import { CategoryType } from "../../utils/interfaces";
 import SnackbarComponent from "../modals/SnackbarComponent";
+import DeleteModal from "../modals/DeleteModal";
 
 type FormData = {
   name: string;
@@ -37,7 +36,7 @@ type FormData = {
 const ManageCategories: React.FC = () => {
   const [categories, setCategories] = useState<CategoryType[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
-   const [page, setPage] = useState(0); 
+  const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [isEdit, setIsEdit] = useState<boolean>(false);
@@ -46,6 +45,8 @@ const ManageCategories: React.FC = () => {
     description: "",
   });
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+  const [isDelModalOpen, setIsDelModalOpen] = useState<boolean>(false);
+  const [categoryName, setCategoryName] = useState<string>("");
   const [errors, setErrors] = useState({ name: "", description: "" });
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -105,11 +106,18 @@ const ManageCategories: React.FC = () => {
       }
     }
   };
-
-  const handleDelete = async (id: number) => {
-    if (window.confirm("Are you sure you want to delete this category?")) {
+  const handleDeleteClick = (id: number, name: string) => {
+    setSelectedCategory(id);
+    setCategoryName(name);
+    setIsDelModalOpen(true);
+  };
+  const handleDelModalClose = () => {
+    setIsDelModalOpen(false);
+  };
+  const handleDelete = async () => {
+    if (selectedCategory) {
       try {
-        await deleteCategroy(id);
+        await deleteCategroy(selectedCategory);
         showSnackbar("Category deleted successfully.", "success");
         fetchCategories();
       } catch (error) {
@@ -117,7 +125,7 @@ const ManageCategories: React.FC = () => {
       }
     }
   };
- const handleChangePage = (
+  const handleChangePage = (
     event: React.MouseEvent<HTMLButtonElement> | null,
     newPage: number
   ) => {
@@ -238,39 +246,42 @@ const ManageCategories: React.FC = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredCategories.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+            {filteredCategories
+              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((category) => (
-              <TableRow key={category.id}>
-                <TableCell>{category.name}</TableCell>
-                <TableCell>{category.description}</TableCell>
-                <TableCell>
-                  <IconButton
-                    color="primary"
-                    onClick={() => handleOpenModal(category)}
-                  >
-                    <Edit />
-                  </IconButton>
-                  <IconButton
-                    color="secondary"
-                    onClick={() => handleDelete(category.id)}
-                  >
-                    <Delete />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            ))}
+                <TableRow key={category.id}>
+                  <TableCell>{category.name}</TableCell>
+                  <TableCell>{category.description}</TableCell>
+                  <TableCell>
+                    <IconButton
+                      color="primary"
+                      onClick={() => handleOpenModal(category)}
+                    >
+                      <Edit />
+                    </IconButton>
+                    <IconButton
+                      color="secondary"
+                      onClick={() =>
+                        handleDeleteClick(category.id, category.name)
+                      }
+                    >
+                      <Delete />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </TableContainer>
-        <TablePagination
-              rowsPerPageOptions={[5, 10, 25]}
-              component="div"
-              count={filteredCategories.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-            />
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25]}
+        component="div"
+        count={filteredCategories.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
       {/* Add/Edit Modal */}
       <Modal open={modalOpen} onClose={handleCloseModal}>
         <Box
@@ -328,6 +339,12 @@ const ManageCategories: React.FC = () => {
         message={snackbar.message}
         type={snackbar.type}
         onClose={closeSnackbar}
+      />
+      <DeleteModal
+        isOpen={isDelModalOpen}
+        onClose={handleDelModalClose}
+        handleDelete={handleDelete}
+        itemName={categoryName}
       />
     </div>
   );

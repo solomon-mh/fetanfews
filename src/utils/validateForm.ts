@@ -72,7 +72,7 @@ export const medicationSchema = z.object({
   name: z.string().nonempty("Name is required"),
   price: z.number().min(0, "Price must be a positive number"),
   description: z.string().optional(),
-  category: z.string().nonempty("Category is required"),
+  category: z.number().refine((val) => val !== null && val !== undefined, { message: "Category is required" }),
   dosage_form: z.string().nonempty("Dosage form is required"),
   dosage_strength: z.string().nonempty("Dosage strength is required"),
   manufacturer: z.string().nonempty("Manufacturer is required"),

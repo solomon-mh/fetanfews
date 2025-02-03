@@ -8,7 +8,7 @@ import NotFound from "./pages/NotFound";
 import SearchResultsPage from "./pages/SearchResults/SearchResults";
 import MainLayout from "./layouts/MainLayout";
 import AdminLayout from "./layouts/AdminLayout";
-import AdminHome from "./pages/AdminDashboard/AdminDashboard";
+import AdminHome from "./admin/AdminDashboard/AdminDashboard";
 import { PharmacyContextProvider } from "./contexts/PharmacyContext";
 import { pharmacies } from "./data/pharmacies";
 import { calculateDistance } from "./utils/calculations";
@@ -63,7 +63,9 @@ function App() {
         <Route
           element={
             <PharmacyContextProvider>
-              <AdminLayout />
+              <PrivateRoute>
+                <AdminLayout />
+              </PrivateRoute>
             </PharmacyContextProvider>
           }
         >
@@ -72,12 +74,15 @@ function App() {
             path="/admin/manage-pharmacies"
             element={<ManagePharmacies />}
           />
+          <Route path="/admin/manage-drugs" element={<ManageMedications />} />
           <Route
-            path="/admin/manage-drugs"
-            element={<ManageMedications />}
+            path="/admin/manage-categories"
+            element={<ManageCategories />}
           />
-          <Route path='/admin/manage-categories' element={<ManageCategories />} />
-          <Route path='/admin/manage-pharmacists' element={<ManagePharmacists/>}/>
+          <Route
+            path="/admin/manage-pharmacists"
+            element={<ManagePharmacists />}
+          />
         </Route>
       </Routes>
     </Router>

@@ -56,12 +56,7 @@ const AdminLayout: React.FC = () => {
         </div>
 
         <main>
-          <div className="home_items">
-            <ItemLists type="totalPharmacies" />
-            <ItemLists type="approvedPharmacies" />
-            <ItemLists type="pendingPharmacies" />
-            <ItemLists type="rejectedPharmacies" />
-          </div>
+       
           <Outlet />
         </main>
       </div>

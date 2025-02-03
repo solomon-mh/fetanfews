@@ -239,7 +239,7 @@ const ManagePharmacists: React.FC = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>User</TableCell>
+              <TableCell>Pharmacist</TableCell>
               <TableCell>Pharmacy</TableCell>
               <TableCell>License Number</TableCell>
               <TableCell>Actions</TableCell>

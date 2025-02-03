@@ -21,7 +21,7 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Edit } from "@mui/icons-material";
 import AddMedicationModal from "../modals/AddMedicationModal";
-import DeleteMedicationModal from "../modals/DeleteMedicationModal";
+import DeleteModal from "../modals/DeleteModal";
 import SearchIcon from "@mui/icons-material/Search";
 import { medicationType } from "../../utils/interfaces";
 import {
@@ -31,6 +31,10 @@ import {
   deleteMedication,
 } from "../../api/pharmacyService";
 import SnackbarComponent from "../modals/SnackbarComponent";
+import { useAuth } from "../../contexts/AuthContext";
+import axios from "axios";
+import Tooltip from "@mui/material/Tooltip";
+
 const ManageMedications: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [medications, setMedications] = useState<medicationType[]>([]);
@@ -48,6 +52,8 @@ const ManageMedications: React.FC = () => {
     message: "",
     type: "success" as "success" | "error",
   });
+
+  const { user } = useAuth();
   const showSnackbar = (message: string, type: "success" | "error") => {
     setSnackbar({ open: true, message, type });
   };
@@ -91,7 +97,24 @@ const ManageMedications: React.FC = () => {
       fetchMedications();
       handleCloseForm();
     } catch (error) {
-      showSnackbar("Failed to submit the medacation data.", "error");
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          const errorMessage =
+            error.response.data.detail ||
+            "Failed to submit the medication data.";
+          showSnackbar(errorMessage, "error");
+        } else if (error.request) {
+          showSnackbar(
+            "No response from the server. Please try again later.",
+            "error"
+          );
+        } else {
+          showSnackbar(
+            "An unexpected error occurred. Please try again.",
+            "error"
+          );
+        }
+      }
     }
   };
 
@@ -99,7 +122,7 @@ const ManageMedications: React.FC = () => {
   const filteredMedications = medications.filter(
     (medication) =>
       medication.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (medication.category || "")
+      (medication.category_name || "")
         .toLowerCase()
         .includes(searchQuery.toLowerCase())
   );
@@ -146,7 +169,7 @@ const ManageMedications: React.FC = () => {
   useEffect(() => {
     fetchMedications();
   }, []);
-  
+
   return (
     <>
       <div className="manage-medications">
@@ -170,15 +193,17 @@ const ManageMedications: React.FC = () => {
               ),
             }}
           />
-          <Button
-            className="add-button"
-            variant="contained"
-            color="primary"
-            size="large"
-            onClick={() => handleOpenForm()}
-          >
-            Add Medication
-          </Button>
+          {user?.role === "pharmacist" && (
+            <Button
+              className="add-button"
+              variant="contained"
+              color="primary"
+              size="large"
+              onClick={() => handleOpenForm()}
+            >
+              Add Medication
+            </Button>
+          )}
         </Box>
 
         <TableContainer className="table-container" component={Paper}>
@@ -205,18 +230,16 @@ const ManageMedications: React.FC = () => {
               {paginatedMedications.map((medication) => (
                 <TableRow key={medication.id}>
                   <TableCell>
-                    <Avatar
+                    <img
                       src={
                         medication.image
-                          ? URL.createObjectURL(medication.image)
-                          : undefined
+                         
                       }
-                      alt={medication.name}
-                      sx={{ width: 56, height: 56 }}
+                      alt="No image"
                     />
                   </TableCell>
                   <TableCell>{medication.name}</TableCell>
-                  <TableCell>{medication.category}</TableCell>
+                  <TableCell>{medication.category_name}</TableCell>
                   <TableCell>{medication.price} Birr</TableCell>
                   <TableCell>
                     {medication.stock_status ? "In Stock" : "Out of Stock"}
@@ -228,8 +251,68 @@ const ManageMedications: React.FC = () => {
                   <TableCell>
                     {medication.prescription_required ? "Yes" : "NO"}
                   </TableCell>
-                  <TableCell>{medication.side_effects}</TableCell>
-                  <TableCell>{medication.usage_instructions}</TableCell>
+                  <TableCell>
+                    <Tooltip
+                      title={medication.side_effects}
+                      arrow
+                      componentsProps={{
+                        tooltip: {
+                          sx: {
+                            backgroundColor: "#fff",
+                            color: "#333",
+                            fontSize: "0.875rem",
+                            padding: "10px",
+                            maxWidth: "300px",
+                            whiteSpace: "normal",
+                            textAlign: "center",
+                          },
+                        },
+                      }}
+                    >
+                      <span
+                        style={{
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          display: "block",
+                          maxWidth: "200px",
+                        }}
+                      >
+                        {medication.side_effects}
+                      </span>
+                    </Tooltip>
+                  </TableCell>
+                  <TableCell>
+                    <Tooltip
+                      title={medication.usage_instructions}
+                      arrow
+                      componentsProps={{
+                        tooltip: {
+                          sx: {
+                            backgroundColor: "#fff",
+                            color: "#333",
+                            fontSize: "0.875rem",
+                            padding: "10px",
+                            maxWidth: "300px",
+                            whiteSpace: "normal",
+                            textAlign: "center",
+                          },
+                        },
+                      }}
+                    >
+                      <span
+                        style={{
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          display: "block",
+                          maxWidth: "200px",
+                        }}
+                      >
+                        {medication.usage_instructions}
+                      </span>
+                    </Tooltip>
+                  </TableCell>
                   <TableCell>{medication.quantity_available}</TableCell>
                   <TableCell className="action-buttons">
                     <Button
@@ -273,11 +356,11 @@ const ManageMedications: React.FC = () => {
         medication={selectedMedication}
         isEdit={isEdit}
       />
-      <DeleteMedicationModal
+      <DeleteModal
         isOpen={isDelModalOpen}
         onClose={handleDelModalClose}
         handleDelete={handleDelete}
-        medicationName={medicationName}
+        itemName={medicationName}
       />
       <SnackbarComponent
         open={snackbar.open}

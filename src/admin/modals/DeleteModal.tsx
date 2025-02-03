@@ -1,21 +1,23 @@
 import React from "react";
-import { Modal, Box, Typography, Button } from "@mui/material";
+import { Modal, Box, Typography, Button, IconButton } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 
-interface DeleteMedicationModalProps {
+
+interface DeleteModalProps {
   isOpen: boolean;
   onClose: () => void;
   handleDelete: () => void;
-  medicationName: string;
+  itemName: string;
 }
 
-const DeleteMedicationModal: React.FC<DeleteMedicationModalProps> = ({
+const DeleteModal: React.FC<DeleteModalProps> = ({
   isOpen,
   onClose,
   handleDelete,
-  medicationName,
+  itemName,
 }) => {
   const style = {
-    position: "absolute" as "absolute",
+    position: "absolute",
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
@@ -30,11 +32,23 @@ const DeleteMedicationModal: React.FC<DeleteMedicationModalProps> = ({
   return (
     <Modal open={isOpen} onClose={onClose}>
       <Box sx={style}>
-        <Typography variant="h6" component="h2" marginBottom={2}>
-          Delete Medication
-        </Typography>
+      <IconButton
+          onClick={onClose}
+          style={{
+            position: "absolute",
+            top: 8,
+            right: 8,
+            color:'red',
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
+        <h2 id="confirmation-modal-title">Confirm Deletion</h2>
         <Typography variant="body1" marginBottom={4}>
-          Are you sure you want to delete <strong>{medicationName}</strong>?
+        <p id="confirmation-modal-description">
+          Are you sure you want to <span style={{ color: "red" }}>delete</span>{" "}
+            <strong>{itemName}</strong>? This action cannot be undone.
+            </p>
         </Typography>
         <Box display="flex" justifyContent="space-around">
           <Button variant="outlined" color="secondary" onClick={onClose}>
@@ -49,4 +63,4 @@ const DeleteMedicationModal: React.FC<DeleteMedicationModalProps> = ({
   );
 };
 
-export default DeleteMedicationModal;
+export default DeleteModal;

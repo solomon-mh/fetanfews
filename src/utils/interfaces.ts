@@ -132,7 +132,7 @@ export interface medicationType{
     name: string;
     price: string;
     description: string;
-    category: string;
+    category_name: string;
     dosage_form: string;
     dosage_strength: string;
     manufacturer: string;

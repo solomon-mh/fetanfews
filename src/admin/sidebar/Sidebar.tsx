@@ -34,7 +34,11 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick }) => {
               <DashboardIcon className="icon" /> Home
             </li>
           </Link>
-
+          <Link to="/admin" style={{ textDecoration: "none" }} onClick={onLinkClick}>
+            <li className={pathname === "/admin" ? "active-link" : ""}>
+              <DashboardIcon className="icon" /> Dashboard
+            </li>
+          </Link>
           <p className="spann">Pharmacies</p>
           <Link
             to="/admin/manage-pharmacies"
