@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { api } from "../api/auth";
 
 interface PharmacyContextType {
   numberOfPharmacies: number;
@@ -23,16 +24,16 @@ export const PharmacyContextProvider: React.FC<PharmacyContextProviderProps> = (
 
   const getData = async () => {
     try {
-      // const response = await axios.get("http://127.0.0.1:8000/api/applicant_counts/");
-      // const data = response.data;
+      const response = await api.get("/pharmacy_counts/"); 
+      const data = response.data;
 
-      setNumberOfPharmacies(20);
-      setPendingPharmacies(5);
-      setRejectedPharmacies(10);
-      setApprovedPharmacies(5);
-      setLoading(false);
+      setNumberOfPharmacies(data.total);
+      setPendingPharmacies(data.pending);
+      setRejectedPharmacies(data.rejected);
+      setApprovedPharmacies(data.approved);
     } catch (error) {
       console.error("Error fetching pharmacy counts:", error);
+    } finally {
       setLoading(false);
     }
   };

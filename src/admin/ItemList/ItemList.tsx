@@ -4,7 +4,6 @@ import HowToRegOutlinedIcon from "@mui/icons-material/HowToRegOutlined";
 import PendingActionsOutlinedIcon from "@mui/icons-material/PendingActionsOutlined";
 import HighlightOffOutlinedIcon from "@mui/icons-material/HighlightOffOutlined";
 import React from "react";
-import { Link } from "react-router-dom";
 import "./itemList.scss";
 import { usePharmacyData } from "../../contexts/PharmacyContext";
 import { motion } from "framer-motion";
@@ -15,9 +14,12 @@ interface ItemListsProps {
     | "approvedPharmacies"
     | "pendingPharmacies"
     | "rejectedPharmacies";
+  setSelectedStatus: (
+    status:string
+  ) => void;
 }
 
-const ItemLists: React.FC<ItemListsProps> = ({ type }) => {
+const ItemLists: React.FC<ItemListsProps> = ({ type, setSelectedStatus }) => {
   const {
     numberOfPharmacies,
     pendingPharmacies,
@@ -31,7 +33,7 @@ const ItemLists: React.FC<ItemListsProps> = ({ type }) => {
     count: number;
     icon: JSX.Element | null;
     link: string;
-    linkto: string;
+    status: string 
   };
 
   // Dynamically change the UI content
@@ -40,6 +42,7 @@ const ItemLists: React.FC<ItemListsProps> = ({ type }) => {
       data = {
         title: "TOTAL PHARMACIES",
         count: numberOfPharmacies,
+        status: "all",
         icon: (
           <PermIdentityIcon
             style={{
@@ -50,13 +53,14 @@ const ItemLists: React.FC<ItemListsProps> = ({ type }) => {
           />
         ),
         link: "See all Pharmacies",
-        linkto: "/admin",
       };
       break;
     case "approvedPharmacies":
       data = {
         title: "APPROVED PHARMACIES",
         count: approvedPharmacies,
+        status: "Approved",
+
         icon: (
           <HowToRegOutlinedIcon
             style={{
@@ -67,13 +71,14 @@ const ItemLists: React.FC<ItemListsProps> = ({ type }) => {
           />
         ),
         link: "View approved Pharmacies",
-        linkto: "/admin/Pharmacies/approved",
       };
       break;
     case "pendingPharmacies":
       data = {
         title: "PENDING PHARMACIES",
         count: pendingPharmacies,
+        status: "Pending",
+
         icon: (
           <PendingActionsOutlinedIcon
             style={{
@@ -84,13 +89,14 @@ const ItemLists: React.FC<ItemListsProps> = ({ type }) => {
           />
         ),
         link: "View pending Pharmacies",
-        linkto: "/admin/Pharmacies/pending",
       };
       break;
     case "rejectedPharmacies":
       data = {
         title: "REJECTED PHARMACIES",
         count: rejectedPharmacies,
+        status: "Rejected",
+
         icon: (
           <HighlightOffOutlinedIcon
             style={{
@@ -101,16 +107,16 @@ const ItemLists: React.FC<ItemListsProps> = ({ type }) => {
           />
         ),
         link: "View rejected Pharmacies",
-        linkto: "/admin/Pharmacies/rejected",
       };
       break;
     default:
       data = {
         title: "UNKNOWN TYPE",
         count: 0,
+        status: "",
+
         icon: null,
         link: "No link available",
-        linkto: "/",
       };
       break;
   }
@@ -122,7 +128,13 @@ const ItemLists: React.FC<ItemListsProps> = ({ type }) => {
       </p>
     );
   }
+  const handleClick=(status:string) => {
+    setSelectedStatus(status);
+    const newUrl = `/admin/pharmacies?status=${data.status.toLowerCase()}`;
+    window.history.pushState(null, "", newUrl);
 
+
+}
   return (
     <motion.div
       className="item_listss"
@@ -143,9 +155,9 @@ const ItemLists: React.FC<ItemListsProps> = ({ type }) => {
       <div className="counts">{data.count}</div>
 
       <div className="see_item">
-        <Link to={data.linkto}>
+        <button onClick={()=>handleClick(data.status)}>
           <p>{data.link}</p>
-        </Link>
+        </button>
         {data.icon}
       </div>
     </motion.div>

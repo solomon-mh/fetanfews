@@ -9,7 +9,6 @@ import {
   TableRow,
   Paper,
   Typography,
-  Avatar,
   Button,
   TextField,
   Box,
@@ -265,7 +264,7 @@ const ManagePharmacies: React.FC = () => {
                 <TableCell>Delivery avliable</TableCell>
                 <TableCell>Latitude</TableCell>
                 <TableCell>Logitude</TableCell>
-                <TableCell>Web Site</TableCell>
+                <TableCell>WebSite</TableCell>
                 <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>

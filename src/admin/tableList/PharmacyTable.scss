@@ -1,0 +1,74 @@
+.pharmacy-table {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+  
+    h2 {
+      font-size: 1.5rem;
+      color: #333;
+      text-align: center;
+      margin-bottom: 15px;
+    }
+  
+    .no-data {
+      text-align: center;
+      font-size: 1.2rem;
+      color: #777;
+    }
+  
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+  
+      th, td {
+        padding: 12px;
+        border-bottom: 1px solid #ddd;
+        text-align: left;
+      }
+  
+      th {
+        background: #4e9f3d;
+        color: white;
+        font-weight: bold;
+      }
+  
+      tbody tr {
+        &:nth-child(even) {
+          background: #f9f9f9;
+        }
+  
+        &:hover {
+          background: #e1f5e1;
+          cursor: pointer;
+        }
+      }
+  
+      .status {
+        font-weight: bold;
+        text-transform: uppercase;
+        text-align: center;
+        border-radius: 5px;
+        padding: 5px 10px;
+        font-size: 0.9rem;
+  
+        &.approved {
+          background: #4caf50;
+          color: white;
+        }
+  
+        &.pending {
+          background: #ff9800;
+          color: white;
+        }
+  
+        &.rejected {
+          background: #f44336;
+          color: white;
+        }
+      }
+    }
+  }
+  
