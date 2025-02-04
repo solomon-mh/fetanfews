@@ -2,14 +2,24 @@ import "./Navbar.scss";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { Logout } from "../../api/auth";
+import { useEffect } from "react";
 const Header = () => {
   const { user,setLoggedin,loggedin } = useAuth();
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")!) : null;
 
+    if (storedUser) {
+
+      setLoggedin(true);
+    }
+  }, [setLoggedin]);
+  
   const handleLogout = async () => {
     await Logout()
     setLoggedin(false);
 
   }
+
   return (
     <header className="header">
       <nav className="navbar">
@@ -37,7 +47,7 @@ const Header = () => {
           </li>
 
           <li>
-            {user || loggedin ? (
+            {loggedin ? (
               <Link className="link" to='' onClick={handleLogout} title={user?.first_name}>
                 Logout 
               </Link>

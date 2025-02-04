@@ -144,6 +144,16 @@ export interface medicationType{
   image: File | null;
   stock_status: boolean;
 }
+export interface pharmacistType{
+  id: number;
+  user: CustomUser;
+  pharmacy: pharmacyType;
+  license_number: string;
+  license_image:File | null
+
+
+
+}
 export type CategoryType = {
   id: number;
   name: string;

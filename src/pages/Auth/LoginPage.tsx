@@ -44,6 +44,7 @@ const Login: React.FC = () => {
       const response = await login(formData);
       console.log(response.data);
       setLoggedin(true);
+      
       navigate(from, { replace: true });
     } catch (err: any) {
       setError(err.response?.data?.message || "Login failed");

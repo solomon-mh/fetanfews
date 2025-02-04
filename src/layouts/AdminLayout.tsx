@@ -10,13 +10,17 @@ const AdminLayout: React.FC = () => {
   const sidebarRef = useRef<HTMLDivElement>(null);
   const [isSidebarVisible, setIsSidebarVisible] = useState<boolean>(false);
   const { darkMode } = useContext(ColorContext);
+  const [isSidebarShrunk, setIsSidebarShrunk] = useState<boolean>(false);
+
 
   // Toggle sidebar visibility
   const handleToggleSidebar = () => {
     setIsSidebarVisible((prev) => !prev);
-    console.log(isSidebarVisible);
   };
-
+  const handleToggleSidebarShrunk = () => {
+    console.log("Toggle sidebar called" )
+    setIsSidebarShrunk((prev) => !prev);
+  };
   useEffect(() => {
     // Function to close sidebar if clicked outside
     const handleClickOutside = (event: MouseEvent) => {
@@ -45,14 +49,14 @@ const AdminLayout: React.FC = () => {
       //   color: darkMode ? "#fff" : "#000",
       // }}
     >
-      <Header onToggleSidebar={handleToggleSidebar} />
+      <Header onToggleSidebar={handleToggleSidebar} onToggleSidebarShrunk={handleToggleSidebarShrunk} />
 
-      <div className="home_main">
+      <div className={`home_main ${isSidebarShrunk ? "shrunk" : ""}`}>
         <div
           ref={sidebarRef}
-          className={`home_sidebar ${isSidebarVisible ? "visible" : ""}`}
+          className={`home_sidebar ${isSidebarVisible ? "visible" : ""} ${isSidebarShrunk ? "shrunk" : ""}`}
         >
-          <Sidebar onLinkClick={() => setIsSidebarVisible(false)} />
+          <Sidebar onLinkClick={() => setIsSidebarVisible(false)} isShrunk={isSidebarShrunk}/>
         </div>
 
         <main>

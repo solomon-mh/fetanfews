@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from "axios";
 
-import {SignUpData } from "../utils/interfaces";
+import { SignUpData } from "../utils/interfaces";
 
 const URL = "http://localhost:8000/api";
 
@@ -54,6 +54,15 @@ api.interceptors.response.use(
         return api(originalRequest);
       } catch (refreshError) {
         console.error("Error refreshing token:", refreshError);
+        const user_type = localStorage.getItem("user_type");
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("refresh_token");
+        if (user_type === 'admin') {
+          window.location.href = "/admin/login";
+        } else {
+          window.location.href = "/user/login";
+
+        }
         // Optionally: redirect to login or clear authentication state
       }
     }
@@ -63,8 +72,10 @@ api.interceptors.response.use(
 );
 
 export const login = async (data: { username: string; password: string }) => {
-  console.log("login calling",data)
-  const response = await axios.post("http://localhost:8000/api/accounts/token/", data);
+  const response = await axios.post(
+    "http://localhost:8000/api/accounts/token/",
+    data
+  );
   const { refresh, access } = response.data;
   // Store tokens in localStorage
   localStorage.setItem("access_token", access);
@@ -73,40 +84,42 @@ export const login = async (data: { username: string; password: string }) => {
 };
 
 export const userRegister = async (data: SignUpData) => {
-  console.log("userRegister calling")
+  console.log("userRegister calling");
 
   try {
-    const response = await axios.post('http://localhost:8000/api/accounts/register/', data);
+    const response = await axios.post(
+      "http://localhost:8000/api/accounts/register/",
+      data
+    );
     const { refresh, access } = response.data;
     // Store tokens in localStorage
     localStorage.setItem("access_token", access);
     localStorage.setItem("refresh_token", refresh);
-      return response.data;
-  } catch (error:any) {
-    throw new Error(error.response?.data?.message || "Error during registration");
+    return response.data;
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.message || "Error during registration"
+    );
   }
-  }
-  export const getCurrentUser = async () => {
-    const response = await api.get("/accounts/current_user/");
-    return response;
+};
+export const getCurrentUser = async () => {
+  const response = await api.get("/accounts/current_user/");
+  return response;
 };
 export const Logout = async () => {
   try {
+    console.log("/accounts/logout/", localStorage.getItem("access_token"));
 
-    console.log('/accounts/logout/',localStorage.getItem('access_token'));
-
-    await api.post('/accounts/logout/', { refresh_token: localStorage.getItem('refresh_token') })
+    await api.post("/accounts/logout/", {
+      refresh_token: localStorage.getItem("refresh_token"),
+    });
     localStorage.clear();
-    console.log('/accounts/logout/',localStorage.getItem('access_token'));
-    
-  } catch (e) { 
-    console.error('Error logging out:', e)
-
-
+    console.log("/accounts/logout/", localStorage.getItem("access_token"));
+  } catch (e) {
+    console.error("Error logging out:", e);
   }
-}
+};
 export const fetchUsers = async () => {
-  const response = await api.get('/accounts/users');
+  const response = await api.get("/accounts/users");
   return response.data;
-}
-  
+};

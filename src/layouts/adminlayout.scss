@@ -8,6 +8,10 @@
     grid-template-columns: 20% 80%;
     justify-content: center;
     height: 100%;
+   
+  &.shrunk { 
+    grid-template-columns: 10% 90%;
+  }
 
     .home_sidebar.visible {
       display: block;

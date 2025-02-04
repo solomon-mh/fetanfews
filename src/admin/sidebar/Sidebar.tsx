@@ -15,9 +15,10 @@ import { useLocation } from "react-router-dom";
 // import { AuthContext } from '../../contexts/AuthContext';
 interface SidebarProps {
   onLinkClick: () => void;
+  isShrunk: boolean;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ onLinkClick }) => {
+const Sidebar: React.FC<SidebarProps> = ({ onLinkClick,isShrunk }) => {
   const { pathname } = useLocation();
   const { darkMode } = useContext(ColorContext);
   const colorStyle: React.CSSProperties = {
@@ -25,18 +26,18 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick }) => {
   };
   // const {logout} = useContext(AuthContext);
   return (
-    <div className="sidebar">
+    <div className={`sidebar ${isShrunk ? "shrunk" : ""}`}>
       <div className="links">
         <ul>
           <p className="spann">Main</p>
-          <Link to="/" style={{ textDecoration: "none" }} onClick={onLinkClick}>
-            <li className={pathname === "/" ? "active-link" : ""}>
-              <DashboardIcon className="icon" /> Home
-            </li>
-          </Link>
+        
           <Link to="admin/dashboard" style={{ textDecoration: "none" }} onClick={onLinkClick}>
-            <li className={pathname === "admin/dashboard" || pathname === "/admin/pharmacies" ? "active-link" : ""}>
-              <DashboardIcon className="icon" /> Dashboard
+            <li className={pathname === "/admin/dashboard" || pathname === "/admin/pharmacies" ? "active-link" : ""}>
+              <DashboardIcon className="icon" />
+              <span>
+
+              Dashboard
+              </span>
             </li>
           </Link>
           <p className="spann">Pharmacies</p>
@@ -46,7 +47,10 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick }) => {
             onClick={onLinkClick}
           >
             <li  className={pathname === "/admin/manage-pharmacies" ? "active-link" : ""}>
-              <GroupIcon className="icon" /> Manage Pharmacies
+              <GroupIcon className="icon" />
+              <span>
+              Manage Pharmacies
+              </span>
             </li>
           </Link>
           <Link
@@ -55,7 +59,9 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick }) => {
             onClick={onLinkClick}
           >
             <li  className={pathname === "/admin/manage-pharmacists" ? "active-link" : ""}>
-              <GroupIcon className="icon" /> Pharmicists
+              <GroupIcon className="icon" /><span>
+              Pharmicists
+              </span>
             </li>
           </Link>
 
@@ -66,7 +72,11 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick }) => {
             onClick={onLinkClick}
           >
             <li className={pathname === "/admin/manage-categories" ? "active-link" : ""}>
-              <EditIcon className="icon" /> Drug Category
+              <EditIcon className="icon" />
+              <span>
+
+              Drug Category
+              </span>
             </li>
           </Link>
           <Link
@@ -75,7 +85,11 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick }) => {
             onClick={onLinkClick}
           >
             <li className={pathname === "/admin/manage-drugs" ? "active-link" : ""}>
-              <EditIcon className="icon" /> Manage Drugs
+              <EditIcon className="icon" />
+              <span>
+
+              Manage Drugs
+              </span>
             </li>
           </Link>
 
@@ -86,7 +100,10 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick }) => {
             onClick={onLinkClick}
           >
             <li className={pathname === "/admin/users" ? "active-link" : ""}>
-              <GroupIcon className="icon" /> Manage Users
+              <GroupIcon className="icon" />
+              <span>
+              View Users
+              </span>
             </li>
           </Link>
 
@@ -97,7 +114,10 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick }) => {
             onClick={onLinkClick}
           >
             <li className={pathname === "/admin/analytics" ? "active-link" : ""}>
-              <AssessmentIcon className="icon" /> Search Analytics
+              <AssessmentIcon className="icon" />
+              <span>
+              Search Analytics
+              </span>
             </li>
           </Link>
 
@@ -108,7 +128,11 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick }) => {
             onClick={onLinkClick}
           >
             <li className={pathname === "/admin/reports" ? "active-link" : ""}>
-              <AssessmentIcon className="icon" /> Reports
+              <AssessmentIcon className="icon" />
+              <span>
+
+              Reports
+              </span>
             </li>
           </Link>
 
@@ -119,7 +143,10 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick }) => {
             onClick={onLinkClick}
           >
             <li className={pathname === "/admin/settings" ? "active-link" : ""}>
-              <SettingsRoundedIcon className="icon" /> Settings
+              <SettingsRoundedIcon className="icon" />
+              <span>
+              Settings
+              </span>
             </li>
           </Link>
 
@@ -129,12 +156,18 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick }) => {
             onClick={onLinkClick}
           >
             <li className={pathname === "/admin/profile" ? "active-link" : ""}>
-              <AccountCircleIcon className="icon" /> Profile
+              <AccountCircleIcon className="icon" />
+              <span>
+              Profile
+              </span>
             </li>
           </Link>
 
           <li >
-            <LogoutIcon className="icon" /> Log Out
+            <LogoutIcon className="icon" />
+            <span>
+            Log Out
+            </span>
           </li>
         </ul>
       </div>
