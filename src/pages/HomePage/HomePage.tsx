@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import React, {useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { pharmacies } from "../../data/pharmacies";
 import "./HomePage.scss";
@@ -6,33 +7,66 @@ import WhyUseMedLocator from "../../components/common/WhyUseMedLocator";
 import HeroSection from "../../components/HeroSection/HeroSection";
 import PharmacyList from "../../components/PharmacyList/PharmacyList";
 import { calculateDistance } from "../../utils/calculations";
-import { useGeoLocation ,defaultCoordinates} from "../../hooks/useGeoLocation";
-
+import { useGeoLocation, defaultCoordinates } from "../../hooks/useGeoLocation";
+import { fetchCategoriesData } from "../../api/pharmacyService";
+import { CategoryType } from "../../utils/interfaces";
+import { fetchPharmacyData } from "../../api/pharmacyService";
+import { PharmacyDataType } from "../../utils/interfaces";
 const HomePage: React.FC = () => {
   const [visibleCount, setVisibleCount] = useState(5);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [categories, setCategories] = useState<CategoryType[]>([]);
+  const [pharmacies, setPharmacies] = useState<PharmacyDataType[]>([]);
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   const userLocation = useGeoLocation();
 
-  const categories = Array.from(
-    new Set(
-      pharmacies.flatMap((pharmacy) =>
-        pharmacy.available_drugs.map((drug) => drug.category)
-      )
-    )
-  );
 
-  const filteredPharmacies = selectedCategory
-    ? pharmacies.filter((pharmacy) =>
-        pharmacy.available_drugs.some(
-          (drug) => drug.category === selectedCategory
-        )
-      )
-    : pharmacies;
+  
+  useEffect(() => {
+    const getCategories = async () => {
+      try {
+        const data = await fetchCategoriesData();
+        setCategories(data); 
+      } catch (err) {
+        setError("Failed to fetch categories.");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const visiblePharmacies = filteredPharmacies.slice(0, visibleCount);
+    getCategories(); // Call the function on component mount
+  }, []);
+  useEffect(() => {
+    const getPharmacies= async () => {
+      try {
+        const data = await fetchPharmacyData();
+        setPharmacies(data); 
+        console.log("pharmacy data", data);
+      } catch (err) {
+        setError("Failed to fetch pharmacies.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getPharmacies(); 
+  }, []);
+
+  // const filteredPharmacies = selectedCategory
+  //   ? pharmacies.filter((pharmacy) =>
+  //       pharmacy.available_drugs.some(
+  //         (drug) => drug.category === selectedCategory
+  //       )
+  //     )
+  //   : pharmacies;
+
+  const visiblePharmacies = pharmacies.slice(0, visibleCount);
 
   const handleShowAll = () => {
-    setVisibleCount(filteredPharmacies.length);
+    setVisibleCount(pharmacies.length);
   };
 
   // Default coordinates for the map if geolocation fails
@@ -40,6 +74,9 @@ const HomePage: React.FC = () => {
     userLocation.latitude && userLocation.longitude
       ? [userLocation.latitude, userLocation.longitude]
       : defaultCoordinates;
+  
+      if (loading) return <p>Loading ...</p>;
+      if (error) return <p>{error}</p>;
 
   return (
     <div className="home-page">
@@ -50,13 +87,13 @@ const HomePage: React.FC = () => {
         <ul className="categories-list">
           {categories.map((category) => (
             <li
-              key={category}
+              key={category.id}
               className={`category-item ${
-                selectedCategory === category ? "active" : ""
+                selectedCategory === category.name ? "active" : ""
               }`}
-              onClick={() => setSelectedCategory(category)}
+              onClick={() => setSelectedCategory(category.name)}
             >
-              {category}
+              {category.name}
             </li>
           ))}
           <li
@@ -77,10 +114,10 @@ const HomePage: React.FC = () => {
       <PharmacyList
         pharmacies={visiblePharmacies}
         calculateDistance={(lat, lon) =>
-          calculateDistance(lat, lon, userCoordinates[0], userCoordinates[1])
+        calculateDistance(lat, lon, userCoordinates[0], userCoordinates[1])
         }
         onShowAll={handleShowAll}
-        showAllButton={visibleCount < filteredPharmacies.length}
+        showAllButton={visibleCount < pharmacies.length}
       />
 
       {/* Map Section */}
@@ -99,13 +136,13 @@ const HomePage: React.FC = () => {
           <Marker position={userCoordinates}>
             <Popup>Your Location</Popup>
           </Marker>
-          {filteredPharmacies.map((pharmacy) => (
+          {pharmacies.map((pharmacy) => (
             <Marker
-              key={pharmacy.pharmacy_id}
+              key={pharmacy.id}
               position={[pharmacy.latitude, pharmacy.longitude]}
             >
               <Popup>
-                {pharmacy.pharmacy_name}
+                {pharmacy.name}
                 <br />
                 Distance:{" "}
                 {userLocation.latitude && userLocation.longitude

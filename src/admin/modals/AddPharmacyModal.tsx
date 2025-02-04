@@ -6,7 +6,7 @@ import {
   TextField,
   Typography,
   IconButton,
-  MenuItem
+  MenuItem,
 } from "@mui/material";
 import Grid from "@mui/material/Grid";
 
@@ -21,6 +21,7 @@ import {
   Popup,
 } from "react-leaflet";
 import { AddPharmacyModalProps } from "../../utils/interfaces";
+import { pharmacySchema } from "../../utils/validateForm";
 const AddPharmacyModal: React.FC<AddPharmacyModalProps> = ({
   openForm,
   handleCloseForm,
@@ -28,14 +29,25 @@ const AddPharmacyModal: React.FC<AddPharmacyModalProps> = ({
   handleSubmit,
   formData,
   isEdit,
-
 }) => {
+  const [errors, setErrors] = useState<{
+    name?: string;
+    address?: string;
+    phone?: string;
+    email?: string;
+    website?: string;
+    operating_hours?: string;
+    delivery_available?: string;
+    image?: string ;
+    longitude?: string;
+    latitude?: string;
+  }>({});
   const [selectedLocation, setSelectedLocation] = useState({
     lat: 11.5742,
     lng: 37.3614,
   });
 
-  const statuses=["Pending","Approved","Rejected"]
+  const statuses = ["Pending", "Approved", "Rejected"];
   const LocationMarker = () => {
     useMapEvents({
       click(e) {
@@ -43,8 +55,12 @@ const AddPharmacyModal: React.FC<AddPharmacyModalProps> = ({
         const lng = e.latlng.lng;
         setSelectedLocation({ lat, lng });
 
-        handleInputChange({ target: { name: "latitude", value: lat.toString() } });
-        handleInputChange({ target: { name: "longitude", value: lng.toString() } });
+        handleInputChange({
+          target: { name: "latitude", value: lat.toString() },
+        });
+        handleInputChange({
+          target: { name: "longitude", value: lng.toString() },
+        });
       },
     });
 
@@ -53,6 +69,34 @@ const AddPharmacyModal: React.FC<AddPharmacyModalProps> = ({
         <Popup>Your Location</Popup>
       </Marker>
     );
+  };
+
+  const onFormSubmit = () => {
+    // Zod validation
+    const validation = pharmacySchema.safeParse(formData);
+
+    if (!validation.success) {
+      const errorMessages = validation.error.format();
+      setErrors({
+        name: errorMessages.name?._errors[0] || "",
+        address: errorMessages.address?._errors[0] || "",
+        phone: errorMessages.phone?._errors[0] || "",
+        email: errorMessages.email?._errors[0] || "",
+        website: errorMessages.website?._errors[0] || "",
+        operating_hours: errorMessages.operating_hours?._errors[0] || "",
+        delivery_available: errorMessages.delivery_available?._errors[0] || "",
+        image: errorMessages.image?._errors[0] || "",
+        longitude: errorMessages.longitude?._errors[0] || "",
+        latitude: errorMessages.latitude?._errors[0] || "",
+      }
+      );
+
+      return;
+    }
+
+    // If validation succeeds, proceed with form submission
+    setErrors({})
+    handleSubmit();
   };
 
   return (
@@ -96,9 +140,9 @@ const AddPharmacyModal: React.FC<AddPharmacyModalProps> = ({
           }}
         >
           <Typography variant="h6" component="h2" gutterBottom>
-          {isEdit ? "Edit Pharmacy" : "Add Pharmacy"}
+            {isEdit ? "Edit Pharmacy" : "Add Pharmacy"}
           </Typography>
-
+         
           {/* Basic Details Section */}
           <Typography variant="subtitle1" gutterBottom>
             Basic Details
@@ -112,7 +156,8 @@ const AddPharmacyModal: React.FC<AddPharmacyModalProps> = ({
                 name="name"
                 value={formData.name}
                 onChange={handleInputChange}
-                required
+                error={!!errors.name}
+                helperText={errors.name}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -123,7 +168,8 @@ const AddPharmacyModal: React.FC<AddPharmacyModalProps> = ({
                 name="address"
                 value={formData.address}
                 onChange={handleInputChange}
-                required
+                error={!!errors.address}
+                helperText={errors.address}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -134,7 +180,8 @@ const AddPharmacyModal: React.FC<AddPharmacyModalProps> = ({
                 name="phone"
                 value={formData.phone}
                 onChange={handleInputChange}
-                required
+                error={!!errors.phone}
+                helperText={errors.phone}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -145,7 +192,8 @@ const AddPharmacyModal: React.FC<AddPharmacyModalProps> = ({
                 name="email"
                 value={formData.email}
                 onChange={handleInputChange}
-                required
+                error={!!errors.email}
+                helperText={errors.email}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -156,6 +204,8 @@ const AddPharmacyModal: React.FC<AddPharmacyModalProps> = ({
                 name="website"
                 value={formData.website}
                 onChange={handleInputChange}
+                error={!!errors.website}
+                helperText={errors.website}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -166,34 +216,33 @@ const AddPharmacyModal: React.FC<AddPharmacyModalProps> = ({
                 name="operating_hours"
                 value={formData.operating_hours}
                 onChange={handleInputChange}
+                error={!!errors.operating_hours}
+                helperText={errors.operating_hours}
               />
             </Grid>
           </Grid>
 
           <Grid container spacing={2}>
-
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label="status"
-              name="status"
-              select
-              value={formData.status}
-              onChange={handleInputChange}
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="status"
+                name="status"
+                select
+                value={formData.status}
+                onChange={handleInputChange}
                 fullWidth
-                
-           
-            >
-              {statuses && statuses.length > 0 ? (
-                statuses.map((status,index) => (
-                  <MenuItem key={index} value={status}>
-                    {status}
-                  </MenuItem>
-                ))
-              ) : (
-                <MenuItem disabled>No status available</MenuItem>
-              )}
-            </TextField>
-          </Grid>
+              >
+                {statuses && statuses.length > 0 ? (
+                  statuses.map((status, index) => (
+                    <MenuItem key={index} value={status}>
+                      {status}
+                    </MenuItem>
+                  ))
+                ) : (
+                  <MenuItem disabled>No status available</MenuItem>
+                )}
+              </TextField>
+            </Grid>
             <Grid item xs={12} sm={6}>
               <FormControlLabel
                 control={
@@ -220,9 +269,9 @@ const AddPharmacyModal: React.FC<AddPharmacyModalProps> = ({
                   type="file"
                   accept="image/*"
                   name="image"
-                  
                   onChange={handleInputChange}
-
+                  error={!!errors.image}
+                  helperText={errors.image}
                 />
               </Button>
               {formData.image && (
@@ -231,9 +280,7 @@ const AddPharmacyModal: React.FC<AddPharmacyModalProps> = ({
                 </Typography>
               )}
             </Grid>
-
           </Grid>
-         
 
           {/* Location Details Section */}
           <Typography variant="subtitle1" gutterBottom sx={{ mt: 3 }}>
@@ -248,7 +295,8 @@ const AddPharmacyModal: React.FC<AddPharmacyModalProps> = ({
                 name="latitude"
                 value={formData.latitude}
                 onChange={handleInputChange}
-                required
+                error={!!errors.latitude}
+                helperText={errors.latitude}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -259,7 +307,8 @@ const AddPharmacyModal: React.FC<AddPharmacyModalProps> = ({
                 name="longitude"
                 value={formData.longitude}
                 onChange={handleInputChange}
-                required
+                error={!!errors.longitude}
+                helperText={errors.longitude}
               />
             </Grid>
             <Grid item xs={12}>
@@ -301,8 +350,8 @@ const AddPharmacyModal: React.FC<AddPharmacyModalProps> = ({
             <Button onClick={handleCloseForm} sx={{ mr: 1 }}>
               Cancel
             </Button>
-            <Button onClick={handleSubmit} variant="contained" color="primary">
-            {isEdit ? "Update" : "Add"}
+            <Button onClick={onFormSubmit} variant="contained" color="primary">
+              {isEdit ? "Update" : "Add"}
             </Button>
           </Box>
         </Box>

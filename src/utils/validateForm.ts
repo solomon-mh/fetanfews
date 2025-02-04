@@ -82,3 +82,17 @@ export const medicationSchema = z.object({
   quantity_available: z.number().min(1, "Quantity must be at least 1"),
   image: z.any().optional(),
 });
+
+
+export const pharmacySchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  address: z.string().min(1, "Address is required"),
+  phone: z.string().min(1, "Phone is required"),
+  email: z.string().email("Invalid email format").min(1, "Email is required"),
+  website: z.string().url("Invalid URL").optional().or(z.literal("")),
+  operating_hours: z.string().optional(),
+  delivery_available: z.boolean(),
+  image: z.instanceof(File).optional(),
+  latitude: z.string().min(1, "Latitude is required"),
+  longitude: z.string().min(1, "Longitude is required"),
+});

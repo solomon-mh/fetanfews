@@ -19,24 +19,31 @@ export interface OnSearchProps {
   }) => void;
 }
 
-interface Drug {
-  drug_id: number;
-  name: string;
-  category: string;
-}
+// interface Drug {
+//   drug_id: number;
+//   name: string;
+//   category: string;
+// }
 
-interface Pharmacy {
-  pharmacy_id: number;
-  pharmacy_name: string;
+
+export interface PharmacyDataType {
+  id: number;
+  name: string;
+  address: string;
+  phone: string;
+  email: string;
+  website?: string; // Optional
+  image: string;
+  is_verified: boolean;
+  delivery_available: boolean;
   latitude: number;
   longitude: number;
-  address: string;
-  available_drugs: Drug[];
-  image: string;
+  operating_hours: string;
+  status: "Approved" | "Pending" | "Rejected"; // Restrict possible values
 }
 
 export interface PharmacyDetailProps {
-  pharmacies: Pharmacy[];
+  pharmacies: PharmacyDataType[];
   calculateDistance: (
     latitude: number,
     longitude: number,
@@ -45,7 +52,7 @@ export interface PharmacyDetailProps {
   ) => string;
 }
 export interface PharmacyListProps {
-  pharmacies: Pharmacy[];
+  pharmacies: PharmacyDataType[];
   calculateDistance: (
     latitude: number,
     longitude: number,

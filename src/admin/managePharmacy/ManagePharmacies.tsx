@@ -276,7 +276,17 @@ const ManagePharmacies: React.FC = () => {
               {paginatedPharmacies.map((pharmacy) => (
                 <TableRow key={pharmacy.id}>
                   <TableCell>
-                    <img src={pharmacy.image} alt="No Image" />
+                  <img
+                      src={`http://127.0.0.1:8000${pharmacy.image}`} // Ensure full URL
+                      alt="No image"
+                      style={{
+                        width: "50px",
+                        height: "50px",
+                        objectFit: "cover",
+                      }}/>
+
+
+
                   </TableCell>
                   <TableCell>{pharmacy.name}</TableCell>
                   <TableCell>{pharmacy.address}</TableCell>

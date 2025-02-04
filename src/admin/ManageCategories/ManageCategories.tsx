@@ -122,8 +122,12 @@ const ManageCategories: React.FC = () => {
         await deleteCategroy(selectedCategory);
         showSnackbar("Category deleted successfully.", "success");
         fetchCategories();
+        handleCloseModal()
+
       } catch (error) {
         showSnackbar("Failed to delete the category.", "error");
+        handleCloseModal()
+
       }
     }
   };

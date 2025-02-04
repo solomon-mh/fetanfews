@@ -152,6 +152,21 @@ const AddMedicationModal: React.FC<AddMedicationModalProps> = ({
     } else {
       setErrors({});
       handleSubmit(parsed.data);
+      setFormData({
+        name: "",
+        price: 1,
+        description: "",
+        category: "",
+        dosage_form: "",
+        dosage_strength: "",
+        manufacturer: "",
+        expiry_date: "",
+        prescription_required: false,
+        side_effects: "",
+        usage_instructions: "",
+        quantity_available: 1,
+        image: null,
+      })
     }
   };
 
