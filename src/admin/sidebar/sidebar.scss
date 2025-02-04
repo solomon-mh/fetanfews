@@ -3,9 +3,40 @@ $text_color: #fff;
 
 .sidebar {
 	background-color:rgb(25, 25, 112);
-	padding: 20px 0;
+	padding: 20px 0 !important;
 	height: calc(100vh - 70px);
 	border-right: 1px solid #f3efef;
+	&.shrunk{
+		padding: 10px;
+		.links {
+			ul {
+				.spann {
+					text-transform: uppercase;
+					color: rgb(214, 209, 209);
+					margin:  5px;
+					font-size: 14px;
+				}
+	
+				li {
+					display: flex;
+					color: $text_color;
+					padding:  10px;
+					font-weight: 300;
+					transition: all 0.2s ease;
+					font-size: 16px;
+					span{
+						display: none;
+					}
+				
+					.icon {
+						color: $icon_color;
+						margin-right: 10px;
+						font-size: 18px;
+					}
+				}
+			}
+		}
+	}
 
 	&::-webkit-scrollbar {
 		display: none;

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect } from "react";
 import {
   TableContainer,
@@ -15,6 +17,7 @@ import {
   Autocomplete,
   InputAdornment,
   TablePagination,
+  Paper,
 } from "@mui/material";
 import { Edit, Delete } from "@mui/icons-material";
 import {
@@ -30,25 +33,36 @@ import SearchIcon from "@mui/icons-material/Search";
 import CloseIcon from "@mui/icons-material/Close";
 
 import DeleteModal from "../modals/DeleteModal";
+import "./ManagePharmacists.scss";
+import "../styles/table.scss";
+import {
+  pharmacistType,
+  CustomUser,
+  pharmacyType,
+} from "../../utils/interfaces";
 
 type FormData = {
-  user: string;
-  pharmacy: string;
+  user: CustomUser | null;
+  pharmacy: pharmacyType | null;
   license_number: string;
   license_image?: File | null;
 };
 
 const ManagePharmacists: React.FC = () => {
-  const [pharmacists, setPharmacists] = useState([]);
-  const [filteredPharmacists, setFilteredPharmacists] = useState([]);
-  const [users, setUsers] = useState([]);
-  const [pharmacies, setPharmacies] = useState([]);
-  const[pharmacistName,setPharmacistName]=useState<string>('')
+  const [pharmacists, setPharmacists] = useState<pharmacistType[]>([]);
+  const [filteredPharmacists, setFilteredPharmacists] = useState<
+    pharmacistType[]
+  >([]);
+  const [users, setUsers] = useState<CustomUser[]>([]);
+  const [filteredUsers, setFilteredUsers] = useState<CustomUser[]>([]);
+
+  const [pharmacies, setPharmacies] = useState<pharmacyType[]>([]);
+  const [pharmacistName, setPharmacistName] = useState<string>("");
   const [modalOpen, setModalOpen] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [formData, setFormData] = useState<FormData>({
-    user: "",
-    pharmacy: "",
+    user: null,
+    pharmacy: null,
     license_number: "",
     license_image: null,
   });
@@ -60,30 +74,42 @@ const ManagePharmacists: React.FC = () => {
     message: "",
     type: "success" as "success" | "error",
   });
-  const [searchQuery, setSearchQuery] = useState(""); 
-  const [page, setPage] = useState(0); 
+  const [searchQuery, setSearchQuery] = useState("");
+  const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [isDelModalOpen, setIsDelModalOpen] = useState<boolean>(false);
-
   useEffect(() => {
     fetchPharmacists();
     fetchUsersData();
     fetchPharmacies();
   }, []);
+  console.log("total users", users);
 
   useEffect(() => {
-    console.log("pharmasist",pharmacists)
     // Filter pharmacists based on search query
     const filtered = pharmacists.filter(
       (pharmacist) =>
-        pharmacist.user_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        pharmacist.pharmacy_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        pharmacist.user.first_name
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
+        pharmacist.pharmacy.name
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
         pharmacist.license_number
           .toLowerCase()
           .includes(searchQuery.toLowerCase())
     );
     setFilteredPharmacists(filtered);
   }, [searchQuery, pharmacists]);
+  useEffect(() => {
+    // Filter pharmacists based on search query
+    const filteredUsers = users.filter(
+      (user) =>
+       user.role !=="pharmacist"
+          
+    );
+    setFilteredUsers(filteredUsers);
+  }, [users]);
 
   const fetchPharmacists = async () => {
     try {
@@ -112,21 +138,21 @@ const ManagePharmacists: React.FC = () => {
     }
   };
 
-  const handleOpenModal = (pharmacist = null) => {
+  const handleOpenModal = (pharmacist: pharmacistType | null = null) => {
     if (pharmacist) {
       setIsEdit(true);
       setSelectedPharmacist(pharmacist.id);
       setFormData({
-        user: pharmacist.user_name,
-        pharmacy: pharmacist.pharmacy_name,
+        user: pharmacist.user,
+        pharmacy: pharmacist.pharmacy,
         license_number: pharmacist.license_number,
         license_image: null, // License image is not editable
       });
     } else {
       setIsEdit(false);
       setFormData({
-        user: "",
-        pharmacy: "",
+        user: null,
+        pharmacy: null,
         license_number: "",
         license_image: null,
       });
@@ -142,8 +168,8 @@ const ManagePharmacists: React.FC = () => {
   const handleSubmit = async () => {
     try {
       const data = new FormData();
-      data.append("user", formData.user?.id || "");
-      data.append("pharmacy", formData.pharmacy?.id || "");
+      data.append("user_id", formData.user?.id?.toString() || "");
+      data.append("pharmacy_id", formData.pharmacy?.id?.toString() || "");
       data.append("license_number", formData.license_number);
       if (formData.license_image) {
         data.append("license_image", formData.license_image);
@@ -159,7 +185,18 @@ const ManagePharmacists: React.FC = () => {
       fetchPharmacists();
       handleCloseModal();
     } catch (error) {
-      showSnackbar(`Failed to submit pharmacist data. ${error.response?.data?.message || error.message}`, "error");
+      const err = error as any;
+      console.error("Error submitting pharmacist:", err.response?.data);
+      const errorMessage =
+        err.response?.data?.errors?.license_number?.[0] ||
+        err.response?.data?.message ||
+        err.message ||
+        "Something went wrong";
+
+      showSnackbar(
+        `Failed to submit pharmacist data. ${errorMessage}`,
+        "error"
+      );
     }
   };
   const handleDeleteClick = (id: number, name: string) => {
@@ -176,10 +213,11 @@ const ManagePharmacists: React.FC = () => {
         await deletePharmacist(selectedPharmacist);
         showSnackbar("Pharmacist deleted successfully.", "success");
         fetchPharmacists();
-      } catch (error) {
+      } catch (error: any) {
         showSnackbar("Failed to delete the pharmacist.", "error");
       }
     }
+    handleDelModalClose()
   };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -239,15 +277,15 @@ const ManagePharmacists: React.FC = () => {
             marginRight: "1rem",
             marginLeft: "auto",
             background: "white",
-            width: "30%",
+            width: "50%",
           }}
         />
-        <Button variant="contained" onClick={() => handleOpenModal()}>
-          Add Pharmacist
+        <Button className="add-button" onClick={() => handleOpenModal()}>
+          + Add Pharmacist
         </Button>
       </Box>
 
-      <TableContainer>
+      <TableContainer className="pharmacist_table-container" component={Paper}>
         <Table>
           <TableHead>
             <TableRow>
@@ -262,13 +300,13 @@ const ManagePharmacists: React.FC = () => {
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((pharmacist) => (
                 <TableRow key={pharmacist.id}>
-                  <TableCell>{pharmacist.user_name}</TableCell>
-                  <TableCell>{pharmacist.pharmacy_name}</TableCell>
+                  <TableCell>{pharmacist.user.first_name}</TableCell>
+                  <TableCell>{pharmacist.pharmacy.name}</TableCell>
                   <TableCell>{pharmacist.license_number}</TableCell>
                   <TableCell>
                     <Button
                       onClick={() => handleOpenModal(pharmacist)}
-                      title={`Edit ${pharmacist.user_name}`}
+                      title={`Edit ${pharmacist.user.first_name}`}
                     >
                       <Edit />
                     </Button>
@@ -276,8 +314,14 @@ const ManagePharmacists: React.FC = () => {
                       style={{
                         color: "red",
                       }}
-                      onClick={() => handleDeleteClick(pharmacist.id, pharmacist.user_name)}
-                      title={`Delete ${pharmacist.user_name}`}>
+                      onClick={() =>
+                        handleDeleteClick(
+                          pharmacist.id,
+                          pharmacist.user.first_name
+                        )
+                      }
+                      title={`Delete ${pharmacist.user.first_name}`}
+                    >
                       <Delete />
                     </Button>
                   </TableCell>
@@ -315,18 +359,18 @@ const ManagePharmacists: React.FC = () => {
             gap: 2, // Spacing between elements
           }}
         >
-            <IconButton
-          aria-label="close"
-          onClick={handleCloseModal}
-          sx={{
-            position: "absolute",
-            top: 8,
-            right: 8,
-            color: (theme) => theme.palette.error.main,
-          }}
-        >
-          <CloseIcon />
-        </IconButton>
+          <IconButton
+            aria-label="close"
+            onClick={handleCloseModal}
+            sx={{
+              position: "absolute",
+              top: 8,
+              right: 8,
+              color: (theme) => theme.palette.error.main,
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
           <Typography
             variant="h6"
             sx={{
@@ -339,11 +383,11 @@ const ManagePharmacists: React.FC = () => {
             {isEdit ? "Edit Pharmacist" : "Add Pharmacist"}
           </Typography>
           <Autocomplete
-            options={users}
-            getOptionLabel={(option) => option.email || formData.user}
+            options={filteredUsers}
+            getOptionLabel={(option) => option.email || ""}
             value={formData.user || null}
             onChange={(event, value) =>
-              setFormData({ ...formData, user: value ? value : "" })
+              setFormData({ ...formData, user: value ? value : null })
             }
             renderInput={(params) => (
               <TextField {...params} label="User" required />
@@ -356,11 +400,11 @@ const ManagePharmacists: React.FC = () => {
           />
 
           <Autocomplete
-            options={Array.isArray(pharmacies) ? pharmacies : []}
-            getOptionLabel={(option) => option?.name || formData.pharmacy}
+            options={pharmacies}
+            getOptionLabel={(option) => option?.name || ""}
             value={formData.pharmacy || null}
             onChange={(event, value) =>
-              setFormData({ ...formData, pharmacy: value || "" })
+              setFormData({ ...formData, pharmacy: value || null })
             }
             renderInput={(params) => (
               <TextField {...params} label="Pharmacy" required />
@@ -491,7 +535,7 @@ const ManagePharmacists: React.FC = () => {
         type={snackbar.type}
         onClose={() => setSnackbar({ ...snackbar, open: false })}
       />
-        <DeleteModal
+      <DeleteModal
         isOpen={isDelModalOpen}
         onClose={handleDelModalClose}
         handleDelete={handleDelete}
