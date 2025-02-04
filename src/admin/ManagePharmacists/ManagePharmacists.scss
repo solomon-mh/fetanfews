@@ -1,51 +1,28 @@
-// .manage-pharmacists {
-//     .manage-header {
-//       display: flex;
-//       justify-content: space-between;
-//       align-items: center;
-//       margin-bottom: 20px;
-  
-//       h4 {
-//         font-size: 24px;
-//         font-weight: bold;
-//       }
-  
-//       button {
-//         background-color: green;
-//         color: white;
-//         font-size: 16px;
-//         &:hover {
-//           background-color: #0056b3;
-//         }
-//       }
-//     }
-  
-//     .modal-content {
-//       position: absolute;
-//       top: 50%;
-//       left: 50%;
-//       transform: translate(-50%, -50%);
-//       width: 400px;
-//       background: #fff;
-//       border-radius: 8px;
-//       padding: 20px;
-//       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  
-//       .actions {
-//         display: flex;
-//         justify-content: flex-end;
-//         margin-top: 20px;
-  
-//         button {
-//           &:first-child {
-//             margin-right: 10px;
-//           }
-//         }
-//       }
-//     }
-  
-//     .file-input {
-//       margin-top: 10px;
-//     }
-//   }
-  
+.manage-pharmacists {
+  .manage-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+
+    h4 {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .add-button {
+      background-color: green;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      padding: 10px 20px;
+      border-radius: 50px;
+    }
+  }
+  .pharmacist_table-container {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+   
+  }
+}
