@@ -1,5 +1,7 @@
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import FullscreenExitIcon from "@mui/icons-material/FullscreenExit";
+import FullscreenIcon from "@mui/icons-material/Fullscreen";
+
 import LanguageIcon from "@mui/icons-material/Language";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -19,17 +21,24 @@ import { useNavigate } from "react-router-dom";
 
 // import images
 
-function Header({ onToggleSidebar }) {
+function Header({ onToggleSidebar, onToggleSidebarShrunk }) {
   const [unreadNotifications, setUnreadNotifications] = useState(0);
   const [notificationList, setNotificationList] = useState([]);
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   // color state management using react context
   const { darkMode, dispatch } = useContext(ColorContext);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
   const handleToggle = () => {
-    onToggleSidebar(); // Call the prop function to toggle sidebar visibility
+    onToggleSidebar();
   };
-  const { user,setLoggedin } = useAuth();
+  const handleToggleShrunk = () => {
+    setIsFullscreen(!isFullscreen);
+
+    onToggleSidebarShrunk();
+  };
+  const { user, setLoggedin } = useAuth();
 
   // Fetch unread notifications count
   const fetchNotifications = async () => {
@@ -60,72 +69,74 @@ function Header({ onToggleSidebar }) {
     fetchNotifications();
   }, []);
   const handleLogout = async () => {
-    await Logout()
+    await Logout();
     setLoggedin(false);
-    navigate("/admin/login")
-
-
-  }
+    navigate("/admin/login");
+  };
   return (
     <div className="admin-navbar">
       <div className="navbar_main">
         <div className="logo">
-        <MenuIcon className="menu_icon" onClick={handleToggle} />
+          <MenuIcon className="menu_icon" onClick={handleToggle} />
 
           <Link to="admin/dashboard" style={{ textDecoration: "none" }}>
             <h3 className="text_none">Admin Dashboard</h3>
           </Link>
         </div>
-        {/* <div className="menu_logo">
-          <MenuIcon className="menu_icon" onClick={handleToggle} />
-        </div>
-        <div className="search">
-          <input type="text" placeholder="Search.." />
-
-                    <SearchIcon className="search_icon" />
-        </div> */}
 
         <div className="item_lists">
-        {user ? (
+          {user ? (
             <>
-            <div>
+              <div>
                 {/* <em>Well Come:{user?.username.toUpperCase()}</em> */}
-                <em>WELCOME, {user?.first_name.toUpperCase()} </em>
-
-                      /
-            </div>
-          
-            <Link to="/" className="link" style={{ textDecoration: "none" }}>
-                <em>  VEIW SITE  </em>
-                  </Link>
-                /
-            <div>
-                <Link to=" " className="link" style={{ textDecoration: "none" }} onClick={handleLogout}>
-                <em> LOGOUT  </em>
-                  </Link>
-                /
-                <Link className="link" to="/change-pass" style={{ textDecoration: "none" }}>
-                <em> CHANGE PASSWORD  </em>
-                  </Link>
-                  
+                <em>WELCOME, {user?.first_name.toUpperCase()} </em>/
               </div>
-
-              </>
-          ):(<>
-            <div>
-                <Link className="link" to="/login" style={{ textDecoration: "none" }}>
-                <em> Login </em>
-                  </Link>
-                  /
-            </div>
-            <div>
-               
-                  <Link className="link" to="/register" style={{ textDecoration: "none" }}>
-                <em>Sign Up </em>
+              <Link to="/" className="link" style={{ textDecoration: "none" }}>
+                <em> VEIW SITE </em>
+              </Link>
+              /
+              <div>
+                <Link
+                  to=" "
+                  className="link"
+                  style={{ textDecoration: "none" }}
+                  onClick={handleLogout}
+                >
+                  <em> LOGOUT </em>
                 </Link>
-             </div>
-             </>)
-        }
+                /
+                <Link
+                  className="link"
+                  to="/change-pass"
+                  style={{ textDecoration: "none" }}
+                >
+                  <em> CHANGE PASSWORD </em>
+                </Link>
+              </div>
+            </>
+          ) : (
+            <>
+              <div>
+                <Link
+                  className="link"
+                  to="/login"
+                  style={{ textDecoration: "none" }}
+                >
+                  <em> Login </em>
+                </Link>
+                /
+              </div>
+              <div>
+                <Link
+                  className="link"
+                  to="/register"
+                  style={{ textDecoration: "none" }}
+                >
+                  <em>Sign Up </em>
+                </Link>
+              </div>
+            </>
+          )}
           {/* <div className="item item_lan">
             <LanguageIcon className="item_icon" />
             <p>English</p>
@@ -144,7 +155,9 @@ function Header({ onToggleSidebar }) {
             )}
           </div>
           <div className="item">
-            <FullscreenExitIcon className="item_icon" onClick={onToggleSidebar } />
+              {isFullscreen ? <FullscreenIcon
+                className="item_icon" onClick={handleToggleShrunk} /> : <FullscreenExitIcon
+                className="item_icon" onClick={handleToggleShrunk}/>}{" "}
           </div>
 
           <div className="item">

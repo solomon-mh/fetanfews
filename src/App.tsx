@@ -21,6 +21,7 @@ import ManageMedications from "./admin/manageDrug/ManageMedications";
 import ManageCategories from "./admin/ManageCategories/ManageCategories";
 import ManagePharmacists from "./admin/ManagePharmacists/ManagePharmacists";
 import AdminLogin from "./admin/AdminAuth/AdminLogin";
+import UserList from "./admin/userList/UserList";
 function App() {
   return (
     <Router>
@@ -45,7 +46,7 @@ function App() {
           <Route
             path="/pharmacy-registration/form"
             element={
-              <PrivateRoute>
+              <PrivateRoute requiredRole="user">
                 <PharmacyForm />
               </PrivateRoute>
             }
@@ -66,7 +67,7 @@ function App() {
         <Route
           element={
             <PharmacyContextProvider>
-              <PrivateRoute>
+              <PrivateRoute requiredRole="admin">
                 <AdminLayout />
               </PrivateRoute>
             </PharmacyContextProvider>
@@ -87,6 +88,10 @@ function App() {
           <Route
             path="/admin/manage-pharmacists"
             element={<ManagePharmacists />}
+          />
+            <Route
+            path="/admin/users"
+            element={<UserList />}
           />
         </Route>
       </Routes>

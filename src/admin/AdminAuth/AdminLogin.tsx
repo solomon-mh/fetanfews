@@ -24,7 +24,8 @@ const AdminLogin: React.FC = () => {
       }
     try {
       const response = await login({ username:email, password:password });
-        localStorage.setItem("adminToken", response.data.access);
+      localStorage.setItem("adminToken", response.data.access);
+      localStorage.setItem("user_type","admin")
         navigate("/admin/dashboard"); 
       
     } catch (err:any) {
