@@ -1,4 +1,3 @@
-import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Login from "./pages/Auth/LoginPage";
 import SignUp from "./pages/Auth/RegisterPage";
@@ -10,7 +9,6 @@ import MainLayout from "./layouts/MainLayout";
 import AdminLayout from "./layouts/AdminLayout";
 import AdminHome from "./admin/AdminDashboard/AdminDashboard";
 import { PharmacyContextProvider } from "./contexts/PharmacyContext";
-import { pharmacies } from "./data/pharmacies";
 import { calculateDistance } from "./utils/calculations";
 import ManagePharmacies from "./admin/managePharmacy/ManagePharmacies";
 import PharmacyForm from "./pages/AddPharmacyForm/PharmcyPhorm";
@@ -22,6 +20,9 @@ import ManageCategories from "./admin/ManageCategories/ManageCategories";
 import ManagePharmacists from "./admin/ManagePharmacists/ManagePharmacists";
 import AdminLogin from "./admin/AdminAuth/AdminLogin";
 import UserList from "./admin/userList/UserList";
+import { ErrorProvider } from "./contexts/ErrorContext";
+import { LoadingProvider } from "./contexts/LoadingContext";
+import "./App.scss";
 function App() {
   return (
     <Router>
@@ -29,15 +30,20 @@ function App() {
         {/* Main Layout Routes */}
         <Route path="/admin/login" element={<AdminLogin />} />
 
-        <Route element={<MainLayout />}>
+        <Route
+          element={
+            <ErrorProvider>
+              <LoadingProvider>
+                <MainLayout />
+              </LoadingProvider>
+            </ErrorProvider>
+          }
+        >
           <Route path="/" element={<HomePage />} />
           <Route
             path="/pharmacy/:pharmacyId"
             element={
-              <PharmacyDetailPage
-                pharmacies={pharmacies}
-                calculateDistance={calculateDistance}
-              />
+              <PharmacyDetailPage calculateDistance={calculateDistance} />
             }
           />
           <Route path="/user/login" element={<Login />} />
@@ -89,10 +95,7 @@ function App() {
             path="/admin/manage-pharmacists"
             element={<ManagePharmacists />}
           />
-            <Route
-            path="/admin/users"
-            element={<UserList />}
-          />
+          <Route path="/admin/users" element={<UserList />} />
         </Route>
       </Routes>
     </Router>

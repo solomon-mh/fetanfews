@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { api } from "./auth";
 import axios from "axios";
@@ -22,7 +23,14 @@ export const editPharmacy = (id: number, data: any) => {
 export const deletePharmacy = (id: number) => {
   return api.delete(`/pharmacies/${id}/`)
 }
-  
+export const getPharmacyDetail = async (Id: any) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/pharmacies/${Id}/`);
+    return response; 
+  } catch (error) {
+    throw new Error("Failed to fetch pharmacy details"); 
+  }
+}
 export const addMedicationData=(data: any) => {
   return api.post('/medications/', data, {
     headers: {
@@ -133,6 +141,7 @@ export const searchMedications = async (query:string) => {
     const response = await axios.get(`${API_BASE_URL}/medications/search/`, {
       params: { query },
     });
+    console.log("search response ",response.data)
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -158,3 +167,17 @@ export const searchPharmacies = async (query = "") => {
     throw error;
   }
 };
+
+export const searchByCategory = async (categoryId:number, pharmacyId = null) => {
+  try {
+      const url = pharmacyId 
+          ? `${API_BASE_URL}/search_by_category/${categoryId}/${pharmacyId}/`
+          : `${API_BASE_URL}/search_by_category/${categoryId}/`;
+
+      const response = await axios.get(url);
+      return response.data;
+  } catch (error) {
+      console.error("Error fetching data:", error);
+      throw error;
+  }
+}
