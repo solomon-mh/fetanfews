@@ -1,19 +1,21 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import  { useEffect, useState } from "react";
+import { useParams, useNavigate ,useSearchParams} from "react-router-dom";
 import axios from "axios";
 import "./PharmacyDetails.scss";
 import { useGeoLocation, defaultCoordinates } from "../../hooks/useGeoLocation";
 import { getPharmacyDetail } from "../../api/pharmacyService";
 // Breadcrumbs Component
 const Breadcrumbs: React.FC = () => {
+  const { pharmacyName } = useParams(); 
+
   const navigate = useNavigate();
   return (
     <nav className="breadcrumbs">
       <span onClick={() => navigate("/")}>Home</span> &gt;{" "}
       <span onClick={() => navigate("/pharmacies")}>Pharmacies</span> &gt;{" "}
-      <span>Pharmacy Details</span>
+      <span>{pharmacyName}</span>
     </nav>
   );
 };
@@ -30,7 +32,8 @@ interface PharmacyDetailPageProps {
 const PharmacyDetailPage: React.FC<PharmacyDetailPageProps> = ({
   calculateDistance,
 }) => {
-  const { pharmacyId } = useParams<{ pharmacyId: string }>();
+  const [searchParams] = useSearchParams();
+  const pharmacyId = searchParams.get("id");
   const [pharmacy, setPharmacy] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -48,7 +51,6 @@ const PharmacyDetailPage: React.FC<PharmacyDetailPageProps> = ({
         if (pharmacyId) {
           const response = await getPharmacyDetail(pharmacyId);
           setPharmacy(response.data);
-          console.log("getPharmacyDetail(pharmacyId) result", response.data);
           setLoading(false);
         } else {
           setError("Pharmacy ID is not defined.");

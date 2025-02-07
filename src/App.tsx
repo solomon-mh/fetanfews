@@ -41,11 +41,12 @@ function App() {
         >
           <Route path="/" element={<HomePage />} />
           <Route
-            path="/pharmacy/:pharmacyId"
+            path="/pharmacy/:pharmacyName"
             element={
               <PharmacyDetailPage calculateDistance={calculateDistance} />
             }
           />
+
           <Route path="/user/login" element={<Login />} />
           <Route path="/user/signup" element={<SignUp />} />
           <Route path="/search-results" element={<SearchResultsPage />} />

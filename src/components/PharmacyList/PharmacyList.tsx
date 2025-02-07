@@ -1,4 +1,3 @@
-import React from "react";
 import "./PharmacyList.scss";
 import { Link } from "react-router-dom";
 import { PharmacyListProps } from "../../utils/interfaces";
@@ -19,27 +18,26 @@ const PharmacyList: React.FC<PharmacyListProps> = ({
       : defaultCoordinates;
 
   // Sort pharmacies by distance
- const sortedPharmacies = [...pharmacies].sort((a, b) => {
-  const distanceA = calculateDistance(
-    a.latitude,
-    a.longitude,
-    userCoordinates[0],
-    userCoordinates[1]
-  );
-  const distanceB = calculateDistance(
-    b.latitude,
-    b.longitude,
-    userCoordinates[0],
-    userCoordinates[1]
-  );
-  if (isNaN(distanceA) || isNaN(distanceB)) {
-    return 0; // If any distance is invalid, keep the current order
-  }
-  return distanceA - distanceB; // Sort in ascending order of distance
-});
+  const sortedPharmacies = [...pharmacies].sort((a, b) => {
+    const distanceA = calculateDistance(
+      a.latitude,
+      a.longitude,
+      userCoordinates[0],
+      userCoordinates[1]
+    );
+    const distanceB = calculateDistance(
+      b.latitude,
+      b.longitude,
+      userCoordinates[0],
+      userCoordinates[1]
+    );
+    if (isNaN(distanceA) || isNaN(distanceB)) {
+      return 0; // If any distance is invalid, keep the current order
+    }
+    return distanceA - distanceB; // Sort in ascending order of distance
+  });
   console.log("User Coordinates:", userCoordinates);
-console.log("Sorted Pharmacies:", sortedPharmacies);
-
+  console.log("Sorted Pharmacies:", sortedPharmacies);
 
   return (
     <div className="pharmacies-list-wrapper">
@@ -61,7 +59,11 @@ console.log("Sorted Pharmacies:", sortedPharmacies);
                 className="pharmacy-image"
               />
               <h3>
-                <Link to={`/pharmacy/${pharmacy.id}`}>
+                <Link
+                  to={`/pharmacy/${encodeURIComponent(pharmacy.name)}?id=${
+                    pharmacy.id
+                  }`}
+                >
                   {pharmacy.name}
                 </Link>
               </h3>
@@ -73,7 +75,8 @@ console.log("Sorted Pharmacies:", sortedPharmacies);
                   pharmacy.longitude,
                   userCoordinates[0],
                   userCoordinates[1]
-                ).toFixed(2)}{" "} Km
+                ).toFixed(2)}{" "}
+                Km
               </p>
             </motion.li>
           );
