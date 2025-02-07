@@ -1,9 +1,12 @@
-import React from "react";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
 import "./PharmacyDetails.scss";
-import { PharmacyDetailProps } from "../../utils/interfaces";
-
-// You could use a package like 'react-router-breadcrumbs' or create your own breadcrumbs component
+import { useGeoLocation, defaultCoordinates } from "../../hooks/useGeoLocation";
+import { getPharmacyDetail } from "../../api/pharmacyService";
+// Breadcrumbs Component
 const Breadcrumbs: React.FC = () => {
   const navigate = useNavigate();
   return (
@@ -15,66 +18,161 @@ const Breadcrumbs: React.FC = () => {
   );
 };
 
-const PharmacyDetailPage: React.FC<PharmacyDetailProps> = ({
-  pharmacies,
+interface PharmacyDetailPageProps {
+  calculateDistance: (
+    lat1: number,
+    lon1: number,
+    lat2: number,
+    lon2: number
+  ) => number;
+}
+
+const PharmacyDetailPage: React.FC<PharmacyDetailPageProps> = ({
   calculateDistance,
 }) => {
   const { pharmacyId } = useParams<{ pharmacyId: string }>();
-  const navigate = useNavigate();
+  const [pharmacy, setPharmacy] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState<string>(""); // State for search term
+  const [searchResults, setSearchResults] = useState<any[]>([]); // State for search results
+  const userLocation = useGeoLocation();
+  const userCoordinates: [number, number] =
+    userLocation.latitude && userLocation.longitude
+      ? [userLocation.latitude, userLocation.longitude]
+      : defaultCoordinates;
+  // Fetch pharmacy data from API
+  useEffect(() => {
+    const fetchPharmacyDetails = async () => {
+      try {
+        if (pharmacyId) {
+          const response = await getPharmacyDetail(pharmacyId);
+          setPharmacy(response.data);
+          console.log("getPharmacyDetail(pharmacyId) result", response.data);
+          setLoading(false);
+        } else {
+          setError("Pharmacy ID is not defined.");
+          setLoading(false);
+        }
+      } catch (err: any) {
+        setError("Failed to fetch pharmacy details.");
+        setLoading(false);
+      }
+    };
 
-  // Find the pharmacy by ID
-  const pharmacy = pharmacies.find(
-    (p) => p.pharmacy_id === parseInt(pharmacyId || "")
-  );
+    fetchPharmacyDetails();
+  }, [pharmacyId]);
+
+  // Function to handle medication search
+  const handleSearch = async () => {
+    if (searchTerm.trim()) {
+      try {
+        const response = await axios.get(
+          `/api/medications/search/?query=${searchTerm}`
+        );
+        setSearchResults(response.data);
+      } catch (err) {
+        setError("Failed to fetch medications.");
+      }
+    } else {
+      setSearchResults([]);
+    }
+  };
+
+  if (loading) {
+    return <p>Loading pharmacy details...</p>;
+  }
+
+  if (error) {
+    return <p>{error}</p>;
+  }
 
   if (!pharmacy) {
     return <p>Pharmacy not found.</p>;
   }
 
-  const handleDrugClick = (drugName: string) => {
-    alert(`You clicked on ${drugName}`);
-  };
-
   return (
-    <div className="pharmacy-detail">
+    <div className="pharmacy-detail-wrapper">
       <Breadcrumbs />
 
-      <div className="pharmacy-info">
-        <img
-          src={pharmacy.image}
-          alt={pharmacy.pharmacy_name}
-          className="pharmacy-image"
-        />
-        <h1 className="pharmacy-name">{pharmacy.pharmacy_name}</h1>
-        <p className="pharmacy-address">{pharmacy.address}</p>
-        <p className="pharmacy-distance">
-          Distance: {calculateDistance(pharmacy.latitude, pharmacy.longitude)}
-        </p>
-        <button
-          className="call-button"
-          onClick={() => alert(`Calling ${pharmacy.pharmacy_name}`)}
-        >
-          Call Pharmacy
-        </button>
-      </div>
-
-      <div className="drug-list">
-        <h2>Available Drugs</h2>
-        <ul>
-          {pharmacy.available_drugs.map((drug) => (
-            <li key={drug.drug_id}>
-              <p>
-                <strong>{drug.name}</strong> - {drug.category}
+      <div className="pharmacy-detail">
+        <div className="pharmacy-info-wrapper">
+          <img
+            src={`http://127.0.0.1:8000${pharmacy.image}`}
+            alt={pharmacy.name}
+            className="pharmacy-image"
+          />
+          <h1 className="pharmacy-name">{pharmacy.name}</h1>
+          <div className="pharmacy-info">
+            <div className="basic-address">
+              <p className="pharmacy-phone">Phone: {pharmacy.phone}</p>
+              <p className="pharmacy-email">Email: {pharmacy.email}</p>
+              <p className="pharmacy-address">{pharmacy.address}</p>
+            </div>
+            <div className="basic-info">
+              {pharmacy.website && (
+                <p className="pharmacy-website">
+                  Website:{" "}
+                  <a
+                    href={pharmacy.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {pharmacy.website}
+                  </a>
+                </p>
+              )}
+              <p className="pharmacy-operating-hours">
+                Operating Hours: {pharmacy.operating_hours}
               </p>
-              <button
-                className="drug-details-button"
-                onClick={() => handleDrugClick(drug.name)}
-              >
-                View Details
-              </button>
-            </li>
-          ))}
-        </ul>
+
+              <p className="pharmacy-delivery">
+                Delivery Available: {pharmacy.delivery_available ? "Yes" : "No"}
+              </p>
+              <p className="pharmacy-distance">
+                Distance:{" "}
+                {calculateDistance(
+                  pharmacy.latitude,
+                  pharmacy.longitude,
+                  userCoordinates[0],
+                  userCoordinates[1]
+                ).toFixed(2)}{" "}
+                Km
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Medication Search */}
+        <div className="medication-search">
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search for medications..."
+            className="search-input"
+          />
+          <button onClick={handleSearch} className="search-button">
+            Search
+          </button>
+
+          {/* Display Search Results */}
+          {searchResults.length > 0 ? (
+            <div className="search-results">
+              <h3>Search Results</h3>
+              <ul>
+                {searchResults.map((med) => (
+                  <li key={med.id} className="search-result-item">
+                    <strong>{med.name}</strong> - {med.price} -{" "}
+                    {med.stock_status}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : (
+            <p>No medications found.</p>
+          )}
+        </div>
       </div>
     </div>
   );

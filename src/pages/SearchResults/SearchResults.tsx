@@ -6,9 +6,10 @@ import { calculateDistance } from "../../utils/calculations";
 import "./SearchResults.scss";
 import HeroSection from "../../components/HeroSection/HeroSection";
 import { Search } from "../../utils/handleSearch";
+import { PharmacyDataType } from "../../utils/interfaces";
 
 const SearchResultsPage: React.FC = () => {
-  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [searchResults, setSearchResults] = useState<PharmacyDataType[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -22,12 +23,11 @@ const SearchResultsPage: React.FC = () => {
     }
 
     // Call Search function
-    const results = Search({ drugName, pharmacyName });
-
-    setSearchResults(results);
-    setIsLoading(false);
+    Search({ drugName, pharmacyName }).then((results) => {
+      setSearchResults(results);
+      setIsLoading(false);
+    });
   }, [searchParams, navigate]);
-
   return (
     <div className="search-results-page">
       <HeroSection />

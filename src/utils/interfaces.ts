@@ -58,7 +58,7 @@ export interface PharmacyListProps {
     longitude: number,
     userLatitude: number,
     userLongitude: number
-  ) => string;
+  ) => number;
   onShowAll?: () => void;
   showAllButton?: boolean;
 }

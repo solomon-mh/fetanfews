@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, {useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import { pharmacies } from "../../data/pharmacies";
 import "./HomePage.scss";
 import WhyUseMedLocator from "../../components/common/WhyUseMedLocator";
 import HeroSection from "../../components/HeroSection/HeroSection";
@@ -12,27 +11,35 @@ import { fetchCategoriesData } from "../../api/pharmacyService";
 import { CategoryType } from "../../utils/interfaces";
 import { fetchPharmacyData } from "../../api/pharmacyService";
 import { PharmacyDataType } from "../../utils/interfaces";
+import { searchByCategory } from "../../api/pharmacyService";
+import { useError } from "../../contexts/ErrorContext";
+import { useLoading } from "../../contexts/LoadingContext";
 const HomePage: React.FC = () => {
   const [visibleCount, setVisibleCount] = useState(5);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<CategoryType | null>(
+    null
+  );
   const [categories, setCategories] = useState<CategoryType[]>([]);
   const [pharmacies, setPharmacies] = useState<PharmacyDataType[]>([]);
+  const [filteredPharmacies, setFilteredPharmacies] = useState<any[]>([]);
 
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { setLoading } = useLoading();
+  const [fetchingLoading, setFetchingLoading] = useState<boolean>(true);
 
   const userLocation = useGeoLocation();
+  const { setError } = useError();
 
-
-  
   useEffect(() => {
+    setLoading(true);
+    setFetchingLoading(true);
     const getCategories = async () => {
       try {
         const data = await fetchCategoriesData();
-        setCategories(data); 
+        setCategories(data);
       } catch (err) {
         setError("Failed to fetch categories.");
       } finally {
+        setFetchingLoading(false);
         setLoading(false);
       }
     };
@@ -40,33 +47,49 @@ const HomePage: React.FC = () => {
     getCategories(); // Call the function on component mount
   }, []);
   useEffect(() => {
-    const getPharmacies= async () => {
+    const getPharmacies = async () => {
       try {
         const data = await fetchPharmacyData();
-        setPharmacies(data); 
-        console.log("pharmacy data", data);
+        setPharmacies(data);
+        setFilteredPharmacies(data);
+        setSelectedCategory(null);
       } catch (err) {
         setError("Failed to fetch pharmacies.");
       } finally {
         setLoading(false);
+        setFetchingLoading(false);
       }
     };
 
-    getPharmacies(); 
+    getPharmacies();
   }, []);
 
-  // const filteredPharmacies = selectedCategory
-  //   ? pharmacies.filter((pharmacy) =>
-  //       pharmacy.available_drugs.some(
-  //         (drug) => drug.category === selectedCategory
-  //       )
-  //     )
-  //   : pharmacies;
+  const handleSearchByCategory = async (category: CategoryType | null) => {
+    setSelectedCategory(category);
 
-  const visiblePharmacies = pharmacies.slice(0, visibleCount);
+    setError(null);
+    try {
+      if (category) {
+        const result = await searchByCategory(category.id, null);
+        setFilteredPharmacies(result);
+      } else {
+        setFilteredPharmacies(pharmacies);
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Failed to fetch data");
+      setSelectedCategory(null);
+      setFilteredPharmacies([]);
+    } finally {
+      setLoading(false);
+      setFetchingLoading(false);
+    }
+  };
+
+  const visiblePharmacies = filteredPharmacies.slice(0, visibleCount);
 
   const handleShowAll = () => {
-    setVisibleCount(pharmacies.length);
+    setVisibleCount(filteredPharmacies.length);
   };
 
   // Default coordinates for the map if geolocation fails
@@ -74,9 +97,10 @@ const HomePage: React.FC = () => {
     userLocation.latitude && userLocation.longitude
       ? [userLocation.latitude, userLocation.longitude]
       : defaultCoordinates;
-  
-      if (loading) return <p>Loading ...</p>;
-      if (error) return <p>{error}</p>;
+
+  if (fetchingLoading) {
+    return;
+  }
 
   return (
     <div className="home-page">
@@ -89,16 +113,18 @@ const HomePage: React.FC = () => {
             <li
               key={category.id}
               className={`category-item ${
-                selectedCategory === category.name ? "active" : ""
+                selectedCategory?.name === category.name ? "active" : ""
               }`}
-              onClick={() => setSelectedCategory(category.name)}
+              onClick={() => handleSearchByCategory(category)}
             >
               {category.name}
             </li>
           ))}
           <li
-            className={`category-item ${!selectedCategory ? "active" : ""}`}
-            onClick={() => setSelectedCategory(null)}
+            className={`category-item ${
+              !selectedCategory?.name ? "active" : ""
+            }`}
+            onClick={() => handleSearchByCategory(null)}
           >
             All Categories
           </li>
@@ -110,16 +136,23 @@ const HomePage: React.FC = () => {
         <p className="error-message">{userLocation.error}</p>
       )}
 
-      <h2 className="section-title">Featured Pharmacies</h2>
-      <PharmacyList
-        pharmacies={visiblePharmacies}
-        calculateDistance={(lat, lon) =>
-        calculateDistance(lat, lon, userCoordinates[0], userCoordinates[1])
-        }
-        onShowAll={handleShowAll}
-        showAllButton={visibleCount < pharmacies.length}
-      />
-
+      <h2 className="section-title">
+        {selectedCategory
+          ? `Pharmacies Found for "${selectedCategory?.name}"`
+          : "Featured Pharmacies"}
+      </h2>
+      {filteredPharmacies.length === 0 ? (
+        <p>No pharmacy found for this category.</p>
+      ) : (
+        <PharmacyList
+          pharmacies={visiblePharmacies}
+          calculateDistance={(lat: number, lon: number) =>
+            calculateDistance(lat, lon, userCoordinates[0], userCoordinates[1])
+          }
+          onShowAll={handleShowAll}
+          showAllButton={visibleCount < filteredPharmacies.length}
+        />
+      )}
       {/* Map Section */}
       <h2 className="section-title">Find Pharmacies on Google Map</h2>
       {userLocation.latitude && userLocation.longitude ? (
@@ -127,7 +160,7 @@ const HomePage: React.FC = () => {
           center={userCoordinates}
           zoom={13}
           style={{ height: "400px", width: "100%" }}
-          scrollWheelZoom={false} 
+          scrollWheelZoom={false}
         >
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -136,7 +169,7 @@ const HomePage: React.FC = () => {
           <Marker position={userCoordinates}>
             <Popup>Your Location</Popup>
           </Marker>
-          {pharmacies.map((pharmacy) => (
+          {filteredPharmacies.map((pharmacy) => (
             <Marker
               key={pharmacy.id}
               position={[pharmacy.latitude, pharmacy.longitude]}
@@ -151,8 +184,9 @@ const HomePage: React.FC = () => {
                       pharmacy.longitude,
                       userLocation.latitude,
                       userLocation.longitude
-                    )
-                  : "Unknown"}
+                    ).toFixed(2)
+                  : "Unknown"}{" "}
+                Km
               </Popup>
             </Marker>
           ))}
