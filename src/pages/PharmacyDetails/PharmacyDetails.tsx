@@ -7,6 +7,7 @@ import "./PharmacyDetails.scss";
 import { useGeoLocation, defaultCoordinates } from "../../hooks/useGeoLocation";
 import { getPharmacyDetail } from "../../api/pharmacyService";
 import PharmacyMap from "../../components/MapView/MapView";
+import { FaSearch } from "react-icons/fa";
 // Breadcrumbs Component
 const Breadcrumbs: React.FC = () => {
   const { pharmacyName } = useParams();
@@ -148,6 +149,7 @@ const PharmacyDetailPage: React.FC<PharmacyDetailPageProps> = ({
 
         {/* Medication Search */}
         <div className="medication-search">
+        <div className="search-bar">
           <input
             type="text"
             value={searchTerm}
@@ -156,26 +158,34 @@ const PharmacyDetailPage: React.FC<PharmacyDetailPageProps> = ({
             className="search-input"
           />
           <button onClick={handleSearch} className="search-button">
-            Search
+            <FaSearch />
           </button>
-
-          {/* Display Search Results */}
-          {searchResults.length > 0 ? (
-            <div className="search-results">
-              <h3>Search Results</h3>
-              <ul>
-                {searchResults.map((med) => (
-                  <li key={med.id} className="search-result-item">
-                    <strong>{med.name}</strong> - {med.price} -{" "}
-                    {med.stock_status}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : (
-            <p>No medications found.</p>
-          )}
         </div>
+
+        {/* Display Search Placeholder or Results */}
+        {!searchTerm.trim() && (
+          <div className="search-placeholder">
+            <p>Enter a medication name to search...</p>
+            {/* You can add more informative text here if needed */}
+          </div>
+        )}
+
+        {searchResults.length > 0 ? (
+          <div className="search-results">
+            <h3>Search Results</h3>
+            <ul>
+              {searchResults.map((med) => (
+                <li key={med.id} className="search-result-item">
+                  <strong>{med.name}</strong> - {med.price} -{" "}
+                  {med.stock_status}
+                </li>
+              ))}searchTerm
+            </ul>
+          </div>
+        ) : .trim() && !searchResults.length ? (
+          <p>No medications found.</p>
+        ) : null}
+      </div>
       </div>
       <div className="pharmacy-map-view">
         <h2 className="section-title">Find  on Google Map</h2>

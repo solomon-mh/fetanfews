@@ -16,17 +16,19 @@
     }
   }
 }
+
 * {
   box-sizing: border-box;
 }
+
 .pharmacy-detail-wrapper {
   display: flex;
   flex-wrap: wrap;
   margin: 20px auto;
   padding: 20px;
-  align-items: center;
-  justify-content: center;
-  /* Pharmacy Detail Page */
+ 
+
+  /* Desktop View (Default) */
   .pharmacy-detail {
     width: 70%;
     padding: 20px;
@@ -35,15 +37,16 @@
     box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
     display: flex;
     gap: 10px;
-    /* Pharmacy Info Section */
-    .pharmacy-info-wrapper {
-      border: 2px solid red;
 
+    .pharmacy-info-wrapper {
       width: 50%;
-      gap: 30px;
-      margin-bottom: 30px;
+      display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
+      gap: 30px;
+      margin-bottom: 30px;
+
       .pharmacy-image {
         width: 100%;
         height: 300px;
@@ -51,14 +54,15 @@
         border-radius: 10px;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
       }
+
       .pharmacy-info {
         display: flex;
-        gap: 10px;
-        align-items: center;
         flex-wrap: wrap;
+        gap: 10px;
         align-items: center;
         justify-content: center;
       }
+
       .pharmacy-name {
         font-size: 28px;
         font-weight: bold;
@@ -66,6 +70,7 @@
         margin-bottom: 10px;
         text-align: center;
       }
+
       .pharmacy-address,
       .pharmacy-distance,
       .pharmacy-phone,
@@ -78,6 +83,7 @@
         color: #777;
         margin: 5px 0;
       }
+
       .pharmacy-website a {
         color: #007bff;
         text-decoration: none;
@@ -85,6 +91,7 @@
           text-decoration: underline;
         }
       }
+
       .call-button {
         background-color: #28a745;
         color: #fff;
@@ -100,119 +107,170 @@
       }
     }
 
-    /* Medication Search Section */
     .medication-search {
       width: 45%;
-
-      margin-top: 40px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-
-      .search-input {
-        padding: 10px;
-        font-size: 16px;
-        border-radius: 5px;
-        border: 1px solid #ddd;
-        outline: none;
-        transition: border-color 0.3s ease;
-        &:focus {
-          border-color: #007bff;
+      .search-bar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 20px;
+    
+        .search-input {
+          padding: 12px 20px;
+          font-size: 16px;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+          width: 100%;
+          max-width: 400px;
+          transition: border-color 0.3s ease;
+        }
+    
+        .search-button {
+          background-color: #007bff;
+          color: #fff;
+          border: none;
+          padding: 12px;
+          font-size: 18px;
+          border-radius: 5px;
+          cursor: pointer;
+          transition: background-color 0.3s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+    
+          &:hover {
+            background-color: #0056b3;
+          }
         }
       }
-
-      .search-button {
-        background-color: #007bff;
-        color: #fff;
-        padding: 10px 15px;
+    
+      .search-placeholder {
+        margin-top: 15px;
         font-size: 16px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-        &:hover {
-          background-color: #0056b3;
-        }
+        color: #777;
       }
-
+    
+      /* Styling for search results */
       .search-results {
         margin-top: 20px;
+    
         h3 {
-          font-size: 22px;
+          font-size: 20px;
+          font-weight: bold;
           color: #333;
         }
-
+    
         ul {
           list-style: none;
           padding: 0;
-          margin: 0;
-          li {
-            padding: 10px;
+    
+          .search-result-item {
+            padding: 10px 0;
             border-bottom: 1px solid #f0f0f0;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: background-color 0.3s ease;
+    
             &:hover {
               background-color: #f9f9f9;
             }
-
+    
             strong {
-              font-weight: 600;
               color: #333;
-            }
-
-            .search-result-item {
-              display: flex;
-              justify-content: space-between;
-              width: 100%;
-              font-size: 16px;
-              color: #555;
             }
           }
         }
       }
     }
+
+
+
+  
   }
+
   .pharmacy-map-view {
-    width: 25%;
+    width: 30%;
   }
 }
-/* Mobile Responsiveness */
+
+/* ✅ Tablets (Medium Screens: 768px - 1024px) */
+@media (max-width: 1024px) {
+  .pharmacy-detail-wrapper {
+    flex-direction: column;
+  }
+
+  .pharmacy-detail {
+    min-width: 100%;
+
+    .pharmacy-info-wrapper {
+      border:2px solid red;
+
+      width: 50%;
+      text-align: center;
+
+      .pharmacy-image {
+        width: 80%;
+        height: 250px;
+      }
+
+      .pharmacy-name {
+        font-size: 26px;
+      }
+    }
+
+    .medication-search {
+      border:2px solid red;
+
+      width: 50%;
+    }
+  }
+
+  .pharmacy-map-view {
+    min-width: 100%;
+    margin-top: 20px;
+  }
+}
+
+/* ✅ Mobile (Small Screens: < 768px) */
 @media (max-width: 768px) {
-  .pharmacy-detail-wrapper,
-  .pharmacy-info {
+  .pharmacy-detail-wrapper {
     flex-direction: column;
     align-items: flex-start;
-    .pharmacy-detail {
+  }
+
+  .pharmacy-detail {
+    min-width: 100%;
+    flex-direction: column;
+
+    .pharmacy-info-wrapper {
+      min-width: 100%;
+      text-align: center;
+
+      .pharmacy-image {
+        min-width: 100px;
+        height: 100px;
+      }
+
+      .pharmacy-name {
+        font-size: 22px;
+      }
+    }
+
+    .medication-search {
+      min-width: 100%;
+    }
+
+    .medication-search .search-input,
+    .medication-search .search-button {
       width: 100%;
     }
-    .pharmacy-map-view {
-      width: 100%;
+
+    .drug-list ul {
+      padding-left: 20px;
     }
   }
 
-  .pharmacy-image {
-    width: 120px;
-    height: 120px;
-  }
-
-  .pharmacy-name {
-    font-size: 24px;
-  }
-  .medication-search {
+  .pharmacy-map-view {
     width: 100%;
-  }
-
-  .medication-search .search-input {
-    width: 100%;
-  }
-
-  .medication-search .search-button {
-    width: 100%;
-  }
-
-  .drug-list ul {
-    padding-left: 20px;
   }
 }
