@@ -1,6 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useEffect, useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "./HomePage.scss";
 import WhyUseMedLocator from "../../components/common/WhyUseMedLocator";
 import HeroSection from "../../components/HeroSection/HeroSection";
@@ -14,6 +14,7 @@ import { PharmacyDataType } from "../../utils/interfaces";
 import { searchByCategory } from "../../api/pharmacyService";
 import { useError } from "../../contexts/ErrorContext";
 import { useLoading } from "../../contexts/LoadingContext";
+import PharmacyMap from "../../components/MapView/MapView";
 const HomePage: React.FC = () => {
   const [visibleCount, setVisibleCount] = useState(5);
   const [selectedCategory, setSelectedCategory] = useState<CategoryType | null>(
@@ -156,41 +157,11 @@ const HomePage: React.FC = () => {
       {/* Map Section */}
       <h2 className="section-title">Find Pharmacies on Google Map</h2>
       {userLocation.latitude && userLocation.longitude ? (
-        <MapContainer
-          center={userCoordinates}
-          zoom={13}
-          style={{ height: "400px", width: "100%" }}
-          scrollWheelZoom={false}
-        >
-          <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-          />
-          <Marker position={userCoordinates}>
-            <Popup>Your Location</Popup>
-          </Marker>
-          {filteredPharmacies.map((pharmacy) => (
-            <Marker
-              key={pharmacy.id}
-              position={[pharmacy.latitude, pharmacy.longitude]}
-            >
-              <Popup>
-                {pharmacy.name}
-                <br />
-                Distance:{" "}
-                {userLocation.latitude && userLocation.longitude
-                  ? calculateDistance(
-                      pharmacy.latitude,
-                      pharmacy.longitude,
-                      userLocation.latitude,
-                      userLocation.longitude
-                    ).toFixed(2)
-                  : "Unknown"}{" "}
-                Km
-              </Popup>
-            </Marker>
-          ))}
-        </MapContainer>
+        <PharmacyMap
+        userCoordinates={userCoordinates}
+        pharmacies={filteredPharmacies}
+        userLocationError={userLocation.error}
+      />
       ) : (
         <p>Please enable location services to view nearby pharmacies.</p>
       )}

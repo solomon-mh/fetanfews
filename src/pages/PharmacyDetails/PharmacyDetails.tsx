@@ -1,14 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import  { useEffect, useState } from "react";
-import { useParams, useNavigate ,useSearchParams} from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import "./PharmacyDetails.scss";
 import { useGeoLocation, defaultCoordinates } from "../../hooks/useGeoLocation";
 import { getPharmacyDetail } from "../../api/pharmacyService";
+import PharmacyMap from "../../components/MapView/MapView";
 // Breadcrumbs Component
 const Breadcrumbs: React.FC = () => {
-  const { pharmacyName } = useParams(); 
+  const { pharmacyName } = useParams();
 
   const navigate = useNavigate();
   return (
@@ -95,7 +96,7 @@ const PharmacyDetailPage: React.FC<PharmacyDetailPageProps> = ({
 
   return (
     <div className="pharmacy-detail-wrapper">
-      <Breadcrumbs />
+      {/* <Breadcrumbs /> */}
 
       <div className="pharmacy-detail">
         <div className="pharmacy-info-wrapper">
@@ -175,6 +176,18 @@ const PharmacyDetailPage: React.FC<PharmacyDetailPageProps> = ({
             <p>No medications found.</p>
           )}
         </div>
+      </div>
+      <div className="pharmacy-map-view">
+        <h2 className="section-title">Find  on Google Map</h2>
+        {userLocation.latitude && userLocation.longitude ? (
+          <PharmacyMap
+            userCoordinates={userCoordinates}
+            pharmacies={[pharmacy]}
+            userLocationError={userLocation.error}
+          />
+        ) : (
+          <p>Please enable location services to view nearby pharmacies.</p>
+        )}
       </div>
     </div>
   );
