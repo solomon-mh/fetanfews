@@ -23,6 +23,7 @@ import UserList from "./admin/userList/UserList";
 import { ErrorProvider } from "./contexts/ErrorContext";
 import { LoadingProvider } from "./contexts/LoadingContext";
 import "./App.scss";
+import MedicationDetail from "./pages/MedicationDetail/MedicationDetail";
 function App() {
   return (
     <Router>
@@ -45,6 +46,10 @@ function App() {
             element={
               <PharmacyDetailPage calculateDistance={calculateDistance} />
             }
+          />
+          <Route
+            path="/pharmacy/:pharmacyName/:medicationName"
+            element={<MedicationDetail />}
           />
 
           <Route path="/user/login" element={<Login />} />

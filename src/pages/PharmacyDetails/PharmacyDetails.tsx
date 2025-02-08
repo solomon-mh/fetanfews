@@ -92,19 +92,21 @@ const PharmacyDetailPage: React.FC<PharmacyDetailPageProps> = ({
     } else {
       setTriggerSearch(true);
     }
-   
   };
   useEffect(() => {
     if (!triggerSearch || !searchTerm.trim()) return;
-  
+
     const searchMedications = async () => {
       setIsOnsearch(true);
       setMessage("");
       setSearchResults([]);
-  
+
       try {
         if (pharmacyId) {
-          const result = await searchPharmacyMedications(pharmacyId, searchTerm);
+          const result = await searchPharmacyMedications(
+            pharmacyId,
+            searchTerm
+          );
           if (result.message) {
             setMessage(result.message);
           } else if (result.error) {
@@ -120,11 +122,11 @@ const PharmacyDetailPage: React.FC<PharmacyDetailPageProps> = ({
       } catch (err) {
         setError("An error occurred while searching. Please try again.");
       }
-  
+
       setIsOnsearch(false);
       setTriggerSearch(false); // Reset trigger
     };
-  
+
     searchMedications();
   }, [searchTerm, pharmacyId, triggerSearch]);
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -288,8 +290,11 @@ const PharmacyDetailPage: React.FC<PharmacyDetailPageProps> = ({
                       <td>{med.price} Birr</td>
                       <td>
                         <Link
-                          to={`/medication/${med.id}`}
-                          className="detail-button"
+                          to={`/pharmacy/${encodeURIComponent(
+                            pharmacy.name
+                          )}/${encodeURIComponent(med.name)}?pham_id=${
+                            pharmacy.id
+                          }&med_id=${med.id}`}
                         >
                           See Detail
                         </Link>
@@ -312,7 +317,13 @@ const PharmacyDetailPage: React.FC<PharmacyDetailPageProps> = ({
         </div>
       </div>
       <div className="pharmacy-map-view">
-        <h2 className="section-title">Find <span style={{color:"blue",textDecoration:"underline"}}>{pharmacyName}</span>  on  Map</h2>
+        <h2 className="section-title">
+          Find{" "}
+          <span style={{ color: "blue", textDecoration: "underline" }}>
+            {pharmacyName}
+          </span>{" "}
+          on Map
+        </h2>
         {userLocation.latitude && userLocation.longitude ? (
           <PharmacyMap
             userCoordinates={userCoordinates}

@@ -19,4 +19,15 @@ export const searchPharmacyMedications = async (pharmacyId: string, query: strin
         return { error: error.message };
       }
     }
-  };
+};
+export const getPharmacyMedicationDetail = async (pharmacyId: string, medicationId: string) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/pharmacies/${pharmacyId}/medications/${medicationId}/`);
+    return { data: response.data, error: null };
+  } catch (error: any) {
+    return {
+      data: null,
+      error: error.response?.data?.error || "An error occurred while fetching medication details.",
+    };
+  }
+};
