@@ -7,7 +7,7 @@ import LightModeIcon from "@mui/icons-material/LightMode";
 import MenuIcon from "@mui/icons-material/Menu";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 // import SearchIcon from '@mui/icons-material/Search';
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 // import axios from 'axios'
 import { Modal, Button } from "@mui/material";
 import { ColorContext } from "../../contexts/ColorContext";
@@ -191,7 +191,7 @@ function Header({ onToggleSidebar, onToggleSidebarShrunk }) {
             width: 400,
             backgroundColor: "white",
             border: "2px solid #000",
-            boxShadow: 24,
+            boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
             padding: "20px",
             borderRadius: "8px",
           }}

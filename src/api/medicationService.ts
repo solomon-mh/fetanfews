@@ -3,7 +3,7 @@ import axios from "axios";
 const API_BASE_URL = "http://localhost:8000/api";
 export const searchPharmacyMedications = async (pharmacyId: string, query: string) => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/pahrmacies/${pharmacyId}/medications/search/`, {
+      const response = await axios.get(`${API_BASE_URL}/pharmacies/${pharmacyId}/medications/search/`, {
         params: { query },
       });
       return response.data; 

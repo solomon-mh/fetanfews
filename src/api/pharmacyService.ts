@@ -155,9 +155,11 @@ export const searchMedications = async (query:string) => {
 export const searchPharmacies = async (query = "") => {
   try {
     const response = await axios.get(`${API_BASE_URL}/pharmacies/search/`, {
-      params: { q: query },
+      params: { query: query },
     });
+
     return response.data;
+
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.error("Error fetching pharmacies:", error.response?.data || error.message);
@@ -181,3 +183,17 @@ export const searchByCategory = async (categoryId:number, pharmacyId = null) => 
       throw error;
   }
 }
+
+
+
+export const getNearbyPharmacies = async (latitude:number, longitude:number, radius = 5) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/pharmacies/nearby/`, {
+      params: { latitude, longitude, radius },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching nearby pharmacies:", error);
+    return [];
+  }
+};
