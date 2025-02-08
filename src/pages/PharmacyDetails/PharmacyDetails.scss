@@ -26,7 +26,6 @@
   flex-wrap: wrap;
   margin: 20px auto;
   padding: 20px;
- 
 
   /* Desktop View (Default) */
   .pharmacy-detail {
@@ -44,7 +43,6 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 30px;
       margin-bottom: 30px;
 
       .pharmacy-image {
@@ -60,15 +58,17 @@
         flex-wrap: wrap;
         gap: 10px;
         align-items: center;
-        justify-content: center;
+        justify-content: space-between;
+        width: 100%;
       }
 
       .pharmacy-name {
+
         font-size: 28px;
         font-weight: bold;
         color: #333;
-        margin-bottom: 10px;
-        text-align: center;
+        border-right:3px solid  #007bff;
+        margin-right: 15px;
       }
 
       .pharmacy-address,
@@ -92,19 +92,7 @@
         }
       }
 
-      .call-button {
-        background-color: #28a745;
-        color: #fff;
-        border: none;
-        padding: 12px 20px;
-        font-size: 16px;
-        border-radius: 5px;
-        transition: background-color 0.3s ease;
-        margin-top: 15px;
-        &:hover {
-          background-color: #218838;
-        }
-      }
+     
     }
 
     .medication-search {
@@ -114,85 +102,171 @@
         align-items: center;
         gap: 10px;
         margin-top: 20px;
-    
+
         .search-input {
-          padding: 12px 20px;
+          padding:  20px;
           font-size: 16px;
           border: 1px solid #ccc;
-          border-radius: 5px;
+          border-radius: 8px;
           width: 100%;
           max-width: 400px;
           transition: border-color 0.3s ease;
+
         }
-    
+
         .search-button {
           background-color: #007bff;
           color: #fff;
           border: none;
-          padding: 12px;
+          padding: 20px;
           font-size: 18px;
-          border-radius: 5px;
+          border-radius: 8px;
           cursor: pointer;
           transition: background-color 0.3s ease;
           display: flex;
-          align-items: center;
-          justify-content: center;
-    
+          
+
           &:hover {
             background-color: #0056b3;
           }
         }
       }
-    
+
       .search-placeholder {
         margin-top: 15px;
         font-size: 16px;
         color: #777;
       }
+      .suggestions {
+        font-size: 16px;
+        color: #333;
+  
+        ul {
+          list-style: none;
+          padding: 0;
+          margin-top: 10px;
+          li {
+            margin: 5px 0;
+            color: #007bff;
+            cursor: pointer;
+            &:hover {
+              text-decoration: underline;
+            }
+          }
+        }
+      }
+      .search-loading {
+        text-align: center;
+        font-size: 18px;
+        color: #007bff;
+        .loading-spinner {
+          margin-top: 10px;
+          font-size: 24px;
+        }
     
+        .spinner-icon {
+          animation: spin 2s linear infinite;
+        }
+    
+       
+      }
       /* Styling for search results */
       .search-results {
         margin-top: 20px;
-    
+
         h3 {
           font-size: 20px;
           font-weight: bold;
           color: #333;
         }
-    
+
         ul {
           list-style: none;
           padding: 0;
-    
+
           .search-result-item {
             padding: 10px 0;
             border-bottom: 1px solid #f0f0f0;
             display: flex;
             justify-content: space-between;
             align-items: center;
-    
+
             &:hover {
               background-color: #f9f9f9;
             }
-    
+
             strong {
               color: #333;
             }
           }
         }
       }
-    }
+      .medication-table {
+        max-width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        thead tr th{
+          background-color: #8299ac;
+          font-weight: bold;
+          color: #333;
 
-
-
+        }
+        th, td {
+          padding: 12px;
+          text-align: left;
+          border: 1px solid #ddd;
+        }
   
-  }
+        th {
+          background-color: #f4f4f4;
+          font-weight: bold;
+        }
+  
+        td {
+          background-color: #fff;
+        }
+  
+        .medication-image {
+          max-width: 50px;
+          max-height: 50px;
+          object-fit: cover;
+        }
+  
+        tr:hover {
+          background-color: #f1f1f1;
+        }
+  
+        tr:nth-child(even) {
+          background-color: #f9f9f9;
+        }
+      }
+    }
+  
+    .no-results {
+      text-align: center;
+      font-size: 18px;
+      color: #888;
+      .retry-button {
+        margin-top: 10px;
+        padding: 10px 15px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        &:hover {
+          background-color: #218838;
+        }
+      }
+    }
+    }
+  
 
   .pharmacy-map-view {
     width: 30%;
   }
-}
 
+}
 /* ✅ Tablets (Medium Screens: 768px - 1024px) */
 @media (max-width: 1024px) {
   .pharmacy-detail-wrapper {
@@ -203,7 +277,7 @@
     min-width: 100%;
 
     .pharmacy-info-wrapper {
-      border:2px solid red;
+      border: 2px solid red;
 
       width: 50%;
       text-align: center;
@@ -219,7 +293,7 @@
     }
 
     .medication-search {
-      border:2px solid red;
+      border: 2px solid red;
 
       width: 50%;
     }
