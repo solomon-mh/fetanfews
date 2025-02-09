@@ -28,20 +28,17 @@ export const Search = async (searchCriteria: {
 
     // If only medication search criteria is provided, filter pharmacies based on drugs
     if (drugName && !pharmacyName) {
-     
-
-      return medicationResults.length>0? medicationResults.map(
-        (medication: any) => medication.pharmacy_details
-      ):[];
+      return medicationResults
     }
 
     // If both search criteria are provided (pharmacy and drug), filter pharmacies
     if (drugName && pharmacyName) {
+
       return pharmacyResults.filter((pharmacy: any) =>
         medicationResults.some(
           (medication: any) =>
-            medication.pharmacy_details &&
-            medication.pharmacy_details.name
+            medication&&
+            medication.name
               .toLowerCase()
               .includes(pharmacyName.toLowerCase())
         )
