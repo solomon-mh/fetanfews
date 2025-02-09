@@ -2,7 +2,7 @@ import React from "react";
 import SearchBar from "../SearchBar/SearchBar";
 import pharmacistImage from "../../assets/images/pharmacist1.svg"; // Update the path as needed
 import "./HeroSection.scss";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,Link } from "react-router-dom";
 
 const HeroSection: React.FC = () => {
   const navigate = useNavigate();
@@ -17,8 +17,7 @@ const HeroSection: React.FC = () => {
 
   const handleDrugSearch = (drug: string) => {
     if (drug) queryParams.append("medication", drug);
-   navigate(`/search-results/?${queryParams.toString()}`);
-
+    navigate(`/search-results/?${queryParams.toString()}`);
   };
 
   return (
@@ -53,7 +52,11 @@ const HeroSection: React.FC = () => {
           </div>
         </div>
       </div>
-
+      <div>
+        <Link to="/nearby-pharmacies/"className="find-nearby">
+          Find Nearby Pharmacies
+        </Link>
+      </div>
       <div className="hero-image-container">
         <img src={pharmacistImage} alt="Hero" className="hero-image" />
       </div>

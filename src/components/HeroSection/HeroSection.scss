@@ -69,6 +69,24 @@
     top: 5%;
     right: 5%; 
     width: 20%;
+    display: inline-block;
+  padding: 15px;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  color: #ffffff;
+  background: linear-gradient(135deg, #e4c40f, #5d8ec4); // Gradient blue effect
+  border-radius: 8px;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+
+ 
+
+  &:active {
+    transform: translateY(1px); // Press-down effect
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.15);
+  }
   }
 
   .hero-image-container {
