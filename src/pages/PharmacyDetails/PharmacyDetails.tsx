@@ -15,7 +15,7 @@ import PharmacyMap from "../../components/MapView/MapView";
 import { FaSearch, FaHeartbeat, FaRedo } from "react-icons/fa";
 import { searchPharmacyMedications } from "../../api/medicationService";
 import { string } from "zod";
-
+import Breadcrumbs from "../../components/common/Breadcrumbs";
 // Breadcrumbs Component
 // const Breadcrumbs: React.FC = () => {
 //   const { pharmacyName } = useParams();
@@ -150,191 +150,199 @@ const PharmacyDetailPage: React.FC<PharmacyDetailPageProps> = ({
   }
 
   return (
-    <div className="pharmacy-detail-wrapper">
-      {/* <Breadcrumbs /> */}
+    <>
+      {" "}
+      <Breadcrumbs />
 
-      <div className="pharmacy-detail">
-        <div className="pharmacy-info-wrapper">
-          <img
-            src={`http://127.0.0.1:8000${pharmacy.image}`}
-            alt={pharmacy.name}
-            className="pharmacy-image"
-          />
-          <div>
-            <span className="pharmacy-name">{pharmacy.name} </span>
-            {""}
-            <span className="pharmacy-distance">
-              {calculateDistance(
-                pharmacy.latitude,
-                pharmacy.longitude,
-                userCoordinates[0],
-                userCoordinates[1]
-              ).toFixed(2)}{" "}
-              Km away from you
-            </span>
-          </div>
-
-          <div className="pharmacy-info">
-            <div className="basic-address">
-              <p className="pharmacy-phone">Phone: {pharmacy.phone}</p>
-              <p className="pharmacy-email">Email: {pharmacy.email}</p>
-              <p className="pharmacy-address">{pharmacy.address}</p>
-            </div>
-            <div className="basic-info">
-              {pharmacy.website && (
-                <p className="pharmacy-website">
-                  Website:{" "}
-                  <a
-                    href={pharmacy.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {pharmacy.website}
-                  </a>
-                </p>
-              )}
-              <p className="pharmacy-operating-hours">
-                Operating Hours: {pharmacy.operating_hours}
-              </p>
-
-              <p className="pharmacy-delivery">
-                Delivery Available: {pharmacy.delivery_available ? "Yes" : "No"}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Medication Search */}
-        <div className="medication-search">
-          <div className="search-bar">
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={handleInputChange}
-              placeholder="Search by medications name or category"
-              className="search-input"
+      <div className="pharmacy-detail-wrapper">
+        <div className="pharmacy-detail">
+          <div className="pharmacy-info-wrapper">
+            <img
+              src={`http://127.0.0.1:8000${pharmacy.image}`}
+              alt={pharmacy.name}
+              className="pharmacy-image"
             />
-            <button onClick={() => handleSearch("")} className="search-button">
-              <FaSearch />
-            </button>
+            <div>
+              <span className="pharmacy-name">{pharmacy.name} </span>
+              {""}
+              <span className="pharmacy-distance">
+                {calculateDistance(
+                  pharmacy.latitude,
+                  pharmacy.longitude,
+                  userCoordinates[0],
+                  userCoordinates[1]
+                ).toFixed(2)}{" "}
+                Km away from you
+              </span>
+            </div>
+
+            <div className="pharmacy-info">
+              <div className="basic-address">
+                <p className="pharmacy-phone">Phone: {pharmacy.phone}</p>
+                <p className="pharmacy-email">Email: {pharmacy.email}</p>
+                <p className="pharmacy-address">{pharmacy.address}</p>
+              </div>
+              <div className="basic-info">
+                {pharmacy.website && (
+                  <p className="pharmacy-website">
+                    Website:{" "}
+                    <a
+                      href={pharmacy.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {pharmacy.website}
+                    </a>
+                  </p>
+                )}
+                <p className="pharmacy-operating-hours">
+                  Operating Hours: {pharmacy.operating_hours}
+                </p>
+
+                <p className="pharmacy-delivery">
+                  Delivery Available:{" "}
+                  {pharmacy.delivery_available ? "Yes" : "No"}
+                </p>
+              </div>
+            </div>
           </div>
 
-          {!searchTerm.trim() && !isOnsearch && (
-            <div className="search-placeholder">
-              <p>
-                <span role="img" aria-label="pill">
-                  💊
-                </span>{" "}
-                Enter a medication name or its category to search durgs at{" "}
-                <strong>{pharmacyName}</strong>
-              </p>
-              <p className="suggestions">
-                Or check out popular medications:
-                <ul>
-                  <li
-                    onClick={() => {
-                      handleSearch("Paracetamol");
-                    }}
-                  >
-                    Paracetamol
-                  </li>
-                  <li
-                    onClick={() => {
-                      handleSearch("Ibuprofen");
-                    }}
-                  >
-                    Ibuprofen
-                  </li>
-                  <li
-                    onClick={() => {
-                      handleSearch("Amoxicillin");
-                    }}
-                  >
-                    Amoxicillin
-                  </li>
-                  <li
-                    onClick={() => {
-                      handleSearch("Aspirin");
-                    }}
-                  >
-                    Aspirin
-                  </li>
-                </ul>
-              </p>
+          {/* Medication Search */}
+          <div className="medication-search">
+            <div className="search-bar">
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={handleInputChange}
+                placeholder="Search by medications name or category"
+                className="search-input"
+              />
+              <button
+                onClick={() => handleSearch("")}
+                className="search-button"
+              >
+                <FaSearch />
+              </button>
             </div>
-          )}
 
-          {isOnsearch ? (
-            <div className="search-loading">
-              <p>Searching...</p>
-              <div className="loading-spinner">
-                <FaHeartbeat className="spinner-icon" />
-                <span>Hold on, we’re looking for medications...</span>
+            {!searchTerm.trim() && !isOnsearch && (
+              <div className="search-placeholder">
+                <p>
+                  <span role="img" aria-label="pill">
+                    💊
+                  </span>{" "}
+                  Enter a medication name or its category to search durgs at{" "}
+                  <strong>{pharmacyName}</strong>
+                </p>
+                <p className="suggestions">
+                  Or check out popular medications:
+                  <ul>
+                    <li
+                      onClick={() => {
+                        handleSearch("Paracetamol");
+                      }}
+                    >
+                      Paracetamol
+                    </li>
+                    <li
+                      onClick={() => {
+                        handleSearch("Ibuprofen");
+                      }}
+                    >
+                      Ibuprofen
+                    </li>
+                    <li
+                      onClick={() => {
+                        handleSearch("Amoxicillin");
+                      }}
+                    >
+                      Amoxicillin
+                    </li>
+                    <li
+                      onClick={() => {
+                        handleSearch("Aspirin");
+                      }}
+                    >
+                      Aspirin
+                    </li>
+                  </ul>
+                </p>
               </div>
-            </div>
-          ) : searchTerm && searchResults.length > 0 ? (
-            <div className="search-results">
-              <h3>Search Results</h3>
-              <table className="medication-table">
-                <thead>
-                  <tr>
-                    <th>Drug Name</th>
-                    <th>Price</th>
-                    <th>Detail</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {searchResults.map((med) => (
-                    <tr key={med.id}>
-                      <td>{med.name}</td>
-                      <td>{med.price} Birr</td>
-                      <td>
-                        <Link
-                          to={`/pharmacy/${encodeURIComponent(
-                            pharmacy.name
-                          )}/${encodeURIComponent(med.name)}?pham_id=${
-                            pharmacy.id
-                          }&med_id=${med.id}`}
-                        >
-                          See Detail
-                        </Link>
-                      </td>
+            )}
+
+            {isOnsearch ? (
+              <div className="search-loading">
+                <p>Searching...</p>
+                <div className="loading-spinner">
+                  <FaHeartbeat className="spinner-icon" />
+                  <span>Hold on, we’re looking for medications...</span>
+                </div>
+              </div>
+            ) : searchTerm && searchResults.length > 0 ? (
+              <div className="search-results">
+                <h3>Search Results</h3>
+                <table className="medication-table">
+                  <thead>
+                    <tr>
+                      <th>Drug Name</th>
+                      <th>Price</th>
+                      <th>Detail</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            (message || error) && (
-              <div className="no-results">
-                <p>{message || error}</p>
-                <button onClick={handleRetry} className="retry-button">
-                  <FaRedo /> Retry Search
-                </button>
+                  </thead>
+                  <tbody>
+                    {searchResults.map((med) => (
+                      <tr key={med.id}>
+                        <td>{med.name}</td>
+                        <td>{med.price} Birr</td>
+                        <td>
+                          <Link
+                            className="see-detail"
+                            to={`/pharmacy/${encodeURIComponent(
+                              pharmacy.name
+                            )}/${encodeURIComponent(med.name)}?pham_id=${
+                              pharmacy.id
+                            }&med_id=${med.id}`}
+                          >
+                            See Detail
+                          </Link>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-            )
+            ) : (
+              (message || error) && (
+                <div className="no-results">
+                  <p>{message || error}</p>
+                  <button onClick={handleRetry} className="retry-button">
+                    <FaRedo /> Retry Search
+                  </button>
+                </div>
+              )
+            )}
+          </div>
+        </div>
+        <div className="pharmacy-map-view">
+          <h2 className="section-title">
+            Find{" "}
+            <span style={{ color: "blue", textDecoration: "underline" }}>
+              {pharmacyName}
+            </span>{" "}
+            on Map
+          </h2>
+          {userLocation.latitude && userLocation.longitude ? (
+            <PharmacyMap
+              userCoordinates={userCoordinates}
+              pharmacies={[pharmacy]}
+              userLocationError={userLocation.error}
+            />
+          ) : (
+            <p>Please enable location services to view on map.</p>
           )}
         </div>
       </div>
-      <div className="pharmacy-map-view">
-        <h2 className="section-title">
-          Find{" "}
-          <span style={{ color: "blue", textDecoration: "underline" }}>
-            {pharmacyName}
-          </span>{" "}
-          on Map
-        </h2>
-        {userLocation.latitude && userLocation.longitude ? (
-          <PharmacyMap
-            userCoordinates={userCoordinates}
-            pharmacies={[pharmacy]}
-            userLocationError={userLocation.error}
-          />
-        ) : (
-          <p>Please enable location services to view on map.</p>
-        )}
-      </div>
-    </div>
+    </>
   );
 };
 
