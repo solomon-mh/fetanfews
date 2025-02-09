@@ -146,13 +146,12 @@ const HomePage: React.FC = () => {
         <p>No pharmacy found for this category.</p>
       ) : (
         <PharmacyList
-          pharmacies={visiblePharmacies}
+          pharmacies={filteredPharmacies}
           calculateDistance={(lat: number, lon: number) =>
             calculateDistance(lat, lon, userCoordinates[0], userCoordinates[1])
           }
-          onShowAll={handleShowAll}
-          showAllButton={visibleCount < filteredPharmacies.length}
-        />
+          showAllButton={true} 
+          />
       )}
       {/* Map Section */}
       <h2 className="section-title">Find Pharmacies on Google Map</h2>

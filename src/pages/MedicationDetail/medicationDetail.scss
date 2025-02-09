@@ -7,6 +7,25 @@
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   font-family: "Poppins", sans-serif;
 
+
+  .breadcrumbs {
+    font-size: 14px;
+    color: #555;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    span {
+      cursor: pointer;
+      color: #007bff;
+      font-weight: 500;
+      transition: color 0.3s ease;
+      &:hover {
+        text-decoration: underline;
+        color: #0056b3;
+      }
+    }
+  }
+
   h1 {
     font-size: 24px;
     font-weight: bold;
@@ -33,7 +52,7 @@
         border-radius: 10px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
         transition: transform 0.3s ease-in-out;
-
+object-fit:cover;
         &:hover {
           transform: scale(1.05);
         }
