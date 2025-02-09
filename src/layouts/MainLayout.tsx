@@ -40,10 +40,10 @@ const MainLayout = () => {
       }
 	return (
 		<div>
-			<header className="fixed w-full z-50 top-0 right-0">
+			<header >
 				<Header />
 			</header>
-			<main style={{ paddingTop: "70px" }}>
+			<main style={{ paddingTop: "80px" }}>
 				<Outlet />
 			</main>
 			<Footer />

@@ -72,8 +72,14 @@ const SearchBar: React.FC = () => {
     }
   };
 
-  const handleSearch = () =>
+  const handleSearch = () => {
+    setPharmacySuggestions([]);
+    setDrugSuggestions([]);
+
     navigate(`/search-results/?${queryParams.toString()}`);
+
+
+  }
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") handleSearch();
