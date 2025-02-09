@@ -1,58 +1,48 @@
+import { useState } from "react";
 import "./Navbar.scss";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { Logout } from "../../api/auth";
-import { useEffect } from "react";
+
 const Header = () => {
-  const { user,setLoggedin,loggedin } = useAuth();
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")!) : null;
+  const { user, setLoggedin, loggedin } = useAuth();
+  const [menuOpen, setMenuOpen] = useState(false);
 
-    if (storedUser) {
-
-      setLoggedin(true);
-    }
-  }, [setLoggedin]);
-  
   const handleLogout = async () => {
-    await Logout()
+    await Logout();
     setLoggedin(false);
-
-  }
+    setMenuOpen(false);
+  };
 
   return (
     <header className="header">
       <nav className="navbar">
-        <div className="navbar-logo">MedLocator</div>
-        <ul className="navbar-links">
+        <Link to="/"  className="navbar-logo">MedLocator</Link>
+        
+        <div className="menu-icon" onClick={() => setMenuOpen(!menuOpen)}>
+          ☰
+        </div>
+
+        <ul className={`navbar-links ${menuOpen ? "active" : ""}`}>
           <li>
-            <Link className="link" to="/admin/dashboard">
+            <Link className="link" to="/admin/dashboard" onClick={() => setMenuOpen(false)}>
               AdminPage
             </Link>
           </li>
           <li>
-            <Link className="link" to="/pharmacy-registration/help">
-              Registor pharmacy
+            <Link className="link" to="/pharmacy-registration/help" onClick={() => setMenuOpen(false)}>
+              Register Pharmacy
             </Link>
           </li>
-          <li>
-            <Link className="link" to="/">
-              Home
-            </Link>
-          </li>
-          <li>
-            <Link className="link" to="/about">
-              About
-            </Link>
-          </li>
-
+          
+          
           <li>
             {loggedin ? (
-              <Link className="link" to='' onClick={handleLogout} title={user?.first_name}>
-                Logout 
+              <Link className="link" to="" onClick={handleLogout} title={user?.first_name}>
+                Logout
               </Link>
             ) : (
-              <Link className="link" to="/user/login">
+              <Link className="link" to="/user/login" onClick={() => setMenuOpen(false)}>
                 Login
               </Link>
             )}

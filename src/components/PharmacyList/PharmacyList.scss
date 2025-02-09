@@ -1,15 +1,7 @@
 
 .pharmacies-list-wrapper{
-    padding: 50px; 
-    .section-title {
-     font-size: 1.8rem;
-     font-weight: bold;
-     color: #333;
-     margin: 20px 0;
-     border-bottom: 2px solid #007bff;
-     display: inline-block;
-     padding-bottom: 5px;
-   }
+    padding: 10px; 
+
  
      .pharmacies-list {
 
@@ -75,6 +67,39 @@
          }
        }
      }
+     .pagination-controls {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+      align-items: center;
+    }
+    
+    .pagination-button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      margin: 0 5px;
+      cursor: pointer;
+      border-radius: 5px;
+      font-size: 14px;
+      transition: background-color 0.3s ease-in-out;
+    
+      &:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+      }
+    
+      &:hover:not(:disabled) {
+        background-color: #0056b3;
+      }
+    }
+    
+    .pagination-info {
+      font-size: 16px;
+      font-weight: bold;
+    }
+    
      .show-all-button {
        display: inline-block;
        margin-top: 20px;
