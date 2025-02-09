@@ -24,6 +24,7 @@ import { ErrorProvider } from "./contexts/ErrorContext";
 import { LoadingProvider } from "./contexts/LoadingContext";
 import "./App.scss";
 import MedicationDetail from "./pages/MedicationDetail/MedicationDetail";
+import NearbyPharmacies from "./pages/NearBy/NearbyPharmacies";
 function App() {
   return (
     <Router>
@@ -54,6 +55,7 @@ function App() {
 
           <Route path="/user/login" element={<Login />} />
           <Route path="/user/signup" element={<SignUp />} />
+          <Route path="/nearby-pharmacies" element={<NearbyPharmacies />} />
           <Route path="/search-results" element={<SearchResultsPage />} />
           <Route
             path="/pharmacy-registration/form"

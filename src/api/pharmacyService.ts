@@ -186,10 +186,10 @@ export const searchByCategory = async (categoryId:number, pharmacyId = null) => 
 
 
 
-export const getNearbyPharmacies = async (latitude:number, longitude:number, radius = 5) => {
+export const getNearbyPharmacies = async (latitude:number, longitude:number, lower_limit: number, upper_limit: number) => {
   try {
     const response = await axios.get(`${API_BASE_URL}/pharmacies/nearby/`, {
-      params: { latitude, longitude, radius },
+      params: { latitude, longitude, lower_limit,upper_limit },
     });
     return response.data;
   } catch (error) {
