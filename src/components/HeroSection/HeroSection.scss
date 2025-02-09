@@ -1,147 +1,159 @@
 .hero-wrapper {
-    position: relative;
-    height: 65vh;
-    background: url("../../assets/images/drugstore.jpg") no-repeat center center /
-      cover;
-    display: flex;
-    flex-direction: column;
+  position: relative;
+  height: 65vh;
+  background: url("../../assets/images/drugstore.jpg") no-repeat center center /
+    cover;
+  display: flex;
+  flex-direction: column;
 
-
-    .hero-container {
-      padding-left: 20px;
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(
-        96deg,
-        rgba(22, 78, 187, 1) 0%,
-        rgba(4, 60, 170, 0.86) 44.4%,
-        rgba(4, 60, 170, 0) 100%
-      );
+  .hero-container {
+    padding-left: 20px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      96deg,
+      rgba(22, 78, 187, 1) 0%,
+      rgba(4, 60, 170, 0.86) 44.4%,
+      rgba(4, 60, 170, 0) 100%
+    );
+  }
+  .hero-content {
+    width: 70%;
+    align-items: center;
+    padding: 3rem;
+    .hero-title {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
     }
+
+    .hero-subtitle {
+       font-size: clamp(1rem, 2vw, 1.2rem);
+  margin-bottom: 2rem;
+    }
+
+    
+    .frequently-searched {
+      margin-top: 20px;
+    }
+
+    .frequently-searched-title {
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .frequently-searched-list {
+      list-style-type: none;
+      padding: 0;
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .drug-item {
+      border: 1px solid #ccc;
+      padding: 5px 10px;
+      background-color: transparent;
+      border-radius: 20%;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+  }
+  .find-nearby{
+    position: absolute;
+    top: 5%;
+    right: 5%; 
+    width: 20%;
+  }
+
+  .hero-image-container {
+    background-color: transparent;
+    position: absolute;
+    bottom: 5px;
+    right: 5%; 
+    width: 20%;
+    .hero-image {
+      background: transparent;
+      width: 100%; 
+      border-radius: 20px;
+    }
+  }
+}
+@media (max-width: 1024px) {
+  .hero-content {
+    width: 90%;
+  }
+
+  .hero-image-container {
+    width: 20%;
+  }
+}
+
+@media (max-width: 768px) {
+  .frequently-searched {
+    display: none;
+  }
+  .hero-wrapper {
+    align-items: center;
+    text-align: center;
     .hero-content {
-      width: 70%;
-      align-items: center;
-      padding: 3rem;
+      width: 80%;
+      padding: 1.5rem;
       .hero-title {
-        font-size: 2rem;
-        font-weight: 700;
-        margin-bottom: 1rem;
+        font-size: clamp(1.5rem, 3.5vw, 2rem);
       }
 
       .hero-subtitle {
-        font-size: 1.2rem;
-        margin-bottom: 2rem;
-      }
-
-      .search-form {
-        display: flex;
-
-        .search-input {
-          padding: 0.8rem 1rem;
-          font-size: 1rem;
-          border: none;
-          border-radius: 10px;
-          flex: 1;
-          max-width: 500px;
-          background: #fff;
-          color: black;
-        }
-
-        .search-button {
-          padding: 0.8rem 1.5rem;
-          font-size: 1rem;
-          background-color: #1abc9c;
-          color: #fff;
-          border: none;
-          border-radius: 5px;
-          cursor: pointer;
-          transition: background-color 0.3s ease;
-
-          &:hover {
-            background-color: #16a085;
-          }
-        }
-      }
-      .frequently-searched {
-        margin-top: 20px;
-      }
-
-      .frequently-searched-title {
-        font-size: 2rem;
-        font-weight: bold;
-        margin-bottom: 10px;
-      }
-
-      .frequently-searched-list {
-        list-style-type: none;
-        padding: 0;
-        display: flex;
-        gap: 15px;
-        flex-wrap: wrap;
-      }
-
-      .drug-item {
-        border: 1px solid #ccc;
-        padding: 5px 10px;
-        background-color: transparent;
-        border-radius: 20%;
-        font-size: 1rem;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
+        font-size: clamp(0.9rem, 2vw, 1rem);
       }
     }
-
     .hero-image-container {
-      background-color: transparent;
-      position: absolute;
-      bottom: 5px;
-      right: 5%; /* 20px from the right */
-      width: 20%;
-      .hero-image {
-        background: transparent;
-        width: 100%; /* Adjust size as needed */
-        border-radius: 20px;
-      }
-    }
+      width: 40%;
+        }
+  }
+}
+@media (max-width: 480px) {
+  .hero-wrapper {
+    height: auto;
+    padding: 20px;
   }
 
-  @media (max-width: 768px) {
-    .frequently-searched {
-      display: none;
-    }
-    .hero-wrapper {
-      .hero-content {
-        .hero-title {
-          font-size: 2rem;
-        }
-  
-        .hero-subtitle {
-          font-size: 0.9rem;
-        }
-      }
-    }
+  .hero-container {
+    padding: 1rem;
   }
-  @media (max-width: 480px) {
-    .hero-content-wrapper {
-      padding: 1rem;
 
-      .hero-content {
-        .hero-title {
-          font-size: 1.8rem;
-        }
-
-        .hero-subtitle {
-          font-size: 0.8rem;
-        }
-      }
-
-      .hero-image-container {
-        .hero-image {
-          max-width: 200px;
-        }
-      }
-    }
+  .hero-content {
+    width: 100%;
+    padding: 1rem;
   }
+
+  .hero-title {
+    font-size: 1.8rem;
+  }
+
+  .hero-subtitle {
+    font-size: 0.8rem;
+  }
+
+  .search-form {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .search-input {
+    width: 100%;
+  }
+
+  .search-button {
+    width: 100%;
+  }
+
+  .hero-image-container {
+    width: 40%;
+  }
+}
