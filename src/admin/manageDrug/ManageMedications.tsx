@@ -81,9 +81,8 @@ const ManageMedications: React.FC = () => {
     try {
       const data = await fetchMedicationsData();
       setMedications(data);
-      console.log("medaction from manage", data);
-    } catch (error) {
-      showSnackbar("Failed to fetch medications.", "error");
+    } catch (error:any) {
+      showSnackbar(error.message, "error");
     }
   };
 
@@ -234,7 +233,7 @@ const ManageMedications: React.FC = () => {
                 <TableRow key={medication.id}>
                   <TableCell>
                     <img
-                      src={`http://127.0.0.1:8000${medication.image}`} // Ensure full URL
+                      src={`http://127.0.0.1:8000${medication.image}`} 
                       alt="No image"
                       style={{
                         width: "50px",
