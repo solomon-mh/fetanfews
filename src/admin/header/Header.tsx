@@ -2,7 +2,7 @@ import DarkModeIcon from "@mui/icons-material/DarkMode";
 import FullscreenExitIcon from "@mui/icons-material/FullscreenExit";
 import FullscreenIcon from "@mui/icons-material/Fullscreen";
 
-import LanguageIcon from "@mui/icons-material/Language";
+// import LanguageIcon from "@mui/icons-material/Language";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import MenuIcon from "@mui/icons-material/Menu";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
@@ -19,9 +19,11 @@ import { useAuth } from "../../contexts/AuthContext";
 import { Logout } from "../../api/auth";
 import { useNavigate } from "react-router-dom";
 
-// import images
-
-function Header({ onToggleSidebar, onToggleSidebarShrunk }) {
+interface propTypes {
+  onToggleSidebar: ()=>void
+  onToggleSidebarShrunk: ()=>void,
+};
+const Header: React.FC<propTypes> = ({ onToggleSidebar, onToggleSidebarShrunk }) => {
   const [unreadNotifications, setUnreadNotifications] = useState(0);
   const [notificationList, setNotificationList] = useState([]);
   const [open, setOpen] = useState(false);
@@ -38,7 +40,7 @@ function Header({ onToggleSidebar, onToggleSidebarShrunk }) {
 
     onToggleSidebarShrunk();
   };
-  const { user, setLoggedin } = useAuth();
+  const { user} = useAuth();
 
   // Fetch unread notifications count
   const fetchNotifications = async () => {
@@ -70,7 +72,6 @@ function Header({ onToggleSidebar, onToggleSidebarShrunk }) {
   }, []);
   const handleLogout = async () => {
     await Logout();
-    setLoggedin(false);
     navigate("/admin/login");
   };
   return (
@@ -107,7 +108,7 @@ function Header({ onToggleSidebar, onToggleSidebarShrunk }) {
                 /
                 <Link
                   className="link"
-                  to="/change-pass"
+                  to="/admin/change-password"
                   style={{ textDecoration: "none" }}
                 >
                   <em> CHANGE PASSWORD </em>
@@ -119,14 +120,14 @@ function Header({ onToggleSidebar, onToggleSidebarShrunk }) {
               <div>
                 <Link
                   className="link"
-                  to="/login"
+                  to="/admin/login"
                   style={{ textDecoration: "none" }}
                 >
                   <em> Login </em>
                 </Link>
                 /
               </div>
-              <div>
+              {/* <div>
                 <Link
                   className="link"
                   to="/register"
@@ -134,7 +135,7 @@ function Header({ onToggleSidebar, onToggleSidebarShrunk }) {
                 >
                   <em>Sign Up </em>
                 </Link>
-              </div>
+              </div> */}
             </>
           )}
           {/* <div className="item item_lan">
