@@ -9,12 +9,12 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({
   children,
   requiredRole,
 }) => {
-  const token = localStorage.getItem("access_token");
+  const user = localStorage.getItem("user");
 
   const location = useLocation();
 
   // If no user is found, redirect to login
-  if (token === null) {
+  if (user === null) {
    return <Navigate
       to={requiredRole === "admin" ? "/admin/login" : "/user/login"}
       state={{ from: location }}

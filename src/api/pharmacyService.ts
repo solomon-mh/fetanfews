@@ -39,10 +39,23 @@ export const addMedicationData=(data: any) => {
   });
 }
 export const fetchMedicationsData = async () => {
-  const response = await api.get("/medications/");
-  return response.data; 
+  try {
+    const response = await api.get("/medications/");
+    return response.data;
+  } catch (error:any) {
+    console.error("Error fetching medications:", error);
+    
+    // Check if response exists (handle server errors)
+    if (error.response) {
+      throw new Error(error.response.data.detail || "Failed to fetch medications.");
+    } else if (error.request) {
+      throw new Error("No response from server. Please check your connection.");
+    } else {
+      throw new Error("An unexpected error occurred.");
+    }
+  }
+};
 
-}
 export const editMedication = async (id: number, data: any) => { 
   return api.put(`/medications/${id}/`, data,{
     headers: {

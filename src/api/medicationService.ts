@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from "axios";
+import { api } from "./auth";
 const API_BASE_URL = "http://localhost:8000/api";
 export const searchPharmacyMedications = async (pharmacyId: string, query: string) => {
     try {
@@ -29,5 +30,38 @@ export const getPharmacyMedicationDetail = async (pharmacyId: string, medication
       data: null,
       error: error.response?.data?.error || "An error occurred while fetching medication details.",
     };
+  }
+};
+
+
+
+export const fetchMedicationCounts = async () => {
+  try {
+    const response = await api.get('/medications_counts/');
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching medication counts:", error);
+    throw error;
+  }
+};
+
+
+export const fetchMostSearchedMedications = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/most-searched-medications/`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching most searched medications:", error);
+    return [];
+  }
+};
+
+export const getPhaMostSearchedMedications = async () => {
+  try {
+    const response = await api.get('/pharmacy/most-searched-medications/');
+    return response.data; 
+  } catch (error) {
+    console.error('Error fetching most searched medications:', error);
+    throw error; 
   }
 };
