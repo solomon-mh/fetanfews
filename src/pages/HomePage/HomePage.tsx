@@ -13,10 +13,8 @@ import { fetchPharmacyData } from "../../api/pharmacyService";
 import { PharmacyDataType } from "../../utils/interfaces";
 import { searchByCategory } from "../../api/pharmacyService";
 import { useError } from "../../contexts/ErrorContext";
-import { useLoading } from "../../contexts/LoadingContext";
 import PharmacyMap from "../../components/MapView/MapView";
 const HomePage: React.FC = () => {
-  const [visibleCount, setVisibleCount] = useState(5);
   const [selectedCategory, setSelectedCategory] = useState<CategoryType | null>(
     null
   );
@@ -24,15 +22,13 @@ const HomePage: React.FC = () => {
   const [pharmacies, setPharmacies] = useState<PharmacyDataType[]>([]);
   const [filteredPharmacies, setFilteredPharmacies] = useState<any[]>([]);
 
-  const { setLoading } = useLoading();
-  const [fetchingLoading, setFetchingLoading] = useState<boolean>(true);
+  const [loading, setLoading ] = useState<boolean>(true);
 
   const userLocation = useGeoLocation();
   const { setError } = useError();
 
   useEffect(() => {
     setLoading(true);
-    setFetchingLoading(true);
     const getCategories = async () => {
       try {
         const data = await fetchCategoriesData();
@@ -40,7 +36,6 @@ const HomePage: React.FC = () => {
       } catch (err) {
         setError("Failed to fetch categories.");
       } finally {
-        setFetchingLoading(false);
         setLoading(false);
       }
     };
@@ -58,7 +53,6 @@ const HomePage: React.FC = () => {
         setError("Failed to fetch pharmacies.");
       } finally {
         setLoading(false);
-        setFetchingLoading(false);
       }
     };
 
@@ -83,15 +77,10 @@ const HomePage: React.FC = () => {
       setFilteredPharmacies([]);
     } finally {
       setLoading(false);
-      setFetchingLoading(false);
     }
   };
 
-  const visiblePharmacies = filteredPharmacies.slice(0, visibleCount);
-
-  const handleShowAll = () => {
-    setVisibleCount(filteredPharmacies.length);
-  };
+  
 
   // Default coordinates for the map if geolocation fails
   const userCoordinates: [number, number] =
@@ -99,8 +88,8 @@ const HomePage: React.FC = () => {
       ? [userLocation.latitude, userLocation.longitude]
       : defaultCoordinates;
 
-  if (fetchingLoading) {
-    return;
+  if (loading) {
+    return<h1>Loading</h1>;
   }
 
   return (
@@ -150,7 +139,6 @@ const HomePage: React.FC = () => {
           calculateDistance={(lat: number, lon: number) =>
             calculateDistance(lat, lon, userCoordinates[0], userCoordinates[1])
           }
-          showAllButton={true} 
           />
       )}
       {/* Map Section */}
