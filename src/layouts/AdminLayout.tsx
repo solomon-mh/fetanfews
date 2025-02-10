@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState, useContext } from "react";
 import Sidebar from "../admin/sidebar/Sidebar";
 import Header from "../admin/header/Header";
 import { Outlet } from "react-router-dom";
-import ItemLists from "../admin/ItemList/ItemList";
+import ItemLists from "../admin/ItemList/PharmacyItemList";
 import "./adminlayout.scss";
 import { ColorContext } from "../contexts/ColorContext";
 
@@ -12,13 +12,12 @@ const AdminLayout: React.FC = () => {
   const { darkMode } = useContext(ColorContext);
   const [isSidebarShrunk, setIsSidebarShrunk] = useState<boolean>(false);
 
-
   // Toggle sidebar visibility
   const handleToggleSidebar = () => {
     setIsSidebarVisible((prev) => !prev);
   };
   const handleToggleSidebarShrunk = () => {
-    console.log("Toggle sidebar called" )
+    console.log("Toggle sidebar called");
     setIsSidebarShrunk((prev) => !prev);
   };
   useEffect(() => {
@@ -49,18 +48,25 @@ const AdminLayout: React.FC = () => {
       //   color: darkMode ? "#fff" : "#000",
       // }}
     >
-      <Header onToggleSidebar={handleToggleSidebar} onToggleSidebarShrunk={handleToggleSidebarShrunk} />
+      <Header
+        onToggleSidebar={handleToggleSidebar}
+        onToggleSidebarShrunk={handleToggleSidebarShrunk}
+      />
 
       <div className={`home_main ${isSidebarShrunk ? "shrunk" : ""}`}>
         <div
           ref={sidebarRef}
-          className={`home_sidebar ${isSidebarVisible ? "visible" : ""} ${isSidebarShrunk ? "shrunk" : ""}`}
+          className={`home_sidebar ${isSidebarVisible ? "visible" : ""} ${
+            isSidebarShrunk ? "shrunk" : ""
+          }`}
         >
-          <Sidebar onLinkClick={() => setIsSidebarVisible(false)} isShrunk={isSidebarShrunk}/>
+          <Sidebar
+            onLinkClick={() => setIsSidebarVisible(false)}
+            isShrunk={isSidebarShrunk}
+          />
         </div>
 
         <main>
-       
           <Outlet />
         </main>
       </div>
