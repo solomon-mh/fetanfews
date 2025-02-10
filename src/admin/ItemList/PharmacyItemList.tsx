@@ -11,15 +11,11 @@ import { cardVariants } from "../../utils/animateVariant";
 import { useNavigate } from "react-router-dom";
 
 interface ItemListsProps {
-  type:
-    | "totalPharmacies"
-    | "approvedPharmacies"
-    | "pendingPharmacies"
-    | "rejectedPharmacies";
+  type: string;
   setSelectedStatus: (status: string) => void;
 }
 
-const ItemLists: React.FC<ItemListsProps> = ({ type, setSelectedStatus }) => {
+const PharmaItemLists: React.FC<ItemListsProps> = ({ type, setSelectedStatus }) => {
   const navigate = useNavigate();
 
   const {
@@ -163,4 +159,4 @@ const ItemLists: React.FC<ItemListsProps> = ({ type, setSelectedStatus }) => {
   );
 };
 
-export default ItemLists;
+export default PharmaItemLists;
