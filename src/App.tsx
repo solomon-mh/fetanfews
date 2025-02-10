@@ -21,10 +21,12 @@ import ManagePharmacists from "./admin/ManagePharmacists/ManagePharmacists";
 import AdminLogin from "./admin/AdminAuth/AdminLogin";
 import UserList from "./admin/userList/UserList";
 import { ErrorProvider } from "./contexts/ErrorContext";
-import { LoadingProvider } from "./contexts/LoadingContext";
 import "./App.scss";
 import MedicationDetail from "./pages/MedicationDetail/MedicationDetail";
 import NearbyPharmacies from "./pages/NearBy/NearbyPharmacies";
+import ChangePassword from "./pages/Auth/ChangePassword";
+import ProtectedRoute from "./admin/ProtectedRoute/ProtectedRoute";
+import Reports from "./admin/reports/Report";
 function App() {
   return (
     <Router>
@@ -35,9 +37,7 @@ function App() {
         <Route
           element={
             <ErrorProvider>
-              <LoadingProvider>
                 <MainLayout />
-              </LoadingProvider>
             </ErrorProvider>
           }
         >
@@ -52,6 +52,7 @@ function App() {
             path="/pharmacy/:pharmacyName/:medicationName"
             element={<MedicationDetail />}
           />
+          <Route path="/user/change-password" element={<ChangePassword />} />
 
           <Route path="/user/login" element={<Login />} />
           <Route path="/user/signup" element={<SignUp />} />
@@ -73,9 +74,8 @@ function App() {
             path="/pharmacy-registration/success"
             element={<PharmacyConfrimation />}
           />
-
-          <Route path="*" element={<NotFound />} />
         </Route>
+        <Route path="*" element={<NotFound />} />
 
         {/* Admin Layout Routes */}
         <Route
@@ -89,21 +89,33 @@ function App() {
         >
           <Route path="/admin/pharmacies" element={<AdminHome />} />
           <Route path="admin/dashboard" element={<AdminHome />} />
+          <Route path="admin/pharmacy/medications" element={<AdminHome />} />
 
-          <Route
-            path="/admin/manage-pharmacies"
-            element={<ManagePharmacies />}
-          />
           <Route path="/admin/manage-drugs" element={<ManageMedications />} />
+          <Route
+            path="/admin/reports"
+            element={<Reports />}
+          />
           <Route
             path="/admin/manage-categories"
             element={<ManageCategories />}
           />
           <Route
-            path="/admin/manage-pharmacists"
-            element={<ManagePharmacists />}
-          />
-          <Route path="/admin/users" element={<UserList />} />
+            element={<ProtectedRoute allowedRoles={["admin", "superuser"]} />}
+          >
+            {" "}
+            <Route
+              path="/admin/manage-pharmacies"
+              element={<ManagePharmacies />}
+            />
+            <Route
+              path="/admin/manage-pharmacists"
+              element={<ManagePharmacists />}
+            />
+            <Route path="/admin/users" element={<UserList />} />
+          </Route>
+
+          <Route path="/admin/change-password" element={<ChangePassword />} />
         </Route>
       </Routes>
     </Router>

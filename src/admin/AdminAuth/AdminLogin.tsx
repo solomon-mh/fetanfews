@@ -5,12 +5,13 @@ import { useNavigate } from "react-router-dom";
 import "./AdminLogin.scss";
 import { login } from "../../api/auth";
 import { emailRegex } from "../../utils/Regex";
+import { useAuth } from "../../contexts/AuthContext";
 const AdminLogin: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
- 
+  const { setUser } = useAuth();
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -18,18 +19,16 @@ const AdminLogin: React.FC = () => {
       setError("Please fill in all fields.");
       return;
     }
-    if (!emailRegex.test(email)){
-        setError("Please enter a valid email");
-        return;
-      }
+    if (!emailRegex.test(email)) {
+      setError("Please enter a valid email");
+      return;
+    }
     try {
-      const response = await login({ username:email, password:password });
-      localStorage.setItem("adminToken", response.data.access);
-      localStorage.setItem("user_type","admin")
-        navigate("/admin/dashboard"); 
-      
-    } catch (err:any) {
-        setError(err.response?.data?.message || "Login failed");
+      const response = await login({ username: email, password: password });
+      setUser(response.data.user);
+      navigate("/admin/dashboard");
+    } catch (errorMessage: any) {
+      setError(errorMessage);
     }
   };
 
@@ -57,7 +56,9 @@ const AdminLogin: React.FC = () => {
               placeholder="Enter your password"
             />
           </div>
-          <button type="submit" className="login-button">Login</button>
+          <button type="submit" className="login-button">
+            Login
+          </button>
         </form>
       </div>
     </div>
