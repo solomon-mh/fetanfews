@@ -5,12 +5,12 @@ import { useAuth } from "../../contexts/AuthContext";
 import { Logout } from "../../api/auth";
 
 const Header = () => {
-  const { user, setLoggedin, loggedin } = useAuth();
+  const { user,setUser } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const handleLogout = async () => {
     await Logout();
-    setLoggedin(false);
+    setUser(null);
     setMenuOpen(false);
   };
 
@@ -37,9 +37,9 @@ const Header = () => {
           
           
           <li>
-            {loggedin ? (
+            {user ? (
               <Link className="link" to="" onClick={handleLogout} title={user?.first_name}>
-                Logout
+                Logout 
               </Link>
             ) : (
               <Link className="link" to="/user/login" onClick={() => setMenuOpen(false)}>

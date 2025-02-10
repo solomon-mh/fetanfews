@@ -1,25 +1,35 @@
-import React from "react";
+import React ,{useState,useEffect} from "react";
 import SearchBar from "../SearchBar/SearchBar";
 import pharmacistImage from "../../assets/images/pharmacist1.svg"; // Update the path as needed
 import "./HeroSection.scss";
-import { useNavigate,Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import { fetchMostSearchedMedications } from "../../api/medicationService";
+import { medicationType } from "../../utils/interfaces";
 
 const HeroSection: React.FC = () => {
   const navigate = useNavigate();
   const queryParams = new URLSearchParams();
-  const frequentlySearchedDrugs = [
-    "Paracetamol",
-    "Ibuprofen",
-    "Amoxicillin",
-    "Metformin",
-    "Aspirin",
-  ];
+  // const frequentlySearchedDrugs = [
+  //   "Paracetamol",
+  //   "Ibuprofen",
+  //   "Amoxicillin",
+  //   "Metformin",
+  //   "Aspirin",
+  // ];
+  const [frequentlySearchedDrugs, setFrequentlySearchedDrugs] = useState<medicationType []>([]);
 
   const handleDrugSearch = (drug: string) => {
     if (drug) queryParams.append("medication", drug);
     navigate(`/search-results/?${queryParams.toString()}`);
   };
+  useEffect(() => {
+    const getMedications = async () => {
+      const data = await fetchMostSearchedMedications();
+      setFrequentlySearchedDrugs(data);
+    };
 
+    getMedications();
+  }, []);
   return (
     <div className="hero-wrapper">
       <div className="hero-container">
@@ -41,11 +51,11 @@ const HeroSection: React.FC = () => {
             <ul className="frequently-searched-list">
               {frequentlySearchedDrugs.map((drug) => (
                 <li
-                  key={drug}
+                  key={drug.id}
                   className="drug-item"
-                  onClick={() => handleDrugSearch(drug)}
+                  onClick={() => handleDrugSearch(drug.name)}
                 >
-                  {drug}
+                  {drug.name}
                 </li>
               ))}
             </ul>

@@ -4,12 +4,10 @@ import { CustomUser, ChildrenProps } from "../utils/interfaces";
 
 const AuthContext = createContext<{
   user: CustomUser | null;
-  loggedin: boolean;
-  setLoggedin: React.Dispatch<React.SetStateAction<boolean>>;
+  setUser: React.Dispatch<React.SetStateAction<CustomUser | null>>;
 }>({
   user: null,
-  loggedin: false,
-  setLoggedin: () => {},
+  setUser: () => {},
 });
 
 export const useAuth = () => {
@@ -18,38 +16,37 @@ export const useAuth = () => {
 
 export const AuthProvider: React.FC<ChildrenProps> = ({ children }) => {
   const [user, setUser] = useState<CustomUser | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [loggedin, setLoggedin] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
       const token = localStorage.getItem("access_token");
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        setUser(JSON.parse(storedUser)); //cached user for faster loading
+      }
+
       if (token) {
         try {
           const response = await getCurrentUser();
           setUser(response.data);
-          setLoggedin(true); 
           localStorage.setItem("user", JSON.stringify(response.data));
         } catch (error) {
           console.error("Token expired or invalid:", error);
-          setLoggedin(false);
-        } finally {
-          setLoading(false);
+
+          localStorage.removeItem("user");
+          setUser(null);
         }
       } else {
-        setLoading(false);
+        setUser(null);
+        localStorage.removeItem("user");
       }
     };
 
     fetchUser();
   }, []);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
   return (
-    <AuthContext.Provider value={{ user, loggedin, setLoggedin }}>
+    <AuthContext.Provider value={{ user, setUser }}>
       {children}
     </AuthContext.Provider>
   );
