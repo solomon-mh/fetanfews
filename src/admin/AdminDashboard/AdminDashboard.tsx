@@ -4,6 +4,7 @@ import "./AdminDashboard.scss";
 import pharmacistImage from "../../assets/images/pharmacist.jpeg";
 import drugImage from "../../assets/images/drugs.jpeg";
 import drugStoreImage from "../../assets/images/drugstore.jpg";
+import MedItemLists from "../ItemList/MedicationItemList";
 
 import {
   Group as GroupIcon,
@@ -12,49 +13,77 @@ import {
   AccountCircle as AccountCircleIcon,
   SettingsRounded as SettingsRoundedIcon,
 } from "@mui/icons-material";
-import ItemLists from "../ItemList/ItemList";
+import PharmaItemLists from "../ItemList/PharmacyItemList";
 import PharmacyTable from "../tableList/PharmacyTable";
+import { useAuth } from "../../contexts/AuthContext";
+import MedicationTable from "../tableList/MedicationTable";
 
 const AdminHome: React.FC = () => {
-  const [selectedStatus, setSelectedStatus] = useState<string>("");
+  const [selectedMedStatus, setSelectedMedStatus] = useState<string>("");
+  const [selectedPharmacyStatus, setSelectedPharmacyStatus] = useState<string>("");
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const status = queryParams.get("status");
+  const pharmStatus = queryParams.get("status");
+  const MedStatus = queryParams.get("med-status");
+
+  const { user } = useAuth();
+  const pharmacyStatusOptions = [
+    "totalPharmacies",
+    "approvedPharmacies",
+    "pendingPharmacies",
+    "rejectedPharmacies",
+  ];
+  const medStutusOptions = [
+    "totalMedications",
+    "inStokMedications",
+    "outOfStokMedications",
+    "expiredMedications",
+  ];
 
   return (
     <div className="dashboard-index">
-      <h1 className="welcome">Welcome to Admin Dashboard</h1>
+      <h1 className="welcome">Welcome to Your Dashboard</h1>
 
       <div className="home_items">
-        <ItemLists
-          setSelectedStatus={setSelectedStatus}
-          type="totalPharmacies"
-        />
-        <ItemLists
-          setSelectedStatus={setSelectedStatus}
-          type="approvedPharmacies"
-        />
-        <ItemLists
-          setSelectedStatus={setSelectedStatus}
-          type="pendingPharmacies"
-        />
-        <ItemLists
-          setSelectedStatus={setSelectedStatus}
-          type="rejectedPharmacies"
-        />
+        {user?.role === "admin"
+          ? pharmacyStatusOptions.map((type) => (
+              <PharmaItemLists
+                key={type}
+                setSelectedStatus={setSelectedPharmacyStatus}
+                type={type}
+              />
+            ))
+          : user?.role === "pharmacist" &&
+          medStutusOptions.map((type) => (
+              <MedItemLists
+                key={type}
+                setSelectedStatus={setSelectedMedStatus}
+                type={type}
+              />
+          ))
+        }
       </div>
       <>
-        {status ? (
-          <PharmacyTable status={selectedStatus} />
-        ) : (
+        {pharmStatus && user?.role === "admin" ? (
+          <PharmacyTable status={selectedPharmacyStatus} />
+        ) : MedStatus && user?.role === "pharmacist" ? (
+          <MedicationTable filter={selectedMedStatus} />
+
+        ):(
           <>
-            <p className="subtitle">
-              Manage pharmacies, drugs, users, and analytics effectively.
-            </p>
+            {user?.role === "admin" ? (
+              <p className="subtitle">
+                Manage pharmacies, drugs, users, and analytics effectively.
+              </p>
+            ) : (
+              <p className="subtitle">
+                Manage drugs , See Reports and Analytics effectively.
+              </p>
+            )}
 
             <div className="quick-links">
               <div className="card">
-                  <Link to="/admin/manage-pharmacies" className="link">
+                <Link to="/admin/manage-pharmacies" className="link">
                   {drugStoreImage ? (
                     <img src={drugStoreImage} alt=" " />
                   ) : (
@@ -74,14 +103,19 @@ const AdminHome: React.FC = () => {
                 </Link>
               </div>
               <div className="card">
-                  <Link to="/admin/manage-drugs" className="link">
-                    {drugImage?(
+                <Link to="/admin/manage-drugs" className="link">
+                  {drugImage ? (
                     <img src={drugImage} alt=" " />
-                  ) :
-                  <EditIcon className="icon" />
-
-                    }
+                  ) : (
+                    <EditIcon className="icon" />
+                  )}
                   <h3>Manage Drugs</h3>
+                </Link>
+              </div>
+              <div className="card">
+                <Link to="/admin/manage-categories" className="link">
+                  <EditIcon className="icon" />
+                  <h3> Drug Categories</h3>
                 </Link>
               </div>
               <div className="card">
