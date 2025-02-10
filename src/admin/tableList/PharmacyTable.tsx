@@ -2,13 +2,14 @@ import React, { useState, useEffect } from "react";
 
 import { fetchPharmacyData } from "../../api/pharmacyService";
 import SnackbarComponent from "../modals/SnackbarComponent";
-import './PharmacyTable.scss'
+import './tables.scss'
+import { PharmacyDataType } from "../../utils/interfaces";
 interface PharmacyTableProps {
   status:string
 }
 
 const PharmacyTable: React.FC<PharmacyTableProps> = ({ status = "all" }) => {
-  const [pharmacies, setPharmacies] = useState([]);
+  const [pharmacies, setPharmacies] = useState<PharmacyDataType []>([]);
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",

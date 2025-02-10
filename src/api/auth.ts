@@ -2,7 +2,6 @@
 import axios from "axios";
 
 import { SignUpData } from "../utils/interfaces";
-
 const URL = "http://localhost:8000/api";
 
 export const api = axios.create({
@@ -11,7 +10,6 @@ export const api = axios.create({
     "Content-Type": "application/json",
   },
 });
-
 // Request interceptor to attach the token
 api.interceptors.request.use(
   (config) => {
@@ -70,21 +68,27 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-
 export const login = async (data: { username: string; password: string }) => {
-  const response = await axios.post(
-    "http://localhost:8000/api/accounts/token/",
-    data
-  );
-  const { refresh, access } = response.data;
-  // Store tokens in localStorage
-  localStorage.setItem("access_token", access);
-  localStorage.setItem("refresh_token", refresh);
-  return response;
-};
 
+  try {
+    const response = await axios.post(
+      "http://localhost:8000/api/accounts/token/",
+      data
+    );
+
+    const { refresh, access, user } = response.data;
+
+    // Store tokens and user data in localStorage
+    localStorage.setItem("access_token", access);
+    localStorage.setItem("refresh_token", refresh);
+    localStorage.setItem("user", JSON.stringify(user));  
+
+    return response;
+  } catch (error: any) {
+    throw error.response?.data?.detail || "Login failed";  
+  }
+};
 export const userRegister = async (data: SignUpData) => {
-  console.log("userRegister calling");
 
   try {
     const response = await axios.post(
@@ -108,13 +112,11 @@ export const getCurrentUser = async () => {
 };
 export const Logout = async () => {
   try {
-    console.log("/accounts/logout/", localStorage.getItem("access_token"));
 
     await api.post("/accounts/logout/", {
       refresh_token: localStorage.getItem("refresh_token"),
     });
     localStorage.clear();
-    console.log("/accounts/logout/", localStorage.getItem("access_token"));
   } catch (e) {
     console.error("Error logging out:", e);
   }
@@ -122,4 +124,13 @@ export const Logout = async () => {
 export const fetchUsers = async () => {
   const response = await api.get("/accounts/users");
   return response.data;
+};
+
+export const changePassword = async (data: { current_password: string, new_password: string }) => {
+  try {
+ await api.put('/accounts/password_change/', data);
+  } catch (error: any) {
+
+    throw new Error(error.response?.data?.current_password || "Something went wrong.");
+  }
 };
