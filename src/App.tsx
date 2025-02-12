@@ -26,7 +26,9 @@ import MedicationDetail from "./pages/MedicationDetail/MedicationDetail";
 import NearbyPharmacies from "./pages/NearBy/NearbyPharmacies";
 import ChangePassword from "./pages/Auth/ChangePassword";
 import ProtectedRoute from "./admin/ProtectedRoute/ProtectedRoute";
-import Reports from "./admin/reports/Report";
+import PharmacistReports from "./admin/reports/PharmacistReport";
+import PharmacistProfile from "./admin/PharmacistUtils/PharmacistProfile";
+import AdminReports from "./admin/reports/AdminReports";
 function App() {
   return (
     <Router>
@@ -93,8 +95,8 @@ function App() {
 
           <Route path="/admin/manage-drugs" element={<ManageMedications />} />
           <Route
-            path="/admin/reports"
-            element={<Reports />}
+            path="/admin/pharmacist/reports"
+            element={<PharmacistReports />}
           />
           <Route
             path="/admin/manage-categories"
@@ -113,8 +115,19 @@ function App() {
               element={<ManagePharmacists />}
             />
             <Route path="/admin/users" element={<UserList />} />
+            <Route path="/admin/reports" element={<AdminReports />} />
+           
           </Route>
+          <Route
+            element={<ProtectedRoute allowedRoles={["pharmacist",]} />}
 
+          >
+            {" "}
+            <Route
+              path="/admin/pharmacist/settings"
+              element={<PharmacistProfile />}
+            />
+          </Route>
           <Route path="/admin/change-password" element={<ChangePassword />} />
         </Route>
       </Routes>
