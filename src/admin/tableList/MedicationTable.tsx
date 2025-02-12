@@ -19,6 +19,10 @@ const MedicationTable: React.FC<MedicationTableProps> = ({
     type: "success" as "success" | "error",
   });
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [medicationsPerPage] = useState(10);
+  const [searchQuery, setSearchQuery] = useState("");
+
   const showSnackbar = (message: string, type: "success" | "error") => {
     setSnackbar({ open: true, message, type });
   };
@@ -32,21 +36,48 @@ const MedicationTable: React.FC<MedicationTableProps> = ({
       try {
         const data = await fetchMedicationsData();
         setMedications(data);
-      } catch (error:any) {
-        showSnackbar(error.message, "error"); 
+      } catch (error: any) {
+        showSnackbar(error.message, "error");
       }
     };
     fetchData();
   }, []);
 
-  // Apply filtering based on stock status and expiry date
+  // Reset search query when filter changes
+  useEffect(() => {
+    setSearchQuery(""); // Reset search query when the filter changes
+    setCurrentPage(1);   // Reset to the first page whenever the filter changes
+  }, [filter]);
+
+  // Apply filtering based on stock status, expiry date, and search query
   const filteredMedications = medications.filter((medication) => {
-    if (filter === "inStock") return medication.stock_status === true;
-    if (filter === "outOfStock") return medication.stock_status === false;
-    if (filter === "expired")
-      return new Date(medication.expiry_date) < new Date();
+    if (filter === "inStock" && medication.stock_status !== true) return false;
+    if (filter === "outOfStock" && medication.stock_status !== false) return false;
+    if (filter === "expired" && new Date(medication.expiry_date) >= new Date())
+      return false;
+    if (
+      searchQuery &&
+      !medication.name.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+      return false;
     return true;
   });
+
+  // Pagination logic
+  const indexOfLastMedication = currentPage * medicationsPerPage;
+  const indexOfFirstMedication = indexOfLastMedication - medicationsPerPage;
+  const currentMedications = filteredMedications.slice(
+    indexOfFirstMedication,
+    indexOfLastMedication
+  );
+
+  const totalPages = Math.ceil(filteredMedications.length / medicationsPerPage);
+
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
 
   return (
     <>
@@ -61,61 +92,90 @@ const MedicationTable: React.FC<MedicationTableProps> = ({
             : "Expired Medications"}
         </h2>
 
-        {filteredMedications.length === 0 ? (
+        {currentMedications.length === 0 ? (
           <p className="no-data">No {filter} medications found.</p>
         ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>Image</th>
-                <th>Name</th>
-                <th>Price</th>
-                <th>Stock Status</th>
-                <th>Category</th>
-                <th>Dosage Form</th>
-                <th>Dosage Strength</th>
-                <th>Manufacturer</th>
-                <th>Expiry Date</th>
-                <th>Prescription Required</th>
-                <th>Quantity Available</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredMedications.map((medication) => (
-                <tr key={medication.id}>
-                  <td>
-                    <img
-                      src={`http://127.0.0.1:8000${medication.image}`}
-                      alt="No Image"
-                      style={{
-                        width: "50px",
-                        height: "50px",
-                        objectFit: "cover",
-                      }}
-                    />
-                  </td>
-                  <td>{medication.name}</td>
-                  <td>{medication.price} Birr</td>
-                  <td
-                    className={
-                      medication.stock_status ? "in-stock" : "out-of-stock"
-                    }
-                  >
-                    {medication.stock_status ? "In Stock" : "Out of Stock"}
-                  </td>
-                  <td>{medication.category_name}</td>
-                  <td>{medication.dosage_form}</td>
-                  <td>{medication.dosage_strength}</td>
-                  <td>{medication.manufacturer}</td>
-                  <td>
-                    {new Date(medication.expiry_date).toLocaleDateString()}
-                  </td>
-                  <td>{medication.prescription_required ? "Yes" : "No"}</td>
-                  <td>{medication.quantity_available}</td>
+          <>
+            <input
+              type="text"
+              placeholder="Search Medications..."
+              value={searchQuery}
+              onChange={handleSearchChange}
+              className="search-input"
+            />
+
+            <table>
+              <thead>
+                <tr>
+                  <th>Image</th>
+                  <th>Name</th>
+                  <th>Price</th>
+                  <th>Stock Status</th>
+                  <th>Category</th>
+                  <th>Dosage Form</th>
+                  <th>Dosage Strength</th>
+                  <th>Manufacturer</th>
+                  <th>Expiry Date</th>
+                  <th>Prescription Required</th>
+                  <th>Quantity Available</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {currentMedications.map((medication) => (
+                  <tr key={medication.id}>
+                    <td>
+                      <img
+                        src={`http://127.0.0.1:8000${medication.image}`}
+                        alt="No Image"
+                        style={{
+                          width: "50px",
+                          height: "50px",
+                          objectFit: "cover",
+                        }}
+                      />
+                    </td>
+                    <td>{medication.name}</td>
+                    <td>{medication.price} Birr</td>
+                    <td
+                      className={
+                        medication.stock_status ? "in-stock" : "out-of-stock"
+                      }
+                    >
+                      {medication.stock_status ? "In Stock" : "Out of Stock"}
+                    </td>
+                    <td>{medication.category_name}</td>
+                    <td>{medication.dosage_form}</td>
+                    <td>{medication.dosage_strength}</td>
+                    <td>{medication.manufacturer}</td>
+                    <td>
+                      {new Date(medication.expiry_date).toLocaleDateString()}
+                    </td>
+                    <td>{medication.prescription_required ? "Yes" : "No"}</td>
+                    <td>{medication.quantity_available}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            {/* Pagination Controls */}
+            <div className="pagination">
+              <button
+                onClick={() => paginate(currentPage - 1)}
+                disabled={currentPage === 1}
+              >
+                Previous
+              </button>
+              <span>
+                Page {currentPage} of {totalPages}
+              </span>
+              <button
+                onClick={() => paginate(currentPage + 1)}
+                disabled={currentPage === totalPages}
+              >
+                Next
+              </button>
+            </div>
+          </>
         )}
       </div>
 
