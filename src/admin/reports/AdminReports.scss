@@ -1,0 +1,30 @@
+.reports-container {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+
+  h1 {
+    color: #333;
+  }
+
+  .chart-container {
+    margin-top: 30px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 50px;
+
+    h2 {
+      text-align: center;
+      color: #4bc0c0;
+      font-size: 1.2rem;
+    }
+    p {
+      color: #30c013;
+      font-size: 1rem;
+      text-align: center;
+    }
+    .chart {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+  }
+}
