@@ -131,35 +131,52 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isShrunk }) => {
               </Link>
             </>
           )}
-       
 
           <p className="spann">Reports</p>
+          {user?.role === "pharmacist" ? (
+            <>
+              <Link
+                to="/admin/pharmacist/reports"
+                style={{ textDecoration: "none" }}
+                onClick={onLinkClick}
+              >
+                <li
+                  className={pathname === "/admin/pharmacist/reports" ? "active-link" : ""}
+                >
+                  <AssessmentIcon className="icon" />
+                  <span>Reports</span>
+                </li>
+              </Link>{" "}
+            </>
+          ) : (
+              <>
+             
+                <Link
+                to="/admin/reports"
+                style={{ textDecoration: "none" }}
+                onClick={onLinkClick}
+              >
+                <li
+                  className={pathname === "/admin/reports" ? "active-link" : ""}
+                >
+                  <AssessmentIcon className="icon" />
+                  <span>Reports</span>
+                </li>
+              </Link>
+              </>
+          )}
+
+          <p className="spann">Settings</p>
           <Link
-            to="/admin/reports"
+            to="/admin/pharmacist/settings"
             style={{ textDecoration: "none" }}
             onClick={onLinkClick}
           >
             <li
               className={
-                pathname === "/admin/reports"
-                  ? "active-link"
-                  : ""
+                pathname === "/admin/pharmacist/settings" ? "active-link" : ""
               }
             >
-              <AssessmentIcon className="icon" />
-              <span>Reports</span>
-            </li>
-          </Link>
-
-        
-
-          <p className="spann">Settings</p>
-          <Link
-            to="/admin/settings"
-            style={{ textDecoration: "none" }}
-            onClick={onLinkClick}
-          >
-            <li className={pathname === "/admin/settings" ? "active-link" : ""}>
               <SettingsRoundedIcon className="icon" />
               <span>Settings</span>
             </li>
