@@ -105,6 +105,7 @@ export const pharmacies: Pharmacy[] = [
     ],
   },
   {
+    
     pharmacy_id: 7,
     image: tenaphaImage,
     pharmacy_name: "Tena Pharmacy",

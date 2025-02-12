@@ -26,7 +26,13 @@ const AdminLogin: React.FC = () => {
     try {
       const response = await login({ username: email, password: password });
       setUser(response.data.user);
-      navigate("/admin/dashboard");
+      if (response.data.user.role === 'admin' || response.data.user.role === 'pharmacist') {
+        navigate("/admin/dashboard");
+      }
+       else {
+          setError("invalid credantial");
+
+        }
     } catch (errorMessage: any) {
       setError(errorMessage);
     }

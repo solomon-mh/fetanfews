@@ -258,3 +258,12 @@ export const getPharmacyStatusReport = async () => {
     throw error;
   }
 };
+export const fetchPharmaciesWithoutPharmacists = async () => {
+  try {
+    const response = await api.get('/pharmacies-without-pharmacists/');
+    return response.data; 
+  } catch (error) {
+    console.error("Error fetching pharmacies without pharmacists:", error);
+    throw error; 
+  }
+};

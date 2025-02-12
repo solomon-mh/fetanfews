@@ -55,11 +55,10 @@ api.interceptors.response.use(
         const user_type = localStorage.getItem("user_type");
         localStorage.removeItem("access_token");
         localStorage.removeItem("refresh_token");
-        if (user_type === 'admin') {
+        if (user_type === "admin") {
           window.location.href = "/admin/login";
         } else {
           window.location.href = "/user/login";
-
         }
         // Optionally: redirect to login or clear authentication state
       }
@@ -69,7 +68,6 @@ api.interceptors.response.use(
   }
 );
 export const login = async (data: { username: string; password: string }) => {
-
   try {
     const response = await axios.post(
       "http://localhost:8000/api/accounts/token/",
@@ -81,38 +79,40 @@ export const login = async (data: { username: string; password: string }) => {
     // Store tokens and user data in localStorage
     localStorage.setItem("access_token", access);
     localStorage.setItem("refresh_token", refresh);
-    localStorage.setItem("user", JSON.stringify(user));  
+    localStorage.setItem("user", JSON.stringify(user));
 
     return response;
   } catch (error: any) {
-    throw error.response?.data?.detail || "Login failed";  
+    throw error.response?.data?.detail || "Login failed";
   }
-};
-export const userRegister = async (data: SignUpData) => {
-
+};export const userRegister = async (data: SignUpData) => {
   try {
     const response = await axios.post(
       "http://localhost:8000/api/accounts/register/",
       data
     );
     const { refresh, access } = response.data;
+
     // Store tokens in localStorage
     localStorage.setItem("access_token", access);
     localStorage.setItem("refresh_token", refresh);
+
     return response.data;
   } catch (error: any) {
-    throw new Error(
-      error.response?.data?.message || "Error during registration"
-    );
+    if (error.response) {
+      return error.response.data; 
+    }
+    return { general: "Error during registration. Please try again." };
   }
 };
+
+
 export const getCurrentUser = async () => {
   const response = await api.get("/accounts/current_user/");
   return response;
 };
 export const Logout = async () => {
   try {
-
     await api.post("/accounts/logout/", {
       refresh_token: localStorage.getItem("refresh_token"),
     });
@@ -126,11 +126,15 @@ export const fetchUsers = async () => {
   return response.data;
 };
 
-export const changePassword = async (data: { current_password: string, new_password: string }) => {
+export const changePassword = async (data: {
+  current_password: string;
+  new_password: string;
+}) => {
   try {
- await api.put('/accounts/password_change/', data);
+    await api.put("/accounts/password_change/", data);
   } catch (error: any) {
-
-    throw new Error(error.response?.data?.current_password || "Something went wrong.");
+    throw new Error(
+      error.response?.data?.current_password || "Something went wrong."
+    );
   }
 };

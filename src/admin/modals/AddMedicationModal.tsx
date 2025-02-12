@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState ,useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import {
   Modal,
   Box,
@@ -24,7 +24,7 @@ interface AddMedicationModalProps {
   handleSubmit: (validatedData: any) => void;
   medication: medicationType | null;
   isEdit: boolean;
-  showSnackbar: (message:string,type: "success" | "error") => void;
+  showSnackbar: (message: string, type: "success" | "error") => void;
 }
 type FormData = {
   name: string;
@@ -40,7 +40,7 @@ type FormData = {
   usage_instructions: string;
   quantity_available: number;
   image: File | null;
-}
+};
 const AddMedicationModal: React.FC<AddMedicationModalProps> = ({
   open,
   handleClose,
@@ -66,13 +66,13 @@ const AddMedicationModal: React.FC<AddMedicationModalProps> = ({
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [categories, setCategories] = useState<CategoryType[]>([])
+  const [categories, setCategories] = useState<CategoryType[]>([]);
   useEffect(() => {
-  const fetchCategories = async () => {
+    const fetchCategories = async () => {
       try {
         const data = await fetchCategoriesData();
         setCategories(data);
-      } catch (error:any) {
+      } catch (error: any) {
         showSnackbar("Failed to fetch categories.", "error");
       }
     };
@@ -97,8 +97,7 @@ const AddMedicationModal: React.FC<AddMedicationModalProps> = ({
         quantity_available: Number(medication.quantity_available),
         image: null,
       });
-    }
-    else {
+    } else {
       setFormData({
         name: "",
         price: 1,
@@ -116,7 +115,6 @@ const AddMedicationModal: React.FC<AddMedicationModalProps> = ({
       });
     }
   }, [isEdit, medication]); // Run only when `isEdit` or `medication` changes
-  
 
   const handleInputChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -136,10 +134,10 @@ const AddMedicationModal: React.FC<AddMedicationModalProps> = ({
       console.log("updaloedde data", file);
       // Check if the file is an image
       if (!file.type.startsWith("image/")) {
-        showSnackbar("Please upload a valid image file.",'error');
+        showSnackbar("Please upload a valid image file.", "error");
         return;
       }
-  
+
       setFormData({ ...formData, image: file });
     }
   };
@@ -176,7 +174,7 @@ const AddMedicationModal: React.FC<AddMedicationModalProps> = ({
         usage_instructions: "",
         quantity_available: 1,
         image: null,
-      })
+      });
     }
   };
 
@@ -198,7 +196,7 @@ const AddMedicationModal: React.FC<AddMedicationModalProps> = ({
     <Modal open={open} onClose={handleClose}>
       <Box sx={style}>
         <Typography variant="h6" component="h2" marginBottom={2}>
-          {isEdit?"Edit Medication" :"Add Medication"} 
+          {isEdit ? "Edit Medication" : "Add Medication"}
         </Typography>
         <IconButton
           aria-label="close"
@@ -217,6 +215,7 @@ const AddMedicationModal: React.FC<AddMedicationModalProps> = ({
             <TextField
               label="Name"
               name="name"
+              placeholder="medication name"
               value={formData.name}
               onChange={handleInputChange}
               fullWidth
@@ -226,32 +225,36 @@ const AddMedicationModal: React.FC<AddMedicationModalProps> = ({
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-  <Autocomplete
-    options={categories}
-    getOptionLabel={(option) => option.name || ""}
-    isOptionEqualToValue={(option, value) => option.id === value.id}
-    value={categories.find((cat) => cat.id === formData.category) || null}
-    onChange={(event, newValue) => {
-      setFormData({
-        ...formData,
-        category: newValue ? newValue.id : "", 
-      });
-    }}
-    renderInput={(params) => (
-      <TextField
-        {...params}
-        label="Category"
-        error={!!errors.category}
-        helperText={errors.category}
-      />
-    )}
-  />
-</Grid>
+            <Autocomplete
+              options={categories}
+              getOptionLabel={(option) => option.name || ""}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+              value={
+                categories.find((cat) => cat.id === formData.category) || null
+              }
+              onChange={(event, newValue) => {
+                setFormData({
+                  ...formData,
+                  category: newValue ? newValue.id : "",
+                });
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Category"
+                  placeholder="select category"
+                  error={!!errors.category}
+                  helperText={errors.category}
+                />
+              )}
+            />
+          </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
               label="Price"
               name="price"
               type="number"
+              placeholder="price in Birr"
               value={formData.price}
               onChange={handleInputChange}
               fullWidth
@@ -265,6 +268,8 @@ const AddMedicationModal: React.FC<AddMedicationModalProps> = ({
               label="Quantity Available"
               name="quantity_available"
               type="number"
+              placeholder="quantity for a unit"
+
               value={formData.quantity_available}
               onChange={handleInputChange}
               fullWidth
@@ -278,6 +283,7 @@ const AddMedicationModal: React.FC<AddMedicationModalProps> = ({
             <TextField
               label="Dosage Form"
               name="dosage_form"
+              placeholder="select dosage form"
               select
               value={formData.dosage_form}
               onChange={handleInputChange}
@@ -296,6 +302,7 @@ const AddMedicationModal: React.FC<AddMedicationModalProps> = ({
             <TextField
               label="Dosage Strength"
               name="dosage_strength"
+              placeholder="dosage strength"
               value={formData.dosage_strength}
               onChange={handleInputChange}
               fullWidth
@@ -308,6 +315,7 @@ const AddMedicationModal: React.FC<AddMedicationModalProps> = ({
             <TextField
               label="Manufacturer"
               name="manufacturer"
+              placeholder="manufacturer name"
               value={formData.manufacturer}
               onChange={handleInputChange}
               fullWidth
@@ -321,6 +329,7 @@ const AddMedicationModal: React.FC<AddMedicationModalProps> = ({
               label="Expiry Date"
               name="expiry_date"
               type="date"
+              placeholder="expiry date"
               InputLabelProps={{ shrink: true }}
               value={formData.expiry_date}
               onChange={handleInputChange}
@@ -352,6 +361,7 @@ const AddMedicationModal: React.FC<AddMedicationModalProps> = ({
             <TextField
               label="Description"
               name="description"
+              placeholder="medication description"
               value={formData.description}
               onChange={handleInputChange}
               multiline
@@ -363,6 +373,7 @@ const AddMedicationModal: React.FC<AddMedicationModalProps> = ({
             <TextField
               label="Side Effects"
               name="side_effects"
+              placeholder="medication side effects"
               value={formData.side_effects}
               onChange={handleInputChange}
               multiline
@@ -376,6 +387,7 @@ const AddMedicationModal: React.FC<AddMedicationModalProps> = ({
             <TextField
               label="Usage Instructions"
               name="usage_instructions"
+              placeholder="medication usage instructions"
               value={formData.usage_instructions}
               onChange={handleInputChange}
               multiline
@@ -388,8 +400,7 @@ const AddMedicationModal: React.FC<AddMedicationModalProps> = ({
         </Grid>
 
         <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 3 }}>
-          <Button onClick={handleClose} sx={{ mr: 2, color:"red" }}
->
+          <Button onClick={handleClose} sx={{ mr: 2, color: "red" }}>
             Cancel
           </Button>
           <Button
@@ -397,7 +408,7 @@ const AddMedicationModal: React.FC<AddMedicationModalProps> = ({
             variant="contained"
             color="primary"
           >
-            {isEdit ?'Update':"Add"}
+            {isEdit ? "Update" : "Add"}
           </Button>
         </Box>
       </Box>

@@ -14,23 +14,46 @@ const SignUp: React.FC = () => {
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(formSchema),
   });
   const navigate = useNavigate();
   const onSubmit = async (data: any) => {
-    console.log("onsubmit calling")
     const { confirmPassword, ...signUpData } = data;
-
+  
     try {
       const response = await userRegister(signUpData);
-      setSubmissionMessage("User created successfully!");
-      navigate('/');
-    } catch (error:any) {
-      setSubmissionMessage("Error Creating user: " + error.message);
+  
+      if (response.access) {
+        setSubmissionMessage("User created successfully!");
+        navigate("/");
+      } else {
+        setSubmissionMessage("Error Creating user");
+  
+        // Handle backend validation errors and set field-specific errors
+        if (response.email) {
+          setError("email", { type: "server", message: 'User with this email already Rigstered' });
+        }
+  
+        if (response.phone_number) {
+          setError("phone_number", { type: "server", message: "User with this phone number already Rigstered"});
+        }
+  
+        if (response.password) {
+          setError("password", { type: "server", message: response.password[0] });
+        }
+  
+        if (response.general) {
+          setSubmissionMessage(response.general);
+        }
+      }
+    } catch (error) {
+      setSubmissionMessage("An unexpected error occurred.");
     }
   };
+  
 
   const renderError = (fieldName: keyof FormErrors) => {
     return errors[fieldName] ? (

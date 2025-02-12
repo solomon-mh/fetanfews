@@ -34,12 +34,11 @@ function App() {
     <Router>
       <Routes>
         {/* Main Layout Routes */}
-        <Route path="/admin/login" element={<AdminLogin />} />
 
         <Route
           element={
             <ErrorProvider>
-                <MainLayout />
+              <MainLayout />
             </ErrorProvider>
           }
         >
@@ -77,7 +76,12 @@ function App() {
             element={<PharmacyConfrimation />}
           />
         </Route>
+
+
+
+
         <Route path="*" element={<NotFound />} />
+        <Route path="/admin/login" element={<AdminLogin />} />
 
         {/* Admin Layout Routes */}
         <Route
@@ -116,12 +120,8 @@ function App() {
             />
             <Route path="/admin/users" element={<UserList />} />
             <Route path="/admin/reports" element={<AdminReports />} />
-           
           </Route>
-          <Route
-            element={<ProtectedRoute allowedRoles={["pharmacist",]} />}
-
-          >
+          <Route element={<ProtectedRoute allowedRoles={["pharmacist"]} />}>
             {" "}
             <Route
               path="/admin/pharmacist/settings"

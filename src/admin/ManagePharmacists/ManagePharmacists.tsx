@@ -25,7 +25,7 @@ import {
   addPharmacistData,
   deletePharmacist,
   editPharmacist,
-  fetchPharmacyData,
+  fetchPharmaciesWithoutPharmacists,
 } from "../../api/pharmacyService";
 import { fetchUsers } from "../../api/auth";
 import SnackbarComponent from "../modals/SnackbarComponent";
@@ -82,8 +82,7 @@ const ManagePharmacists: React.FC = () => {
     fetchPharmacists();
     fetchUsersData();
     fetchPharmacies();
-  }, []);
-  console.log("total users", users);
+  }, [pharmacists]);
 
   useEffect(() => {
     // Filter pharmacists based on search query
@@ -131,7 +130,7 @@ const ManagePharmacists: React.FC = () => {
 
   const fetchPharmacies = async () => {
     try {
-      const data = await fetchPharmacyData();
+      const data = await fetchPharmaciesWithoutPharmacists();
       setPharmacies(data);
     } catch (error) {
       showSnackbar("Failed to fetch pharmacies.", "error");
