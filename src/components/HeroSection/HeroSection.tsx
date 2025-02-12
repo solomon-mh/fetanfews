@@ -1,4 +1,4 @@
-import React ,{useState,useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import SearchBar from "../SearchBar/SearchBar";
 import pharmacistImage from "../../assets/images/pharmacist1.svg"; // Update the path as needed
 import "./HeroSection.scss";
@@ -16,7 +16,9 @@ const HeroSection: React.FC = () => {
   //   "Metformin",
   //   "Aspirin",
   // ];
-  const [frequentlySearchedDrugs, setFrequentlySearchedDrugs] = useState<medicationType []>([]);
+  const [frequentlySearchedDrugs, setFrequentlySearchedDrugs] = useState<
+    medicationType[]
+    >([]);
 
   const handleDrugSearch = (drug: string) => {
     if (drug) queryParams.append("medication", drug);
@@ -43,27 +45,28 @@ const HeroSection: React.FC = () => {
           </p>
           <SearchBar />
 
-          {/* Frequently Searched Drugs */}
-          <div className="frequently-searched">
-            <h2 className="frequently-searched-title">
-              Frequently Searched Drugs
-            </h2>
-            <ul className="frequently-searched-list">
-              {frequentlySearchedDrugs.map((drug) => (
-                <li
-                  key={drug.id}
-                  className="drug-item"
-                  onClick={() => handleDrugSearch(drug.name)}
-                >
-                  {drug.name}
-                </li>
-              ))}
-            </ul>
-          </div>
+          {frequentlySearchedDrugs.length > 0 && (
+            <div className="frequently-searched">
+              <h2 className="frequently-searched-title">
+                Frequently Searched Drugs
+              </h2>
+              <ul className="frequently-searched-list">
+                {frequentlySearchedDrugs.map((drug) => (
+                  <li
+                    key={drug.id}
+                    className="drug-item"
+                    onClick={() => handleDrugSearch(drug.name)}
+                  >
+                    {drug.name}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       </div>
       <div>
-        <Link to="/nearby-pharmacies/"className="find-nearby">
+        <Link to="/nearby-pharmacies/" className="find-nearby">
           Find Nearby Pharmacies
         </Link>
       </div>

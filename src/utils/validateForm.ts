@@ -1,98 +1,111 @@
 import { z } from "zod";
 
 // Zod schema for the form
+
+const nameValidation = z
+  .string()
+  .min(1, { message: "Name is required." })
+  .max(50, { message: "Name must not exceed 50 characters." })
+  .regex(/^[A-Za-z\s]+$/, { message: "Name must contain only letters." });
+
+const emailValidation = z.string().email({ message: "Invalid email address." });
+
+const phoneValidation = z
+  .string()
+  .max(13, { message: "Phone number must not exceed 13 characters." })
+  .regex(/^(?:\+2519\d{8}|\+2517\d{8}|09\d{8}|07\d{8})$/, {
+    message: "Phone number must be in a valid Ethiopian format.",
+  });
+
+const passwordValidation = z
+  .string()
+  .min(8, { message: "Password must be at least 8 characters long." })
+  .regex(/[!@#$%^&*]/, {
+    message: "Password must contain at least one special character.",
+  });
+
+const requiredString = (field:string) =>
+  z.string().min(1, { message: `${field} is required.` });
+const optionalUrl = z.string().url("Invalid URL.").optional().or(z.literal(""));
+const fileValidation = z
+  .any()
+  .refine((file) => file instanceof File, { message: "Invalid file format." })
+  .optional().nullable();
 export const formSchema = z
   .object({
-    first_name: z
+    first_name: nameValidation,
+    last_name: nameValidation,
+
+    email: emailValidation,
+
+    phone_number: phoneValidation,
+    password: passwordValidation,
+    confirmPassword: z
       .string()
-      .min(1, { message: "First name is required." })
-      .max(50, { message: "First name must not exceed 50 characters." })
-      .regex(/^[A-Za-z\s]+$/, { message: "First name must contain only letters." }), // Alphabetic check
-
-    last_name: z
-      .string()
-      .min(1, { message: "Last name is required." })
-      .max(50, { message: "Last name must not exceed 50 characters." })
-      .regex(/^[A-Za-z\s]+$/, { message: "Last name must contain only letters." }), // Alphabetic check
-
-    email: z.string().email({ message: "Invalid email address." }),
-
-    phone_number: z
-      .string()
-      .max(13, { message: "Phone number must not exceed 13 characters." })
-      .regex(
-        /^(?:\+2519\d{8}|\+2517\d{8}|09\d{8}|07\d{8})$/,
-        { message: "Phone number must be in a valid Ethiopian format "}
-      ),
-    password: z
-      .string()
-      .min(8, { message: "Password must be at least 8 characters long." })
-
-      .regex(/[!@#$%^&*]/, { message: "Password must contain at least one special character." }),
-
-    confirmPassword: z.string().min(1, { message: "Password confirmation is required." }),
+      .min(1, { message: "Password confirmation is required." }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords must match.",
     path: ["confirmPassword"], // Attach the error to the confirmPassword field
   });
 
-
-
 export const pharmacyFormSchema = z.object({
-  name: z.string().nonempty("Name is required"),
-  address: z.string().nonempty("Address is required"),
-  phone: z
-    .string()
-    .nonempty("Phone number is required")
-    .max(13, { message: "Phone number must not exceed 13 characters." })
-    .regex(
-      /^(?:\+2519\d{8}|\+2517\d{8}|09\d{8}|07\d{8})$/,
-      { message: "Phone number must be in a valid Ethiopian format "}
-    ),
-  email: z.string().email("Invalid email").nonempty("Email is required"),
-  website: z.string().url("Invalid URL").optional().or(z.literal("")),
-  operating_hours: z.string().nonempty("Operating hours are required"),
+  name: requiredString("Name is required"),
+  address: requiredString("Address"),
+  phone: phoneValidation,
+
+  email: emailValidation,
+  website: optionalUrl,
+  operating_hours: requiredString("Operating hours"),
   image: z.any().optional(),
-  delivery_available: z.string({
-    required_error: "Please specify if delivery is available",
-  }),
-  license_number: z.string().nonempty("License number is required"),
-  license_image: z
-    .any()
-    .refine((file) => file instanceof File, {
-      message: "Invalid file format",
-    })
-    .optional(),
-  
+  delivery_available: z.boolean(),
+  license_number: requiredString("License number"),
+  license_image: fileValidation,
 });
 
-
 export const medicationSchema = z.object({
-  name: z.string().nonempty("Name is required"),
+  name: requiredString("Name "),
   price: z.number().min(0, "Price must be a positive number"),
   description: z.string().optional(),
-  category: z.number().refine((val) => val !== null && val !== undefined, { message: "Category is required" }),
-  dosage_form: z.string().nonempty("Dosage form is required"),
-  dosage_strength: z.string().nonempty("Dosage strength is required"),
-  manufacturer: z.string().nonempty("Manufacturer is required"),
-  expiry_date: z.string().nonempty("Expiry date is required"),
+  category: z
+    .number()
+    .refine((val) => val !== null && val !== undefined, {
+      message: "Category is required",
+    }),
+  dosage_form: requiredString("Dosage form"),
+  dosage_strength: requiredString("Dosage strength"),
+  manufacturer: requiredString("Manufacturer"),
+  expiry_date: requiredString("Expiry date"),
   side_effects: z.string().optional(),
   usage_instructions: z.string().optional(),
   quantity_available: z.number().min(1, "Quantity must be at least 1"),
   image: z.any().optional(),
+  prescription_required:z.boolean()
 });
 
-
 export const pharmacySchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  address: z.string().min(1, "Address is required"),
-  phone: z.string().min(1, "Phone is required"),
-  email: z.string().email("Invalid email format").min(1, "Email is required"),
-  website: z.string().url("Invalid URL").optional().or(z.literal("")),
-  operating_hours: z.string().optional(),
+  name: requiredString("Name"),
+  address: requiredString("Address "),
+  phone: phoneValidation,
+  email: emailValidation,
+  website: optionalUrl,
+  operating_hours: requiredString("Operating hours"),
   delivery_available: z.boolean(),
-  image: z.instanceof(File).optional(),
-  latitude: z.string().min(1, "Latitude is required"),
-  longitude: z.string().min(1, "Longitude is required"),
+  latitude: requiredString("Latitude "),
+  longitude: requiredString("Longitude "),
+});
+
+export const pharmasistDetailSchema = z.object({
+  license_number: requiredString("License Number"),
+  license_image:z.instanceof(File).optional().nullable(),
+
+  pharmacy: z.object({
+    name: requiredString("Pharmacy Name "),
+    phone: phoneValidation,
+    email: emailValidation,
+    operating_hours: requiredString("Operating Hours "),
+    website: optionalUrl,
+    delivery_available: z.boolean(),
+    image: z.instanceof(File).optional().nullable(),
+  }),
 });

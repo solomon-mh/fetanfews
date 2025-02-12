@@ -7,7 +7,7 @@ import HeroSection from "../../components/HeroSection/HeroSection";
 import PharmacyList from "../../components/PharmacyList/PharmacyList";
 import { calculateDistance } from "../../utils/calculations";
 import { useGeoLocation, defaultCoordinates } from "../../hooks/useGeoLocation";
-import { fetchCategoriesData } from "../../api/pharmacyService";
+import { brwose_by_categories } from "../../api/pharmacyService";
 import { CategoryType } from "../../utils/interfaces";
 import { fetchPharmacyData } from "../../api/pharmacyService";
 import { PharmacyDataType } from "../../utils/interfaces";
@@ -31,7 +31,7 @@ const HomePage: React.FC = () => {
     setLoading(true);
     const getCategories = async () => {
       try {
-        const data = await fetchCategoriesData();
+        const data = await brwose_by_categories();
         setCategories(data);
       } catch (err) {
         setError("Failed to fetch categories.");
