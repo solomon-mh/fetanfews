@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect } from "react";
 import "./ManageMedications.scss";
-import '../styles/table.scss'
+import "../styles/table.scss";
 
 import {
   Table,
@@ -64,7 +64,6 @@ const ManageMedications: React.FC = () => {
 
   const handleOpenForm = (medication: medicationType | null = null) => {
     if (medication) {
-      
       setIsEdit(true);
       setSelectedMedication(medication);
     } else {
@@ -81,7 +80,7 @@ const ManageMedications: React.FC = () => {
     try {
       const data = await fetchMedicationsData();
       setMedications(data);
-    } catch (error:any) {
+    } catch (error: any) {
       showSnackbar(error.message, "error");
     }
   };
@@ -90,6 +89,7 @@ const ManageMedications: React.FC = () => {
   const handleSubmit = async (data: any) => {
     try {
       if (isEdit && selectedMedication) {
+
         await editMedication(selectedMedication.id, data);
         showSnackbar("Medication updated successfully.", "success");
       } else {
@@ -98,6 +98,7 @@ const ManageMedications: React.FC = () => {
       }
       fetchMedications();
       handleCloseForm();
+      setIsEdit(false);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response) {
@@ -117,6 +118,8 @@ const ManageMedications: React.FC = () => {
           );
         }
       }
+      setIsEdit(false);
+      handleCloseForm();
     }
   };
 
@@ -233,7 +236,7 @@ const ManageMedications: React.FC = () => {
                 <TableRow key={medication.id}>
                   <TableCell>
                     <img
-                      src={`http://127.0.0.1:8000${medication.image}`} 
+                      src={`http://127.0.0.1:8000${medication.image}`}
                       alt="No image"
                       style={{
                         width: "50px",
@@ -359,6 +362,7 @@ const ManageMedications: React.FC = () => {
         handleSubmit={handleSubmit}
         medication={selectedMedication}
         isEdit={isEdit}
+        showSnackbar={showSnackbar}
       />
       <DeleteModal
         isOpen={isDelModalOpen}

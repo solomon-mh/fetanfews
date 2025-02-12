@@ -10,7 +10,6 @@ import {
   Group as GroupIcon,
   Edit as EditIcon,
   Assessment as AssessmentIcon,
-  AccountCircle as AccountCircleIcon,
   SettingsRounded as SettingsRoundedIcon,
 } from "@mui/icons-material";
 import PharmaItemLists from "../ItemList/PharmacyItemList";
@@ -20,7 +19,8 @@ import MedicationTable from "../tableList/MedicationTable";
 
 const AdminHome: React.FC = () => {
   const [selectedMedStatus, setSelectedMedStatus] = useState<string>("");
-  const [selectedPharmacyStatus, setSelectedPharmacyStatus] = useState<string>("");
+  const [selectedPharmacyStatus, setSelectedPharmacyStatus] =
+    useState<string>("");
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const pharmStatus = queryParams.get("status");
@@ -54,22 +54,20 @@ const AdminHome: React.FC = () => {
               />
             ))
           : user?.role === "pharmacist" &&
-          medStutusOptions.map((type) => (
+            medStutusOptions.map((type) => (
               <MedItemLists
                 key={type}
                 setSelectedStatus={setSelectedMedStatus}
                 type={type}
               />
-          ))
-        }
+            ))}
       </div>
       <>
         {pharmStatus && user?.role === "admin" ? (
           <PharmacyTable status={selectedPharmacyStatus} />
         ) : MedStatus && user?.role === "pharmacist" ? (
           <MedicationTable filter={selectedMedStatus} />
-
-        ):(
+        ) : (
           <>
             {user?.role === "admin" ? (
               <p className="subtitle">
@@ -82,67 +80,74 @@ const AdminHome: React.FC = () => {
             )}
 
             <div className="quick-links">
-              <div className="card">
-                <Link to="/admin/manage-pharmacies" className="link">
-                  {drugStoreImage ? (
-                    <img src={drugStoreImage} alt=" " />
-                  ) : (
-                    <GroupIcon className="icon" />
-                  )}
-                  <h3>Manage Pharmacies</h3>
-                </Link>
-              </div>
-              <div className="card">
-                <Link to="/admin/manage-pharmacists" className="link">
-                  {pharmacistImage ? (
-                    <img src={pharmacistImage} alt=" " />
-                  ) : (
-                    <GroupIcon className="icon" />
-                  )}
-                  <h3>Manage Pharmacists</h3>
-                </Link>
-              </div>
-              <div className="card">
-                <Link to="/admin/manage-drugs" className="link">
-                  {drugImage ? (
-                    <img src={drugImage} alt=" " />
-                  ) : (
-                    <EditIcon className="icon" />
-                  )}
-                  <h3>Manage Drugs</h3>
-                </Link>
-              </div>
-              <div className="card">
-                <Link to="/admin/manage-categories" className="link">
-                  <EditIcon className="icon" />
-                  <h3> Drug Categories</h3>
-                </Link>
-              </div>
-              <div className="card">
-                <Link to="/admin/users" className="link">
-                  <GroupIcon className="icon" />
-                  <h3>Manage Users</h3>
-                </Link>
-              </div>
+              {user?.role === "admin" ? (
+                <>
+                  <div className="card">
+                    <Link to="/admin/manage-pharmacies" className="link">
+                      {drugStoreImage ? (
+                        <img src={drugStoreImage} alt=" " />
+                      ) : (
+                        <GroupIcon className="icon" />
+                      )}
+                      <h3>Manage Pharmacies</h3>
+                    </Link>
+                  </div>
+                  <div className="card">
+                    <Link to="/admin/manage-pharmacists" className="link">
+                      {pharmacistImage ? (
+                        <img src={pharmacistImage} alt=" " />
+                      ) : (
+                        <GroupIcon className="icon" />
+                      )}
+                      <h3>Manage Pharmacists</h3>
+                    </Link>
+                  </div>
+                  <div className="card">
+                    <Link to="/admin/users" className="link">
+                      <GroupIcon className="icon" />
+                      <h3>Manage Users</h3>
+                    </Link>
+                  </div>
+                  <div className="card">
+                    <Link to="/admin/settings" className="link">
+                      <SettingsRoundedIcon className="icon" />
+                      <h3>Settings</h3>
+                    </Link>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="card">
+                    <Link to="/admin/manage-drugs" className="link">
+                      {drugImage ? (
+                        <img src={drugImage} alt=" " />
+                      ) : (
+                        <EditIcon className="icon" />
+                      )}
+                      <h3>Manage Drugs</h3>
+                    </Link>
+                  </div>
+                  <div className="card">
+                    <Link to="/admin/manage-categories" className="link">
+                      <EditIcon className="icon" />
+                      <h3> Drug Categories</h3>
+                    </Link>
+                  </div>
 
-              <div className="card">
-                <Link to="/admin/analytics" className="link">
-                  <AssessmentIcon className="icon" />
-                  <h3>Search Analytics</h3>
-                </Link>
-              </div>
-              <div className="card">
-                <Link to="/admin/settings" className="link">
-                  <SettingsRoundedIcon className="icon" />
-                  <h3>Settings</h3>
-                </Link>
-              </div>
-              <div className="card">
-                <Link to="/admin/profile" className="link">
-                  <AccountCircleIcon className="icon" />
-                  <h3>Profile</h3>
-                </Link>
-              </div>
+                  <div className="card">
+                    <Link to="/admin/pharmacist/reports" className="link">
+                      <AssessmentIcon className="icon" />
+                      <h3>Reports</h3>
+                    </Link>
+                  </div>
+                  <div className="card">
+                    <Link to="/admin/pharmacist/settings" className="link">
+                      <SettingsRoundedIcon className="icon" />
+                      <h3>Settings</h3>
+                    </Link>
+                  </div>
+                </>
+              )}
             </div>
           </>
         )}
