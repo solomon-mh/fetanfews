@@ -1,0 +1,12 @@
+/* src/styles/variables.scss */
+:root {
+	--primary-color: #1e90ff;
+	--secondary-color: #5d8ec4;
+	--accent-color: #e4c40f;
+	--background-color: #f0f8ff;
+	--text-color: #1b1f23;
+	--button-text-color: #ffffff;
+	--error-color: #ff6b6b;
+	--success-color: #2ecc71;
+	--border-color: #d1e3f8;
+}

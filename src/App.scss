@@ -1,45 +1,44 @@
-
+@import "./variables.css";
 @mixin message-base {
-    padding: 1rem;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: 500;
-    margin: 1rem 0;
-    display: flex;
-    align-items: center;
-  };
-  
-  .loading {
-    @include message-base;
-    background-color: #f0f8ff; 
-    color: #007bff; 
-    border: 1px solid #cce5ff;
-  }
-  
-  .error-network {
-    @include message-base;
-    background-color: #f8d7da; 
-    color: #721c24; 
-    border: 1px solid #f5c6cb;
-  }
-  
-  .error-server {
-    @include message-base;
-    background-color: #fff3cd; 
-    color: #856404; 
-    border: 1px solid #ffeeba;
-  }
-  
-  .message-icon {
-    margin-right: 0.5rem;
-    font-size: 1.2rem;
-  }
-  
-  .message-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    margin-top: 20px;
-  }
-  
+	padding: 1rem;
+	border-radius: 8px;
+	font-size: 16px;
+	font-weight: 500;
+	margin: 1rem 0;
+	display: flex;
+	align-items: center;
+}
+
+.loading {
+	@include message-base;
+	background-color: #f0f8ff;
+	color: #007bff;
+	border: 1px solid #cce5ff;
+}
+
+.error-network {
+	@include message-base;
+	background-color: #f8d7da;
+	color: #721c24;
+	border: 1px solid #f5c6cb;
+}
+
+.error-server {
+	@include message-base;
+	background-color: #fff3cd;
+	color: #856404;
+	border: 1px solid #ffeeba;
+}
+
+.message-icon {
+	margin-right: 0.5rem;
+	font-size: 1.2rem;
+}
+
+.message-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	margin-top: 20px;
+}
