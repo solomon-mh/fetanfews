@@ -72,11 +72,15 @@ const AddPharmacyModal: React.FC<AddPharmacyModalProps> = ({
   };
 
   const onFormSubmit = () => {
+    setErrors({})
     // Zod validation
     const validation = pharmacySchema.safeParse(formData);
+    console.log("validation.success",validation.success)
 
     if (!validation.success) {
       const errorMessages = validation.error.format();
+      console.log("errorMessages",errorMessages)
+
       setErrors({
         name: errorMessages.name?._errors[0] || "",
         address: errorMessages.address?._errors[0] || "",
@@ -85,7 +89,6 @@ const AddPharmacyModal: React.FC<AddPharmacyModalProps> = ({
         website: errorMessages.website?._errors[0] || "",
         operating_hours: errorMessages.operating_hours?._errors[0] || "",
         delivery_available: errorMessages.delivery_available?._errors[0] || "",
-        image: errorMessages.image?._errors[0] || "",
         longitude: errorMessages.longitude?._errors[0] || "",
         latitude: errorMessages.latitude?._errors[0] || "",
       }
@@ -94,8 +97,7 @@ const AddPharmacyModal: React.FC<AddPharmacyModalProps> = ({
       return;
     }
 
-    // If validation succeeds, proceed with form submission
-    setErrors({})
+   
     handleSubmit();
   };
 
@@ -270,8 +272,7 @@ const AddPharmacyModal: React.FC<AddPharmacyModalProps> = ({
                   accept="image/*"
                   name="image"
                   onChange={handleInputChange}
-                  error={!!errors.image}
-                  helperText={errors.image}
+              
                 />
               </Button>
               {formData.image && (

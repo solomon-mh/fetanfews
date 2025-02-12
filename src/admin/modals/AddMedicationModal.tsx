@@ -24,6 +24,7 @@ interface AddMedicationModalProps {
   handleSubmit: (validatedData: any) => void;
   medication: medicationType | null;
   isEdit: boolean;
+  showSnackbar: (message:string,type: "success" | "error") => void;
 }
 type FormData = {
   name: string;
@@ -46,6 +47,7 @@ const AddMedicationModal: React.FC<AddMedicationModalProps> = ({
   handleSubmit,
   medication,
   isEdit,
+  showSnackbar,
 }) => {
   const [formData, setFormData] = useState<FormData>({
     name: "",
@@ -70,8 +72,8 @@ const AddMedicationModal: React.FC<AddMedicationModalProps> = ({
       try {
         const data = await fetchCategoriesData();
         setCategories(data);
-      } catch (error) {
-        alert("Failed to fetch categories.", "error");
+      } catch (error:any) {
+        showSnackbar("Failed to fetch categories.", "error");
       }
     };
     fetchCategories();
@@ -130,7 +132,15 @@ const AddMedicationModal: React.FC<AddMedicationModalProps> = ({
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
-      setFormData({ ...formData, image: event.target.files[0] });
+      const file = event.target.files[0];
+      console.log("updaloedde data", file);
+      // Check if the file is an image
+      if (!file.type.startsWith("image/")) {
+        showSnackbar("Please upload a valid image file.",'error');
+        return;
+      }
+  
+      setFormData({ ...formData, image: file });
     }
   };
 
@@ -387,7 +397,7 @@ const AddMedicationModal: React.FC<AddMedicationModalProps> = ({
             variant="contained"
             color="primary"
           >
-            Submit
+            {isEdit ?'Update':"Add"}
           </Button>
         </Box>
       </Box>

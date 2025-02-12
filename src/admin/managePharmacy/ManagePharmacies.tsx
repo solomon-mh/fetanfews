@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect } from "react";
 import "./ManagePharmacies.scss";
-import '../styles/table.scss'
+import "../styles/table.scss";
 
 import {
   Table,
@@ -34,7 +35,7 @@ import {
 import SnackbarComponent from "../modals/SnackbarComponent";
 const ManagePharmacies: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [pharmacies, setPharmacies] = useState();
+  const [pharmacies, setPharmacies] = useState<pharmacyType[]>([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [openForm, setOpenForm] = useState<boolean>(false);
@@ -76,7 +77,6 @@ const ManagePharmacies: React.FC = () => {
     try {
       const data = await fetchPharmacyData();
       setPharmacies(data);
-      console.log("pharmacy data", data);
     } catch (error) {
       showSnackbar("Failed to fetch medications.", "error");
     }
@@ -97,9 +97,9 @@ const ManagePharmacies: React.FC = () => {
         operating_hours: pharmacy.operating_hours || "",
         delivery_available: pharmacy.delivery_available || false,
         status: pharmacy.status || "",
-        latitude: pharmacy.latitude || "",
-        longitude: pharmacy.longitude || "",
-        image: pharmacy.image || null,
+        latitude: pharmacy.latitude.toString() || "",
+        longitude: pharmacy.longitude.toString() || "",
+        image: null,
       });
     } else {
       setIsEdit(false);
@@ -141,17 +141,25 @@ const ManagePharmacies: React.FC = () => {
       status: "",
     });
   };
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (
+    event:
+      | React.ChangeEvent<HTMLInputElement>
+      | {
+          target: {
+            name: string;
+            value: string;
+            checked?: boolean;
+            type?: string;
+            files?: FileList | null;
+          };
+        }
+  ) => {
     const { name, value, checked, type, files } = event.target;
 
     setFormData((prevData) => ({
       ...prevData,
       [name]:
-        type === "checkbox"
-          ? checked
-          : type === "file"
-          ? files?.[0] // Save the file object for file inputs
-          : value,
+        type === "checkbox" ? checked : type === "file" ? files?.[0] : value,
     }));
   };
 
@@ -167,8 +175,30 @@ const ManagePharmacies: React.FC = () => {
       }
       fetchPharmacy();
       handleCloseForm();
-    } catch (error) {
-      showSnackbar("Failed to submit the Pharmacy data.", "error");
+    } catch (error: any) {
+      // Check if response exists and contains 'email' unique error
+      if (error.response && error.response.data) {
+        const responseData = error.response.data;
+
+        if (
+          responseData.email &&
+          responseData.email.includes(
+            "pharmacy with this email already exists."
+          )
+        ) {
+          showSnackbar(
+            "This email is already registered. Please use a different one.",
+            "error"
+          );
+        } else {
+          showSnackbar("Failed to submit the Pharmacy data.", "error");
+        }
+      } else {
+        showSnackbar(
+          "An unexpected error occurred. Please try again.",
+          "error"
+        );
+      }
     }
   };
 
@@ -256,14 +286,11 @@ const ManagePharmacies: React.FC = () => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Image</TableCell>
-                <TableCell>Pharmacy Name</TableCell>
+                <TableCell>Pharmacy</TableCell>
                 <TableCell>Address</TableCell>
                 <TableCell>Phone Number</TableCell>
-
                 <TableCell>email</TableCell>
                 <TableCell>Status</TableCell>
-
                 <TableCell>Oprating hour</TableCell>
                 <TableCell>Delivery avliable</TableCell>
                 <TableCell>Latitude</TableCell>
@@ -273,22 +300,20 @@ const ManagePharmacies: React.FC = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {paginatedPharmacies.map((pharmacy) => (
+              {paginatedPharmacies.map((pharmacy: pharmacyType) => (
                 <TableRow key={pharmacy.id}>
-                  <TableCell>
-                  <img
+                  <TableCell sx={{display:'flex', gap:"10px"}}>
+                    <img
                       src={`http://127.0.0.1:8000${pharmacy.image}`} // Ensure full URL
                       alt="No image"
                       style={{
                         width: "50px",
                         height: "50px",
                         objectFit: "cover",
-                      }}/>
-
-
-
+                      }}
+                    />
+                    {' '} {pharmacy.name}
                   </TableCell>
-                  <TableCell>{pharmacy.name}</TableCell>
                   <TableCell>{pharmacy.address}</TableCell>
 
                   <TableCell>{pharmacy.phone}</TableCell>
