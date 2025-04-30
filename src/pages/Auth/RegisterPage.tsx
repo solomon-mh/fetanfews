@@ -2,7 +2,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
 import { userRegister } from "../../api/auth";
-import "./Auth.scss";
 import drugStore from "../../assets/images/drugstore.jpg";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,50 +9,58 @@ import { formSchema } from "../../utils/validateForm";
 import { FormErrors } from "../../utils/interfaces";
 import { Link, useNavigate } from "react-router-dom";
 const SignUp: React.FC = () => {
-  const [submissionMessage, setSubmissionMessage] = useState(" ");
-  const {
-    register,
-    handleSubmit,
-    setError,
-    formState: { errors },
-  } = useForm({
-    resolver: zodResolver(formSchema),
-  });
-  const navigate = useNavigate();
-  const onSubmit = async (data: any) => {
-    const { confirmPassword, ...signUpData } = data;
-  
-    try {
-      const response = await userRegister(signUpData);
-  
-      if (response.access) {
-        setSubmissionMessage("User created successfully!");
-        navigate("/");
-      } else {
-        setSubmissionMessage("Error Creating user");
-  
-        // Handle backend validation errors and set field-specific errors
-        if (response.email) {
-          setError("email", { type: "server", message: 'User with this email already Rigstered' });
-        }
-  
-        if (response.phone_number) {
-          setError("phone_number", { type: "server", message: "User with this phone number already Rigstered"});
-        }
-  
-        if (response.password) {
-          setError("password", { type: "server", message: response.password[0] });
-        }
-  
-        if (response.general) {
-          setSubmissionMessage(response.general);
-        }
-      }
-    } catch (error) {
-      setSubmissionMessage("An unexpected error occurred.");
-    }
-  };
-  
+	const [submissionMessage, setSubmissionMessage] = useState(" ");
+	const {
+		register,
+		handleSubmit,
+		setError,
+		formState: { errors },
+	} = useForm({
+		resolver: zodResolver(formSchema),
+	});
+	const navigate = useNavigate();
+	const onSubmit = async (data: any) => {
+		const { confirmPassword, ...signUpData } = data;
+
+		try {
+			const response = await userRegister(signUpData);
+
+			if (response.access) {
+				setSubmissionMessage("User created successfully!");
+				navigate("/");
+			} else {
+				setSubmissionMessage("Error Creating user");
+
+				// Handle backend validation errors and set field-specific errors
+				if (response.email) {
+					setError("email", {
+						type: "server",
+						message: "User with this email already Rigstered",
+					});
+				}
+
+				if (response.phone_number) {
+					setError("phone_number", {
+						type: "server",
+						message: "User with this phone number already Rigstered",
+					});
+				}
+
+				if (response.password) {
+					setError("password", {
+						type: "server",
+						message: response.password[0],
+					});
+				}
+
+				if (response.general) {
+					setSubmissionMessage(response.general);
+				}
+			}
+		} catch (error) {
+			setSubmissionMessage("An unexpected error occurred.");
+		}
+	};
 
 	const renderError = (fieldName: keyof FormErrors) => {
 		return errors[fieldName] ? (

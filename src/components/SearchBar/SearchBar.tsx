@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useCallback } from "react";
 import { FiSearch, FiMapPin, FiTag } from "react-icons/fi";
-import "./SearchBar.scss";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { pharmacies } from "../../data/pharmacies";
 import { debounce } from "../../utils/debounce";

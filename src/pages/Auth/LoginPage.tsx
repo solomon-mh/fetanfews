@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import { LoginCredentials } from "../../utils/interfaces";
 import { login } from "../../api/auth";
-import "./Auth.scss";
 import drugStore from "../../assets/images/drugstore.jpg";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";

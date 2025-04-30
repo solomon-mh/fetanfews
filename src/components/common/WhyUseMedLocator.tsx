@@ -1,5 +1,4 @@
 import React, { useRef } from "react";
-import "./WhyUseMedLocator.scss";
 import { FaMapMarkerAlt, FaClock, FaMedkit, FaSearch } from "react-icons/fa";
 import { cardVariants } from "../../utils/animateVariant";
 import { motion, useInView } from "framer-motion";
