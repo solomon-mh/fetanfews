@@ -6,13 +6,14 @@ import HeroSection from "../../components/HeroSection/HeroSection";
 import PharmacyList from "../../components/PharmacyList/PharmacyList";
 import { calculateDistance } from "../../utils/calculations";
 import { useGeoLocation, defaultCoordinates } from "../../hooks/useGeoLocation";
-import { brwose_by_categories } from "../../api/pharmacyService";
 import { CategoryType } from "../../utils/interfaces";
-import { fetchPharmacyData } from "../../api/pharmacyService";
+// import { brwose_by_categories } from "../../api/pharmacyService";
+// import { fetchPharmacyData } from "../../api/pharmacyService";
+// import { searchByCategory } from "../../api/pharmacyService";
 import { PharmacyDataType } from "../../utils/interfaces";
-import { searchByCategory } from "../../api/pharmacyService";
 import { useError } from "../../contexts/ErrorContext";
 import PharmacyMap from "../../components/MapView/MapView";
+import PharmacySkeleton from "../../components/common/PharmacySkeleton";
 const HomePage: React.FC = () => {
 	const [selectedCategory, setSelectedCategory] = useState<CategoryType | null>(
 		null
@@ -26,58 +27,58 @@ const HomePage: React.FC = () => {
 	const userLocation = useGeoLocation();
 	const { setError } = useError();
 
-	useEffect(() => {
-		setLoading(true);
-		const getCategories = async () => {
-			try {
-				const data = await brwose_by_categories();
-				setCategories(data);
-			} catch (err) {
-				setError("Failed to fetch categories.");
-			} finally {
-				setLoading(false);
-			}
-		};
+	// useEffect(() => {
+	// 	setLoading(true);
+	// 	const getCategories = async () => {
+	// 		try {
+	// 			const data = await brwose_by_categories();
+	// 			setCategories(data);
+	// 		} catch (err) {
+	// 			setError("Failed to fetch categories.");
+	// 		} finally {
+	// 			setLoading(false);
+	// 		}
+	// 	};
 
-		getCategories(); // Call the function on component mount
-	}, []);
-	useEffect(() => {
-		const getPharmacies = async () => {
-			try {
-				const data = await fetchPharmacyData();
-				setPharmacies(data);
-				setFilteredPharmacies(data);
-				setSelectedCategory(null);
-			} catch (err) {
-				setError("Failed to fetch pharmacies.");
-			} finally {
-				setLoading(false);
-			}
-		};
+	// 	getCategories(); // Call the function on component mount
+	// }, []);
+	// useEffect(() => {
+	// 	const getPharmacies = async () => {
+	// 		try {
+	// 			const data = await fetchPharmacyData();
+	// 			setPharmacies(data);
+	// 			setFilteredPharmacies(data);
+	// 			setSelectedCategory(null);
+	// 		} catch (err) {
+	// 			setError("Failed to fetch pharmacies.");
+	// 		} finally {
+	// 			setLoading(false);
+	// 		}
+	// 	};
 
-		getPharmacies();
-	}, []);
+	// 	getPharmacies();
+	// }, []);
 
-	const handleSearchByCategory = async (category: CategoryType | null) => {
-		setSelectedCategory(category);
+	// const handleSearchByCategory = async (category: CategoryType | null) => {
+	// 	setSelectedCategory(category);
 
-		setError(null);
-		try {
-			if (category) {
-				const result = await searchByCategory(category.id, null);
-				setFilteredPharmacies(result);
-			} else {
-				setFilteredPharmacies(pharmacies);
-			}
-		} catch (err) {
-			console.error(err);
-			setError("Failed to fetch data");
-			setSelectedCategory(null);
-			setFilteredPharmacies([]);
-		} finally {
-			setLoading(false);
-		}
-	};
+	// 	setError(null);
+	// 	try {
+	// 		if (category) {
+	// 			const result = await searchByCategory(category.id, null);
+	// 			setFilteredPharmacies(result);
+	// 		} else {
+	// 			setFilteredPharmacies(pharmacies);
+	// 		}
+	// 	} catch (err) {
+	// 		console.error(err);
+	// 		setError("Failed to fetch data");
+	// 		setSelectedCategory(null);
+	// 		setFilteredPharmacies([]);
+	// 	} finally {
+	// 		setLoading(false);
+	// 	}
+	// };
 
 	// Default coordinates for the map if geolocation fails
 	const userCoordinates: [number, number] =
@@ -86,13 +87,12 @@ const HomePage: React.FC = () => {
 			: defaultCoordinates;
 
 	if (loading) {
-		return <h1>Loading</h1>;
+		return <PharmacySkeleton />;
 	}
 
 	return (
 		<div className="home-page">
 			<HeroSection />
-
 			<div className="browse-categories-wrapper">
 				<h2 className="section-title">Browse by Medication Category</h2>
 				<ul className="categories-list">
@@ -102,7 +102,7 @@ const HomePage: React.FC = () => {
 							className={`category-item ${
 								selectedCategory?.name === category.name ? "active" : ""
 							}`}
-							onClick={() => handleSearchByCategory(category)}
+							// onClick={() => handleSearchByCategory(category)}
 						>
 							{category.name}
 						</li>
@@ -111,7 +111,7 @@ const HomePage: React.FC = () => {
 						className={`category-item ${
 							!selectedCategory?.name ? "active" : ""
 						}`}
-						onClick={() => handleSearchByCategory(null)}
+						// onClick={() => handleSearchByCategory(null)}
 					>
 						All Categories
 					</li>

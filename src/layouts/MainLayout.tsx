@@ -10,11 +10,14 @@ const MainLayout = () => {
 		// Network error handling
 		if (error.toLowerCase().includes("failed to fetch")) {
 			return (
-				<div className="message-container">
-					<div className="error-network">
-						<span className="message-icon bg-red-500">⚠️</span> There was a
-						problem connecting to the server. Please check your internet
-						connection and try again.
+				<div className="">
+					<div className="w-full h-screen flex justify-center items-center">
+						<p className="text-xl text-center font-bold">
+							<span className="text-3xl">⚠️</span>
+							<br />
+							There was a problem connecting to the server. <br /> Please check
+							your internet connection and try again.
+						</p>
 					</div>
 				</div>
 			);
@@ -23,19 +26,21 @@ const MainLayout = () => {
 		// Generic error handling
 		return (
 			<div className="message-container">
-				<div className="error-server">
-					<span className="message-icon">💥</span> Something went wrong while
-					fetching the data. Please try again later.
+				<div className="w-full h-screen flex justify-center items-center">
+					<p className="text-xl text-center font-bold">
+						<span className="text-3xl">💥</span>
+						<br />
+						Something went wrong while fetching the data. <br /> Please try
+						again later.
+					</p>
 				</div>
 			</div>
 		);
 	}
 	return (
 		<div>
-			<header>
-				<Header />
-			</header>
-			<main style={{ paddingTop: "80px" }}>
+			<Header />
+			<main>
 				<Outlet />
 			</main>
 			<Footer />
