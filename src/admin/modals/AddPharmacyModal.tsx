@@ -38,7 +38,7 @@ const AddPharmacyModal: React.FC<AddPharmacyModalProps> = ({
     website?: string;
     operating_hours?: string;
     delivery_available?: string;
-    image?: string ;
+    image?: string;
     longitude?: string;
     latitude?: string;
   }>({});
@@ -72,14 +72,14 @@ const AddPharmacyModal: React.FC<AddPharmacyModalProps> = ({
   };
 
   const onFormSubmit = () => {
-    setErrors({})
+    setErrors({});
     // Zod validation
     const validation = pharmacySchema.safeParse(formData);
-    console.log("validation.success",validation.success)
+    console.log("validation.success", validation.success);
 
     if (!validation.success) {
       const errorMessages = validation.error.format();
-      console.log("errorMessages",errorMessages)
+      console.log("errorMessages", errorMessages);
 
       setErrors({
         name: errorMessages.name?._errors[0] || "",
@@ -91,13 +91,11 @@ const AddPharmacyModal: React.FC<AddPharmacyModalProps> = ({
         delivery_available: errorMessages.delivery_available?._errors[0] || "",
         longitude: errorMessages.longitude?._errors[0] || "",
         latitude: errorMessages.latitude?._errors[0] || "",
-      }
-      );
+      });
 
       return;
     }
 
-   
     handleSubmit();
   };
 
@@ -144,7 +142,7 @@ const AddPharmacyModal: React.FC<AddPharmacyModalProps> = ({
           <Typography variant="h6" component="h2" gutterBottom>
             {isEdit ? "Edit Pharmacy" : "Add Pharmacy"}
           </Typography>
-         
+
           {/* Basic Details Section */}
           <Typography variant="subtitle1" gutterBottom>
             Basic Details
@@ -272,7 +270,6 @@ const AddPharmacyModal: React.FC<AddPharmacyModalProps> = ({
                   accept="image/*"
                   name="image"
                   onChange={handleInputChange}
-              
                 />
               </Button>
               {formData.image && (
