@@ -3,17 +3,18 @@ import SearchBar from "../SearchBar/SearchBar";
 import { useNavigate, Link } from "react-router-dom";
 import { fetchMostSearchedMedications } from "../../api/medicationService";
 import { medicationType } from "../../utils/interfaces";
+import SearchResults from "../SearchResults/SearchResults";
 
 const HeroSection: React.FC = () => {
   const navigate = useNavigate();
-  const queryParams = new URLSearchParams();
+  const queryParams = new URLSearchParams(window.location.search);
   const [frequentlySearchedDrugs, setFrequentlySearchedDrugs] = useState<
     medicationType[]
   >([]);
 
   const handleDrugSearch = (drug: string) => {
-    if (drug) queryParams.append("medication", drug);
-    navigate(`/search-results/?${queryParams.toString()}`);
+    if (drug) queryParams.set("medication", drug);
+    navigate(`?${queryParams.toString()}`);
   };
 
   useEffect(() => {
@@ -26,7 +27,7 @@ const HeroSection: React.FC = () => {
   }, []);
 
   return (
-    <div className="hero-wrapper py-40 dark:bg-gray-800 dark:text-white">
+    <div className="hero-wrapper px-12 py-40 dark:bg-gray-800 dark:text-white">
       {/* Left Content */}
       <div className="flex-1 space-y-6 text-center md:text-left">
         <h1 className="text-4xl md:text-5xl font-bold text-green-700 dark:text-lime-300 leading-tight">
@@ -40,6 +41,7 @@ const HeroSection: React.FC = () => {
         <div className="max-w-xl mx-auto md:mx-0">
           <SearchBar />
         </div>
+        <SearchResults />
 
         {frequentlySearchedDrugs.length > 0 && (
           <div className="bg-white dark:bg-gray-800 p-4 mt-6">
