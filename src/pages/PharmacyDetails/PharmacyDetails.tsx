@@ -2,346 +2,323 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import {
-	useParams,
-	useNavigate,
-	useSearchParams,
-	Link,
+  useParams,
+  useNavigate,
+  useSearchParams,
+  Link,
 } from "react-router-dom";
-import axios from "axios";
 import { useGeoLocation, defaultCoordinates } from "../../hooks/useGeoLocation";
 import { getPharmacyDetail } from "../../api/pharmacyService";
 import PharmacyMap from "../../components/MapView/MapView";
 import { FaSearch, FaHeartbeat, FaRedo } from "react-icons/fa";
 import { searchPharmacyMedications } from "../../api/medicationService";
-import { string } from "zod";
 import Breadcrumbs from "../../components/common/Breadcrumbs";
-// Breadcrumbs Component
-// const Breadcrumbs: React.FC = () => {
-//   const { pharmacyName } = useParams();
-
-//   const navigate = useNavigate();
-//   return (
-//     <nav className="breadcrumbs">
-//       <span onClick={() => navigate("/")}>Home</span> &gt;{" "}
-//       <span onClick={() => navigate("/pharmacies")}>Pharmacies</span> &gt;{" "}
-//       <span>{pharmacyName}</span>
-//     </nav>
-//   );
-// };
+import defaultPharmacyImage from "../../assets/default-pharmacy.png";
 
 interface PharmacyDetailPageProps {
-	calculateDistance: (
-		lat1: number,
-		lon1: number,
-		lat2: number,
-		lon2: number
-	) => number;
+  calculateDistance: (
+    lat1: number,
+    lon1: number,
+    lat2: number,
+    lon2: number
+  ) => number;
 }
 
 const PharmacyDetailPage: React.FC<PharmacyDetailPageProps> = ({
-	calculateDistance,
+  calculateDistance,
 }) => {
-	const [searchParams] = useSearchParams();
-	const pharmacyId = searchParams.get("id");
-	const [pharmacy, setPharmacy] = useState<any>(null);
-	const [loading, setLoading] = useState<boolean>(true);
-	const [error, setError] = useState<string | null>(null);
-	const [searchTerm, setSearchTerm] = useState<string>("");
-	const [searchResults, setSearchResults] = useState<any[]>([]);
-	const [isOnsearch, setIsOnsearch] = useState(false);
-	const [message, setMessage] = useState("");
-	const { pharmacyName } = useParams();
-	const [triggerSearch, setTriggerSearch] = useState(false);
+  const [searchParams] = useSearchParams();
+  const pharmacyId = searchParams.get("id");
+  const [pharmacy, setPharmacy] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [isOnsearch, setIsOnsearch] = useState(false);
+  const [message, setMessage] = useState("");
+  const { pharmacyName } = useParams();
+  const [triggerSearch, setTriggerSearch] = useState(false);
 
-	const userLocation = useGeoLocation();
-	const userCoordinates: [number, number] =
-		userLocation.latitude && userLocation.longitude
-			? [userLocation.latitude, userLocation.longitude]
-			: defaultCoordinates;
-	// Fetch pharmacy data from API
-	useEffect(() => {
-		const fetchPharmacyDetails = async () => {
-			try {
-				if (pharmacyId) {
-					const response = await getPharmacyDetail(pharmacyId);
-					setPharmacy(response.data);
-					setLoading(false);
-				} else {
-					setError("Pharmacy ID is not defined.");
-					setLoading(false);
-				}
-			} catch (err: any) {
-				setError("Failed to fetch pharmacy details.");
-				setLoading(false);
-			}
-		};
+  const userLocation = useGeoLocation();
+  const userCoordinates: [number, number] =
+    userLocation.latitude && userLocation.longitude
+      ? [userLocation.latitude, userLocation.longitude]
+      : defaultCoordinates;
+  // Fetch pharmacy data from API
+  useEffect(() => {
+    const fetchPharmacyDetails = async () => {
+      try {
+        if (pharmacyId) {
+          const response = await getPharmacyDetail(pharmacyId);
+          setPharmacy(response.data);
+          setLoading(false);
+        } else {
+          setError("Pharmacy ID is not defined.");
+          setLoading(false);
+        }
+      } catch (err: any) {
+        setError("Failed to fetch pharmacy details.");
+        setLoading(false);
+      }
+    };
 
-		fetchPharmacyDetails();
-	}, [pharmacyId]);
+    fetchPharmacyDetails();
+  }, [pharmacyId]);
 
-	// Function to handle medication search
-	const handleSearch = async (term = "") => {
-		if (term) {
-			setSearchTerm(term);
-			setTriggerSearch(true);
-		} else if (!searchTerm.trim()) {
-			setError("Please enter a search term");
-			setSearchResults([]);
-			return;
-		} else {
-			setTriggerSearch(true);
-		}
-	};
-	useEffect(() => {
-		if (!triggerSearch || !searchTerm.trim()) return;
+  // Function to handle medication search
+  const handleSearch = async (term = "") => {
+    if (term) {
+      setSearchTerm(term);
+      setTriggerSearch(true);
+    } else if (!searchTerm.trim()) {
+      setError("Please enter a search term");
+      setSearchResults([]);
+      return;
+    } else {
+      setTriggerSearch(true);
+    }
+  };
+  useEffect(() => {
+    if (!triggerSearch || !searchTerm.trim()) return;
 
-		const searchMedications = async () => {
-			setIsOnsearch(true);
-			setMessage("");
-			setSearchResults([]);
+    const searchMedications = async () => {
+      setIsOnsearch(true);
+      setMessage("");
+      setSearchResults([]);
 
-			try {
-				if (pharmacyId) {
-					const result = await searchPharmacyMedications(
-						pharmacyId,
-						searchTerm
-					);
-					if (result.message) {
-						setMessage(result.message);
-					} else if (result.error) {
-						setError(result.error);
-						setSearchResults([]);
-					} else {
-						setError("");
-						setSearchResults(result);
-					}
-				} else {
-					setError("Pharmacy ID is not defined.");
-				}
-			} catch (err) {
-				setError("An error occurred while searching. Please try again.");
-			}
+      try {
+        if (pharmacyId) {
+          const result = await searchPharmacyMedications(
+            pharmacyId,
+            searchTerm
+          );
+          if (result.message) {
+            setMessage(result.message);
+          } else if (result.error) {
+            setError(result.error);
+            setSearchResults([]);
+          } else {
+            setError("");
+            setSearchResults(result);
+          }
+        } else {
+          setError("Pharmacy ID is not defined.");
+        }
+      } catch (err) {
+        setError("An error occurred while searching. Please try again.");
+      }
 
-			setIsOnsearch(false);
-			setTriggerSearch(false); // Reset trigger
-		};
+      setIsOnsearch(false);
+      setTriggerSearch(false); // Reset trigger
+    };
 
-		searchMedications();
-	}, [searchTerm, pharmacyId, triggerSearch]);
-	const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		setError("");
-		setMessage("");
-		setSearchTerm(event.target.value);
-	};
-	const handleRetry = () => {
-		setSearchTerm("");
-		setIsOnsearch(false);
-		setMessage("");
-		setError("");
-	};
+    searchMedications();
+  }, [searchTerm, pharmacyId, triggerSearch]);
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setError("");
+    setMessage("");
+    setSearchTerm(event.target.value);
+  };
+  const handleRetry = () => {
+    setSearchTerm("");
+    setIsOnsearch(false);
+    setMessage("");
+    setError("");
+  };
 
-	if (loading) {
-		return <p>Loading pharmacy details...</p>;
-	}
+  if (loading) {
+    return <p>Loading pharmacy details...</p>;
+  }
 
-	if (!pharmacy) {
-		return <p>Pharmacy not found.</p>;
-	}
+  if (!pharmacy) {
+    return <p>Pharmacy not found.</p>;
+  }
 
-	return (
-		<>
-			{" "}
-			<Breadcrumbs />
-			<div className="pharmacy-detail-wrapper">
-				<div className="pharmacy-detail">
-					<div className="pharmacy-info-wrapper">
-						<img
-							src={`http://127.0.0.1:8000${pharmacy.image}`}
-							alt={pharmacy.name}
-							className="pharmacy-image"
-						/>
-						<div>
-							<span className="pharmacy-name">{pharmacy.name} </span>
-							{""}
-							<span className="pharmacy-distance">
-								{calculateDistance(
-									pharmacy.latitude,
-									pharmacy.longitude,
-									userCoordinates[0],
-									userCoordinates[1]
-								).toFixed(2)}{" "}
-								Km away from you
-							</span>
-						</div>
+  return (
+    <div className="py-30 dark:bg-gray-800 dark:text-white">
+      {" "}
+      <Breadcrumbs />
+      <div className="bg-gray-50 dark:bg-gray-950 min-h-screen px-4 py-6 sm:px-8 text-gray-800 dark:text-gray-100">
+        {/* Header Section */}
+        <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-10">
+          {/* Left: Pharmacy Info */}
+          <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-md p-6 space-y-6">
+            <div className="flex gap-4">
+              <img
+                src={`http://127.0.0.1:8000${pharmacy.image}`}
+                alt={pharmacy.name}
+                className="w-32 h-32 object-cover rounded-xl shadow-sm"
+                onError={(e) => {
+                  e.currentTarget.src = defaultPharmacyImage;
+                }}
+              />
+              <div>
+                <h2 className="text-2xl font-bold mb-1">{pharmacy.name}</h2>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  {calculateDistance(
+                    pharmacy.latitude,
+                    pharmacy.longitude,
+                    userCoordinates[0],
+                    userCoordinates[1]
+                  ).toFixed(2)}{" "}
+                  km away from you
+                </p>
+                <div className="mt-2 space-y-1 text-sm">
+                  <p>📞 {pharmacy.phone}</p>
+                  <p>📧 {pharmacy.email}</p>
+                  <p>📍 {pharmacy.address}</p>
+                </div>
+              </div>
+            </div>
 
-						<div className="pharmacy-info">
-							<div className="basic-address">
-								<p className="pharmacy-phone">Phone: {pharmacy.phone}</p>
-								<p className="pharmacy-email">Email: {pharmacy.email}</p>
-								<p className="pharmacy-address">{pharmacy.address}</p>
-							</div>
-							<div className="basic-info">
-								{pharmacy.website && (
-									<p className="pharmacy-website">
-										Website:{" "}
-										<a
-											href={pharmacy.website}
-											target="_blank"
-											rel="noopener noreferrer"
-										>
-											{pharmacy.website}
-										</a>
-									</p>
-								)}
-								<p className="pharmacy-operating-hours">
-									Operating Hours: {pharmacy.operating_hours}
-								</p>
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-1 text-sm">
+              {pharmacy.website && (
+                <p>
+                  🌐 Website:{" "}
+                  <a
+                    href={pharmacy.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:underline"
+                  >
+                    {pharmacy.website}
+                  </a>
+                </p>
+              )}
+              <p>🕒 Hours: {pharmacy.operating_hours}</p>
+              <p>
+                🚚 Delivery:{" "}
+                <span className="font-semibold text-green-600 dark:text-green-400">
+                  {pharmacy.delivery_available ? "Yes" : "No"}
+                </span>
+              </p>
+            </div>
+          </div>
 
-								<p className="pharmacy-delivery">
-									Delivery Available:{" "}
-									{pharmacy.delivery_available ? "Yes" : "No"}
-								</p>
-							</div>
-						</div>
-					</div>
+          {/* Right: Map */}
+          <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-md p-6">
+            <h3 className="text-xl font-semibold mb-3">
+              <span className="text-blue-600 underline">{pharmacyName}</span> on
+              Map
+            </h3>
+            {userLocation.latitude && userLocation.longitude ? (
+              <PharmacyMap
+                userCoordinates={userCoordinates}
+                pharmacies={[pharmacy]}
+                userLocationError={userLocation.error}
+              />
+            ) : (
+              <p className="text-sm text-gray-500">
+                Please enable location services to view the map.
+              </p>
+            )}
+          </div>
+        </div>
 
-					{/* Medication Search */}
-					<div className="medication-search">
-						<div className="search-bar">
-							<input
-								type="text"
-								value={searchTerm}
-								onChange={handleInputChange}
-								placeholder="Search by medications name or category"
-								className="search-input"
-							/>
-							<button
-								onClick={() => handleSearch("")}
-								className="search-button"
-							>
-								<FaSearch />
-							</button>
-						</div>
+        {/* Search Section */}
+        <div className="max-w-4xl mx-auto mt-10 bg-white dark:bg-gray-900 rounded-2xl shadow-md p-6 space-y-6">
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={handleInputChange}
+              placeholder="Search medications or categories"
+              className="flex-1 p-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder:text-gray-400"
+            />
+            <button
+              onClick={() => handleSearch("")}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
+            >
+              <FaSearch />
+            </button>
+          </div>
 
-						{!searchTerm.trim() && !isOnsearch && (
-							<div className="search-placeholder">
-								<p>
-									<span role="img" aria-label="pill">
-										💊
-									</span>{" "}
-									Enter a medication name or its category to search durgs at{" "}
-									<strong>{pharmacyName}</strong>
-								</p>
-								<p className="suggestions">
-									Or check out popular medications:
-									<ul>
-										<li
-											onClick={() => {
-												handleSearch("Paracetamol");
-											}}
-										>
-											Paracetamol
-										</li>
-										<li
-											onClick={() => {
-												handleSearch("Ibuprofen");
-											}}
-										>
-											Ibuprofen
-										</li>
-										<li
-											onClick={() => {
-												handleSearch("Amoxicillin");
-											}}
-										>
-											Amoxicillin
-										</li>
-										<li
-											onClick={() => {
-												handleSearch("Aspirin");
-											}}
-										>
-											Aspirin
-										</li>
-									</ul>
-								</p>
-							</div>
-						)}
+          {!searchTerm.trim() && !isOnsearch && (
+            <div className="text-sm text-gray-500 dark:text-gray-400">
+              <p>
+                💊 Search a medication or browse categories at{" "}
+                <strong className="text-blue-600">{pharmacyName}</strong>
+              </p>
+              <p className="mt-2">Popular meds:</p>
+              <ul className="flex gap-3 mt-1 flex-wrap">
+                {["Paracetamol", "Ibuprofen", "Amoxicillin", "Aspirin"].map(
+                  (item) => (
+                    <li
+                      key={item}
+                      onClick={() => handleSearch(item)}
+                      className="bg-gray-200 dark:bg-gray-700 px-3 py-1 rounded-md cursor-pointer hover:bg-blue-600 hover:text-white transition text-sm"
+                    >
+                      {item}
+                    </li>
+                  )
+                )}
+              </ul>
+            </div>
+          )}
 
-						{isOnsearch ? (
-							<div className="search-loading">
-								<p>Searching...</p>
-								<div className="loading-spinner">
-									<FaHeartbeat className="spinner-icon" />
-									<span>Hold on, we’re looking for medications...</span>
-								</div>
-							</div>
-						) : searchTerm && searchResults.length > 0 ? (
-							<div className="search-results">
-								<h3>Search Results</h3>
-								<table className="medication-table">
-									<thead>
-										<tr>
-											<th>Drug Name</th>
-											<th>Price</th>
-											<th>Detail</th>
-										</tr>
-									</thead>
-									<tbody>
-										{searchResults.map((med) => (
-											<tr key={med.id}>
-												<td>{med.name}</td>
-												<td>{med.price} Birr</td>
-												<td>
-													<Link
-														className="see-detail"
-														to={`/pharmacy/${encodeURIComponent(
-															pharmacy.name
-														)}/${encodeURIComponent(med.name)}?pham_id=${
-															pharmacy.id
-														}&med_id=${med.id}`}
-													>
-														See Detail
-													</Link>
-												</td>
-											</tr>
-										))}
-									</tbody>
-								</table>
-							</div>
-						) : (
-							(message || error) && (
-								<div className="no-results">
-									<p>{message || error}</p>
-									<button onClick={handleRetry} className="retry-button">
-										<FaRedo /> Retry Search
-									</button>
-								</div>
-							)
-						)}
-					</div>
-				</div>
-				<div className="pharmacy-map-view">
-					<h2 className="section-title">
-						Find{" "}
-						<span style={{ color: "blue", textDecoration: "underline" }}>
-							{pharmacyName}
-						</span>{" "}
-						on Map
-					</h2>
-					{userLocation.latitude && userLocation.longitude ? (
-						<PharmacyMap
-							userCoordinates={userCoordinates}
-							pharmacies={[pharmacy]}
-							userLocationError={userLocation.error}
-						/>
-					) : (
-						<p>Please enable location services to view on map.</p>
-					)}
-				</div>
-			</div>
-		</>
-	);
+          {isOnsearch && (
+            <div className="flex gap-2 items-center text-blue-600 dark:text-blue-400">
+              <FaHeartbeat className="animate-pulse" />
+              <p>Searching... Please wait</p>
+            </div>
+          )}
+
+          {searchTerm && searchResults.length > 0 && (
+            <div>
+              <h3 className="text-lg font-semibold mb-2">Search Results</h3>
+              <div className="overflow-x-auto rounded-md border border-gray-200 dark:border-gray-700">
+                <table className="w-full text-sm text-left">
+                  <thead className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300">
+                    <tr>
+                      <th className="px-4 py-2">Drug Name</th>
+                      <th className="px-4 py-2">Price</th>
+                      <th className="px-4 py-2">Detail</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {searchResults.map((med) => (
+                      <tr
+                        key={med.id}
+                        className="border-t border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
+                      >
+                        <td className="px-4 py-2">{med.name}</td>
+                        <td className="px-4 py-2">{med.price} Birr</td>
+                        <td className="px-4 py-2">
+                          <Link
+                            to={`/pharmacy/${encodeURIComponent(
+                              pharmacy.name
+                            )}/${encodeURIComponent(med.name)}?pham_id=${
+                              pharmacy.id
+                            }&med_id=${med.id}`}
+                            className="text-blue-600 hover:underline"
+                          >
+                            See Detail
+                          </Link>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {(message || error) && !isOnsearch && (
+            <div className="text-sm text-red-600 dark:text-red-400 space-y-2">
+              <p>{message || error}</p>
+              <button
+                onClick={handleRetry}
+                className="flex items-center gap-2 bg-red-100 dark:bg-red-800 text-red-800 dark:text-red-200 px-4 py-1 rounded-md hover:bg-red-200 dark:hover:bg-red-700"
+              >
+                <FaRedo />
+                Retry Search
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default PharmacyDetailPage;
