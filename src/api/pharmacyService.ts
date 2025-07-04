@@ -137,7 +137,7 @@ export const editPharmacist = async (id: number, data: any) => {
 export const searchMedications = async (query: string) => {
   try {
     const response = await axios.get(`${API_BASE_URL}/medications/search/`, {
-      params: { query },
+      params: { medication: query },
     });
 
     return response.data;
@@ -155,10 +155,9 @@ export const searchMedications = async (query: string) => {
 };
 export const searchPharmacies = async (query = "") => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/pharmacies/search/`, {
-      params: { query: query },
+    const response = await axios.get(`${API_BASE_URL}/pharmacies/search`, {
+      params: { pharmacy: query },
     });
-
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
