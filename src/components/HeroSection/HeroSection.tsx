@@ -41,7 +41,9 @@ const HeroSection: React.FC = () => {
         <div className="max-w-xl mx-auto md:mx-0">
           <SearchBar />
         </div>
-        <SearchResults />
+        {(queryParams.get("medication") || queryParams.get("pharmacy")) && (
+          <SearchResults />
+        )}
 
         {frequentlySearchedDrugs.length > 0 && (
           <div className="bg-white dark:bg-gray-800 p-4 mt-6">
