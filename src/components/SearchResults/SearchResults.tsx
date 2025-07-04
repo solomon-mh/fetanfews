@@ -4,7 +4,8 @@ import React, { useEffect, useState } from "react";
 import { Search } from "../../utils/handleSearch";
 import { useGeoLocation, defaultCoordinates } from "../../hooks/useGeoLocation";
 import PharmacyMap from "../../components/MapView/MapView";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
+import { calculateDistance } from "../../utils/calculations";
 
 const SearchResults: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -69,67 +70,106 @@ const SearchResults: React.FC = () => {
               </h2>
               <div className="space-y-6">
                 {searchResults.type === "pharmacy" &&
-                  searchResults.data.map((pharmacy: any) => (
-                    <div
-                      key={pharmacy.id}
-                      className="bg-white dark:bg-gray-900 p-4 rounded-lg shadow border dark:border-gray-700"
+                  searchResults?.data?.map((pharmacy: any) => (
+                    <Link
+                      to={`/pharmacy/${encodeURIComponent(pharmacy.name)}?id=${
+                        pharmacy.id
+                      }`}
                     >
-                      <h3 className="text-xl font-semibold mb-2">
-                        {pharmacy.name}
-                      </h3>
-                      <ul className="list-disc list-inside ml-4">
-                        {pharmacy.medications.map((med: any) => {
-                          const matchedPharmacy = med.pharmacies.find(
-                            (p: any) => p.id === pharmacy.id
-                          );
-                          return (
-                            <li key={med.id}>
-                              💊 {med.name} –{" "}
-                              {matchedPharmacy?.pivot?.price ??
-                                "Price not available"}{" "}
-                              Birr
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    </div>
+                      <div
+                        key={pharmacy.id}
+                        className="bg-white dark:bg-gray-900 p-4 rounded-lg shadow border dark:border-gray-700"
+                      >
+                        <h3 className="text-xl font-semibold mb-2">
+                          {pharmacy.name}
+                        </h3>
+                        <p>{pharmacy.address}</p>
+                        <p>
+                          Distance of:&nbsp;
+                          <strong>
+                            {calculateDistance(
+                              pharmacy.latitude,
+                              pharmacy.longitude,
+                              userCoordinates[0],
+                              userCoordinates[1]
+                            ).toFixed(2)}{" "}
+                            Km
+                          </strong>
+                        </p>
+                        {searchParams.get("medication") &&
+                          pharmacy?.medications?.length > 0 && (
+                            <ul className="list-disc list-inside ml-4">
+                              {pharmacy?.medications?.map((med: any) => {
+                                const matchedPharmacy = med?.pharmacies?.find(
+                                  (p: any) => p.id === pharmacy.id
+                                );
+                                return (
+                                  <li key={med.id}>
+                                    💊 {med.name} –{" "}
+                                    {matchedPharmacy?.pivot?.price ??
+                                      "Price not available"}{" "}
+                                    Birr
+                                  </li>
+                                );
+                              })}
+                            </ul>
+                          )}
+                      </div>
+                    </Link>
                   ))}
               </div>
               {searchResults.type === "medication" && (
                 <div className="space-y-6">
                   {searchResults.data.map((pharmacy) => (
-                    <div
-                      key={pharmacy.id}
-                      className="bg-white dark:bg-gray-900 p-4 rounded-lg shadow border dark:border-gray-700"
+                    <Link
+                      to={`/pharmacy/${encodeURIComponent(pharmacy.name)}?id=${
+                        pharmacy.id
+                      }`}
                     >
-                      <h3 className="text-xl font-semibold mb-2">
-                        {pharmacy.name}
-                      </h3>
-                      <ul className="list-disc list-inside ml-4">
-                        {pharmacy.medications.map((med: any) => {
-                          const matchedPharmacy = med.pharmacies.find(
-                            (p: any) => p.id === pharmacy.id
-                          );
-                          return (
-                            <li key={med.id}>
-                              💊 {med.name} –{" "}
-                              {matchedPharmacy?.pivot?.price ??
-                                "Price not available"}{" "}
-                              Birr
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    </div>
+                      <div
+                        key={pharmacy.id}
+                        className="bg-white dark:bg-gray-900 p-4 rounded-lg shadow border dark:border-gray-700"
+                      >
+                        <h3 className="text-xl font-semibold mb-2">
+                          {pharmacy.name}
+                        </h3>
+                        <p>{pharmacy.address}</p>
+                        <p>
+                          Distance of:&nbsp;
+                          <strong>
+                            {calculateDistance(
+                              pharmacy.latitude,
+                              pharmacy.longitude,
+                              userCoordinates[0],
+                              userCoordinates[1]
+                            ).toFixed(2)}{" "}
+                            Km
+                          </strong>
+                        </p>
+                        <ul className="list-disc list-inside ml-4">
+                          {pharmacy.medications.map((med: any) => {
+                            const matchedPharmacy = med.pharmacies.find(
+                              (p: any) => p.id === pharmacy.id
+                            );
+                            return (
+                              <li key={med.id}>
+                                💊 {med.name} –{" "}
+                                {matchedPharmacy?.pivot?.price ??
+                                  "Price not available"}{" "}
+                                Birr{" "}
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      </div>
+                    </Link>
                   ))}
                 </div>
               )}
             </>
           ) : (
             <p className="text-center my-6 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900 border border-red-300 dark:border-red-700 px-4 py-3 rounded-md shadow-sm">
-              {medication || pharmacy
-                ? "No results found. Please refine your search."
-                : "Enter search terms to find pharmacies or medications."}
+              No results found. Please refine your search.
             </p>
           )}
         </div>
