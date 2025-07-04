@@ -1,6 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { searchPharmacies, searchMedications } from "../api/pharmacyService";
+import { searchMedications, searchPharmacies } from "../api/pharmacyService";
+import { PharmacyDataType } from "./interfaces";
+import { IMedication } from "./interfaces";
 
 export const Search = async (searchCriteria: {
   drugName: string | null;
@@ -9,46 +9,76 @@ export const Search = async (searchCriteria: {
   const { drugName, pharmacyName } = searchCriteria;
 
   if (!drugName?.trim() && !pharmacyName?.trim()) {
-    return [];
+    return { type: "none", data: [] };
   }
 
   try {
     let pharmacyResults = [];
     let medicationResults = [];
 
-    // If pharmacy name is provided, search pharmacies
     if (pharmacyName) {
       pharmacyResults = await searchPharmacies(pharmacyName);
     }
 
-    // If drug name is provided, search medications
     if (drugName) {
       medicationResults = await searchMedications(drugName);
     }
 
-    // If only medication search criteria is provided, filter pharmacies based on drugs
+    // 🎯 Only medication search
     if (drugName && !pharmacyName) {
-      return medicationResults
+      // Extract pharmacies from medications
+      const grouped = groupMedsByPharmacy(medicationResults);
+      return { type: "medication", data: grouped };
     }
 
-    // If both search criteria are provided (pharmacy and drug), filter pharmacies
     if (drugName && pharmacyName) {
+      const filtered = pharmacyResults
+        .map((pharmacy: PharmacyDataType) => {
+          const matchesName = pharmacy.name
+            .toLowerCase()
+            .includes(pharmacyName.toLowerCase());
 
-      return pharmacyResults.filter((pharmacy: any) =>
-        medicationResults.some(
-          (medication: any) =>
-            medication&&
-            medication.name
-              .toLowerCase()
-              .includes(pharmacyName.toLowerCase())
-        )
-      );
+          if (!matchesName) return null;
+
+          // Filter medications that belong to this pharmacy
+          const matchedMeds = medicationResults.filter((med: IMedication) =>
+            med.pharmacies?.some((p: PharmacyDataType) => p.id === pharmacy.id)
+          );
+
+          if (matchedMeds.length === 0) return null;
+
+          return {
+            ...pharmacy,
+            medications: matchedMeds,
+          };
+        })
+        .filter(Boolean); // Remove nulls
+
+      return { type: "pharmacy", data: filtered };
     }
 
-    // If only pharmacy search criteria is provided, return pharmacies matching the pharmacy name
-    return pharmacyResults;
+    // 🎯 Only pharmacy
+    return { type: "pharmacy", data: pharmacyResults };
   } catch (error) {
-    console.error("Error fetching search results:", error);
-    return [];
+    console.error("Search error:", error);
+    return { type: "error", data: [] };
   }
 };
+
+function groupMedsByPharmacy(medications: IMedication[]) {
+  const pharmacyMap: Record<
+    string,
+    PharmacyDataType & { medications: IMedication[] }
+  > = {};
+
+  medications.forEach((med) => {
+    med.pharmacies?.forEach((pharmacy: PharmacyDataType) => {
+      if (!pharmacyMap[pharmacy.id]) {
+        pharmacyMap[pharmacy.id] = { ...pharmacy, medications: [] };
+      }
+      pharmacyMap[pharmacy.id].medications.push(med);
+    });
+  });
+
+  return Object.values(pharmacyMap); // [{...pharmacy, medications: [...]}, ...]
+}
