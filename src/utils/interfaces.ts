@@ -1,4 +1,4 @@
-import {ReactNode} from 'react';
+import { ReactNode } from "react";
 export interface LoginCredentials {
   username: string;
   password: string;
@@ -9,7 +9,7 @@ export interface SignUpData {
   password: string;
   email: string;
   first_name: string;
-  last_name:string
+  last_name: string;
 }
 
 export interface OnSearchProps {
@@ -25,7 +25,12 @@ export interface OnSearchProps {
 //   category: string;
 // }
 
-
+export interface IMedication {
+  id: number;
+  name: string;
+  price: number;
+  pharmacies: PharmacyDataType[];
+}
 export interface PharmacyDataType {
   id: number;
   name: string;
@@ -72,10 +77,10 @@ export interface pharmacyFormData {
   website: string;
   email: string;
   delivery_available: boolean;
-  image: File | null,
-  status:string,
+  image: File | null;
+  status: string;
 }
-export interface pharmacyType{
+export interface pharmacyType {
   id: number;
   name: string;
   address: string;
@@ -87,24 +92,25 @@ export interface pharmacyType{
   email: string;
   delivery_available: boolean;
   status: string;
-  image:File | null,
+  image: File | null;
 }
 export interface AddPharmacyModalProps {
   openForm: boolean;
   handleCloseForm: () => void;
   handleInputChange: (
-    event: React.ChangeEvent<HTMLInputElement> | { target: { name: string; value: string } }
+    event:
+      | React.ChangeEvent<HTMLInputElement>
+      | { target: { name: string; value: string } }
   ) => void;
   handleSubmit: () => void;
   formData: pharmacyFormData;
   isEdit: boolean;
 }
 
-export interface DelatePharmacyProps{
+export interface DelatePharmacyProps {
   isOpen: boolean;
   handleDelete: () => void;
-  onClose:()=> void;
-
+  onClose: () => void;
 }
 
 export interface FormErrors {
@@ -118,48 +124,44 @@ export enum UserRole {
   USER = "user",
 }
 export interface CustomUser {
-  id: number;  
+  id: number;
   email: string | null;
   phone_number: string | null;
   first_name: string;
   last_name: string;
-  role: UserRole;  
+  role: UserRole;
   is_staff: boolean;
   is_active: boolean;
-  date_joined: string;  
+  date_joined: string;
 }
 
 export interface ChildrenProps {
   children: ReactNode;
 }
 
-
-export interface medicationType{
-    id: number;
-    name: string;
-    price: string;
-    description: string;
-    category_name: string;
-    dosage_form: string;
-    dosage_strength: string;
-    manufacturer: string;
-    expiry_date: string;
-    prescription_required: boolean;
-    side_effects: string;
-    usage_instructions: string;
-    quantity_available: string;
+export interface medicationType {
+  id: number;
+  name: string;
+  price: string;
+  description: string;
+  category_name: string;
+  dosage_form: string;
+  dosage_strength: string;
+  manufacturer: string;
+  expiry_date: string;
+  prescription_required: boolean;
+  side_effects: string;
+  usage_instructions: string;
+  quantity_available: string;
   image: File | null;
   stock_status: boolean;
 }
-export interface pharmacistType{
+export interface pharmacistType {
   id: number;
   user: CustomUser;
   pharmacy: pharmacyType;
   license_number: string;
-  license_image:File | null
-
-
-
+  license_image: File | null;
 }
 export type CategoryType = {
   id: number;
