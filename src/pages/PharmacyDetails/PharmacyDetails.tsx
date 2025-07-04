@@ -1,18 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
-import {
-  useParams,
-  useNavigate,
-  useSearchParams,
-  Link,
-} from "react-router-dom";
+import { useParams, useSearchParams, Link } from "react-router-dom";
 import { useGeoLocation, defaultCoordinates } from "../../hooks/useGeoLocation";
 import { getPharmacyDetail } from "../../api/pharmacyService";
 import PharmacyMap from "../../components/MapView/MapView";
 import { FaSearch, FaHeartbeat, FaRedo } from "react-icons/fa";
 import { searchPharmacyMedications } from "../../api/medicationService";
-import Breadcrumbs from "../../components/common/Breadcrumbs";
 import defaultPharmacyImage from "../../assets/default-pharmacy.png";
 
 interface PharmacyDetailPageProps {
@@ -38,6 +32,7 @@ const PharmacyDetailPage: React.FC<PharmacyDetailPageProps> = ({
   const [message, setMessage] = useState("");
   const { pharmacyName } = useParams();
   const [triggerSearch, setTriggerSearch] = useState(false);
+  const [searchSubmitted, setSearchSubmitted] = useState(false);
 
   const userLocation = useGeoLocation();
   const userCoordinates: [number, number] =
@@ -70,6 +65,7 @@ const PharmacyDetailPage: React.FC<PharmacyDetailPageProps> = ({
     if (term) {
       setSearchTerm(term);
       setTriggerSearch(true);
+      setSearchSubmitted(true);
     } else if (!searchTerm.trim()) {
       setError("Please enter a search term");
       setSearchResults([]);
@@ -84,6 +80,7 @@ const PharmacyDetailPage: React.FC<PharmacyDetailPageProps> = ({
     const searchMedications = async () => {
       setIsOnsearch(true);
       setMessage("");
+      setError("");
       setSearchResults([]);
 
       try {
@@ -92,7 +89,14 @@ const PharmacyDetailPage: React.FC<PharmacyDetailPageProps> = ({
             pharmacyId,
             searchTerm
           );
-          if (result.message) {
+          // Handle empty results
+          if (Array.isArray(result)) {
+            if (result.length === 0) {
+              setMessage("No medications found matching your search");
+            } else {
+              setSearchResults(result);
+            }
+          } else if (result.message) {
             setMessage(result.message);
           } else if (result.error) {
             setError(result.error);
@@ -125,7 +129,9 @@ const PharmacyDetailPage: React.FC<PharmacyDetailPageProps> = ({
     setMessage("");
     setError("");
   };
-
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") handleSearch();
+  };
   if (loading) {
     return <p>Loading pharmacy details...</p>;
   }
@@ -137,7 +143,6 @@ const PharmacyDetailPage: React.FC<PharmacyDetailPageProps> = ({
   return (
     <div className="py-30 dark:bg-gray-800 dark:text-white">
       {" "}
-      <Breadcrumbs />
       <div className="bg-gray-50 dark:bg-gray-950 min-h-screen px-4 py-6 sm:px-8 text-gray-800 dark:text-gray-100">
         {/* Header Section */}
         <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-10">
@@ -222,6 +227,7 @@ const PharmacyDetailPage: React.FC<PharmacyDetailPageProps> = ({
               type="text"
               value={searchTerm}
               onChange={handleInputChange}
+              onKeyDown={handleKeyPress}
               placeholder="Search medications or categories"
               className="flex-1 p-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder:text-gray-400"
             />
@@ -282,7 +288,7 @@ const PharmacyDetailPage: React.FC<PharmacyDetailPageProps> = ({
                         className="border-t border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
                       >
                         <td className="px-4 py-2">{med.name}</td>
-                        <td className="px-4 py-2">{med.price} Birr</td>
+                        <td className="px-4 py-2">{med.pivot.price} Birr</td>
                         <td className="px-4 py-2">
                           <Link
                             to={`/pharmacy/${encodeURIComponent(
@@ -300,6 +306,18 @@ const PharmacyDetailPage: React.FC<PharmacyDetailPageProps> = ({
                   </tbody>
                 </table>
               </div>
+            </div>
+          )}
+          {searchSubmitted && searchResults.length < 1 && (
+            <div className="text-sm text-red-600 dark:text-red-400 space-y-2">
+              <p>Sorry, Medication Not Found.</p>
+              <button
+                onClick={handleRetry}
+                className="flex items-center gap-2 bg-red-100 dark:bg-red-800 text-red-800 dark:text-red-200 px-4 py-1 rounded-md hover:bg-red-200 dark:hover:bg-red-700"
+              >
+                <FaRedo />
+                Retry Search
+              </button>
             </div>
           )}
 
