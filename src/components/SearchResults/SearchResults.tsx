@@ -8,6 +8,9 @@ import { Link, useSearchParams } from "react-router-dom";
 import { calculateDistance } from "../../utils/calculations";
 
 const SearchResults: React.FC = () => {
+  const [sortBy, setSortBy] = useState<
+    "distance" | "price" | "price+distance" | "none"
+  >("none");
   const [searchParams] = useSearchParams();
   const [medication, pharmacy] = [
     searchParams.get("medication") ?? "",
@@ -48,16 +51,101 @@ const SearchResults: React.FC = () => {
         setSearchResults({ type: "error", data: [] });
       });
   }, [medication, pharmacy, searchParams]);
-
-  console.log("searchResults");
-  console.log(searchResults);
-
   // const handleShowAll = () => {
   //   setVisibleCount(searchResults.data.length);
   // };
+  const sortedResults = [...searchResults.data];
+
+  if (sortBy === "distance") {
+    sortedResults.sort((a, b) => {
+      const distA = calculateDistance(
+        a.latitude,
+        a.longitude,
+        userCoordinates[0],
+        userCoordinates[1]
+      );
+      const distB = calculateDistance(
+        b.latitude,
+        b.longitude,
+        userCoordinates[0],
+        userCoordinates[1]
+      );
+      return distA - distB;
+    });
+  } else if (sortBy === "price") {
+    sortedResults.sort((a, b) => {
+      const getLowestPrice = (pharmacy: any): number => {
+        if (!pharmacy.medications || pharmacy.medications.length === 0)
+          return Infinity;
+        const prices = pharmacy.medications
+          .map((med: any) => {
+            const match = med.pharmacies?.find(
+              (p: any) => p.id === pharmacy.id
+            );
+            return match?.pivot?.price ?? Infinity;
+          })
+          .filter((price: number) => price !== Infinity);
+        return prices.length > 0 ? Math.min(...prices) : Infinity;
+      };
+
+      return getLowestPrice(a) - getLowestPrice(b);
+    });
+  } else if (sortBy === "price+distance") {
+    sortedResults.sort((a, b) => {
+      const distA = calculateDistance(
+        a.latitude,
+        a.longitude,
+        userCoordinates[0],
+        userCoordinates[1]
+      );
+      const distB = calculateDistance(
+        b.latitude,
+        b.longitude,
+        userCoordinates[0],
+        userCoordinates[1]
+      );
+      const getLowestPrice = (pharmacy: any): number => {
+        if (!pharmacy.medications || pharmacy.medications.length === 0)
+          return Infinity;
+        const prices = pharmacy.medications
+          .map((med: any) => {
+            const match = med.pharmacies?.find(
+              (p: any) => p.id === pharmacy.id
+            );
+            return match?.pivot?.price ?? Infinity;
+          })
+          .filter((price: number) => price !== Infinity);
+        return prices.length > 0 ? Math.min(...prices) : Infinity;
+      };
+      const priceA = getLowestPrice(a);
+      const priceB = getLowestPrice(b);
+
+      // Sort by distance first, then by price
+      return distA !== distB ? distA - distB : priceA - priceB;
+    });
+  }
 
   return (
     <div className="search-results-page px-4 md:px-10 py-6 space-y-6 text-gray-800 dark:text-gray-100">
+      <div className="mb-4">
+        <label className="mr-2 font-medium">Sort by:</label>
+        <select
+          value={sortBy}
+          onChange={(e) =>
+            setSortBy(e.target.value as "distance" | "price" | "none")
+          }
+          className="border px-2 py-1 rounded dark:bg-gray-800 dark:text-white"
+        >
+          <option value="none">None</option>
+          {searchParams.get("medication") && (
+            <>
+              <option value="price">Price</option>
+              <option value="price+distance">Price+Distance</option>
+            </>
+          )}
+          <option value="distance">Distance</option>
+        </select>
+      </div>
       <div className="search-results-wrapper">
         <div className="search-results">
           {isLoading ? (
@@ -70,16 +158,14 @@ const SearchResults: React.FC = () => {
               </h2>
               <div className="space-y-6">
                 {searchResults.type === "pharmacy" &&
-                  searchResults?.data?.map((pharmacy: any) => (
+                  sortedResults?.map((pharmacy: any) => (
                     <Link
                       to={`/pharmacy/${encodeURIComponent(pharmacy.name)}?id=${
                         pharmacy.id
                       }`}
+                      key={pharmacy.id}
                     >
-                      <div
-                        key={pharmacy.id}
-                        className="bg-white dark:bg-gray-900 p-4 rounded-lg shadow border dark:border-gray-700"
-                      >
+                      <div className="bg-white dark:bg-gray-900 p-4 rounded-lg shadow border dark:border-gray-700">
                         <h3 className="text-xl font-semibold mb-2">
                           {pharmacy.name}
                         </h3>
@@ -120,7 +206,7 @@ const SearchResults: React.FC = () => {
               </div>
               {searchResults.type === "medication" && (
                 <div className="space-y-6">
-                  {searchResults.data.map((pharmacy) => (
+                  {sortedResults?.map((pharmacy) => (
                     <Link
                       to={`/pharmacy/${encodeURIComponent(pharmacy.name)}?id=${
                         pharmacy.id
