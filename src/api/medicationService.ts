@@ -10,7 +10,7 @@ export const searchPharmacyMedications = async (
     const response = await axios.get(
       `${API_BASE_URL}/pharmacies/${pharmacyId}/medications/search/`,
       {
-        params: { query },
+        params: { medication: query },
       }
     );
     return response.data;
