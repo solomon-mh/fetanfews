@@ -16,14 +16,16 @@ const NearbyPharmacies: React.FC = () => {
     lower: number;
     upper: number;
   }>({ lower: 0, upper: 5 });
-  const [visibleCount, setVisibleCount] = useState(5);
   const [error, setError] = useState<string | null>(null);
 
   const userLocation = useGeoLocation();
-  const userCoordinates: [number, number] =
-    userLocation.latitude && userLocation.longitude
-      ? [userLocation.latitude, userLocation.longitude]
-      : defaultCoordinates;
+  const userCoordinates: [number, number] = React.useMemo(
+    () =>
+      userLocation.latitude && userLocation.longitude
+        ? [userLocation.latitude, userLocation.longitude]
+        : defaultCoordinates,
+    [userLocation.latitude, userLocation.longitude]
+  );
 
   // Define distance range options dynamically
   const distanceOptions = [
@@ -47,30 +49,33 @@ const NearbyPharmacies: React.FC = () => {
 
     loadPharmacies();
   }, []);
-  const fetchNearbyPharmacies = async (
-    lower_limit: number,
-    upper_limit: number
-  ) => {
-    if (userLocation.latitude && userLocation.longitude) {
-      setIsLoading(true);
-      const results = await getNearbyPharmacies(
-        userCoordinates[0],
-        userCoordinates[1],
-        lower_limit,
-        upper_limit
-      );
-      setSearchResults(results);
-      setIsLoading(false);
-    }
-  };
 
   useEffect(() => {
+    const fetchNearbyPharmacies = async (
+      lower_limit: number,
+      upper_limit: number
+    ) => {
+      if (userLocation.latitude && userLocation.longitude) {
+        setIsLoading(true);
+        const results = await getNearbyPharmacies(
+          userCoordinates[0],
+          userCoordinates[1],
+          lower_limit,
+          upper_limit
+        );
+        setSearchResults(results);
+        setIsLoading(false);
+      }
+    };
     fetchNearbyPharmacies(selectedRange.lower, selectedRange.upper);
-  }, [selectedRange]);
+  }, [
+    selectedRange,
+    userCoordinates,
+    userLocation.latitude,
+    userLocation.longitude,
+  ]);
+  console.log(userCoordinates, userLocation);
 
-  const handleShowAll = () => {
-    setVisibleCount(searchResults.length);
-  };
   if (error) {
     return (
       <div className="error-message">
