@@ -4,10 +4,12 @@ import React, { useEffect, useState } from "react";
 import { Search } from "../../utils/handleSearch";
 import { useGeoLocation, defaultCoordinates } from "../../hooks/useGeoLocation";
 import PharmacyMap from "../../components/MapView/MapView";
-import { Link, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { calculateDistance } from "../../utils/calculations";
+import { usePharmacyStore } from "../../store/usePharmacyStore";
 
 const SearchResults: React.FC = () => {
+  const setMedications = usePharmacyStore((state) => state.setMedications);
   const [sortBy, setSortBy] = useState<
     "distance" | "price" | "price+distance" | "none"
   >("none");
@@ -31,7 +33,22 @@ const SearchResults: React.FC = () => {
     userLocation.latitude && userLocation.longitude
       ? [userLocation.latitude, userLocation.longitude]
       : defaultCoordinates;
-
+  const navigate = useNavigate();
+  const handleClick = ({
+    pharmacy,
+  }: {
+    pharmacy: { id: number; name: string; medications: any[] };
+  }) => {
+    setMedications(pharmacy.medications || []);
+    navigate(
+      `/pharmacy/${encodeURIComponent(pharmacy.name)}?id=${pharmacy.id}`,
+      {
+        state: {
+          fromSearch: true,
+        },
+      }
+    );
+  };
   useEffect(() => {
     if (!medication.trim() && !pharmacy.trim()) {
       setSearchResults({ type: "none", data: [] });
@@ -82,7 +99,7 @@ const SearchResults: React.FC = () => {
             const match = med.pharmacies?.find(
               (p: any) => p.id === pharmacy.id
             );
-            return match?.pivot?.price ?? Infinity;
+            return match?.price ?? Infinity;
           })
           .filter((price: number) => price !== Infinity);
         return prices.length > 0 ? Math.min(...prices) : Infinity;
@@ -112,7 +129,7 @@ const SearchResults: React.FC = () => {
             const match = med.pharmacies?.find(
               (p: any) => p.id === pharmacy.id
             );
-            return match?.pivot?.price ?? Infinity;
+            return match?.price ?? Infinity;
           })
           .filter((price: number) => price !== Infinity);
         return prices.length > 0 ? Math.min(...prices) : Infinity;
@@ -159,11 +176,10 @@ const SearchResults: React.FC = () => {
               <div className="space-y-6">
                 {searchResults.type === "pharmacy" &&
                   sortedResults?.map((pharmacy: any) => (
-                    <Link
-                      to={`/pharmacy/${encodeURIComponent(pharmacy.name)}?id=${
-                        pharmacy.id
-                      }`}
+                    <button
+                      className="block w-full text-left"
                       key={pharmacy.id}
+                      onClick={() => handleClick({ pharmacy })}
                     >
                       <div className="bg-white dark:bg-gray-900 p-4 rounded-lg shadow border dark:border-gray-700">
                         <h3 className="text-xl font-semibold mb-2">
@@ -192,25 +208,25 @@ const SearchResults: React.FC = () => {
                                 return (
                                   <li key={med.id}>
                                     💊 {med.name} –{" "}
-                                    {matchedPharmacy?.pivot?.price ??
-                                      "Price not available"}{" "}
-                                    Birr
+                                    {matchedPharmacy?.price
+                                      ? `${matchedPharmacy?.price} Birr`
+                                      : "Price not available"}{" "}
                                   </li>
                                 );
                               })}
                             </ul>
                           )}
                       </div>
-                    </Link>
+                    </button>
                   ))}
               </div>
               {searchResults.type === "medication" && (
                 <div className="space-y-6">
                   {sortedResults?.map((pharmacy) => (
-                    <Link
-                      to={`/pharmacy/${encodeURIComponent(pharmacy.name)}?id=${
-                        pharmacy.id
-                      }`}
+                    <button
+                      key={pharmacy.id}
+                      className="block w-full text-left"
+                      onClick={() => handleClick({ pharmacy })}
                     >
                       <div
                         key={pharmacy.id}
@@ -240,15 +256,15 @@ const SearchResults: React.FC = () => {
                             return (
                               <li key={med.id}>
                                 💊 {med.name} –{" "}
-                                {matchedPharmacy?.pivot?.price ??
-                                  "Price not available"}{" "}
-                                Birr{" "}
+                                {matchedPharmacy?.price
+                                  ? `${matchedPharmacy?.price} Birr`
+                                  : "Price not available"}{" "}
                               </li>
                             );
                           })}
                         </ul>
                       </div>
-                    </Link>
+                    </button>
                   ))}
                 </div>
               )}
