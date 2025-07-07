@@ -1,6 +1,7 @@
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { PharmacyDataType } from "../../utils/interfaces";
 import { calculateDistance } from "../../utils/calculations";
+import { redIcon } from "./icons";
 
 interface PharmacyMapProps {
   userCoordinates: [number, number];
@@ -20,9 +21,6 @@ const PharmacyMap: React.FC<PharmacyMapProps> = ({
   pharmacies,
   userLocationError,
 }) => {
-  console.log("pharmacies");
-  console.log(pharmacies);
-
   return (
     <div className="pharmacy-map">
       {userLocationError ? (
@@ -39,7 +37,7 @@ const PharmacyMap: React.FC<PharmacyMapProps> = ({
             attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           />
 
-          <Marker position={userCoordinates}>
+          <Marker position={userCoordinates} icon={redIcon}>
             <Popup>Your Location</Popup>
           </Marker>
           {pharmacies.map((pharmacy) => {
