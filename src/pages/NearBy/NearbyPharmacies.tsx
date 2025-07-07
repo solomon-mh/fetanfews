@@ -86,47 +86,61 @@ const NearbyPharmacies: React.FC = () => {
   }
 
   return (
-    <div className="nearby-pharmacies dark:bg-gray-800 dark:text-white py-24">
+    <div className="nearby-pharmacies py-20 px-4 md:px-10 bg-gray-50 dark:bg-gray-900 min-h-screen transition-all">
       {/* Distance Filter */}
-      <div className="filter-section">
-        <h3 className="filter-title">Filter by Distance</h3>
-        <div className="distance-filters">
-          {distanceOptions.map((option) => (
-            <label
-              key={`${option.lower}-${option.upper}`}
-              className="radio-label"
+      <div className="max-w-4xl mx-auto mb-10">
+        <h2 className="text-2xl md:text-3xl font-semibold text-gray-800 dark:text-white mb-4">
+          Filter Pharmacies by Distance
+        </h2>
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+            {distanceOptions.map((option) => (
+              <label
+                key={`${option.lower}-${option.upper}`}
+                className="flex items-center gap-2 cursor-pointer p-3 rounded-lg border border-gray-300 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-400 transition-all"
+              >
+                <input
+                  type="radio"
+                  name="distance"
+                  value={`${option.lower}-${option.upper}`}
+                  checked={
+                    selectedRange.lower === option.lower &&
+                    selectedRange.upper === option.upper
+                  }
+                  onChange={() =>
+                    setSelectedRange({
+                      lower: option.lower,
+                      upper: option.upper,
+                    })
+                  }
+                  className="accent-blue-500"
+                />
+                <span className="text-sm text-gray-800 dark:text-gray-100">
+                  {option.label}
+                </span>
+              </label>
+            ))}
+          </div>
+          <div className="text-right">
+            <button
+              onClick={() => setSelectedRange({ lower: 0, upper: 5 })}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
             >
-              <input
-                type="radio"
-                name="distance"
-                value={`${option.lower}-${option.upper}`}
-                checked={
-                  selectedRange.lower === option.lower &&
-                  selectedRange.upper === option.upper
-                }
-                onChange={() =>
-                  setSelectedRange({ lower: option.lower, upper: option.upper })
-                }
-                className="mr-2"
-              />
-              {option.label}
-            </label>
-          ))}
+              Reset Distance
+            </button>
+          </div>
         </div>
-        <button
-          onClick={() => setSelectedRange({ lower: 0, upper: 5 })}
-          className="reset-btn"
-        >
-          Reset Distance
-        </button>
       </div>
 
-      <div className="filter-results dark:bg-gray-800 dark:text-white">
+      {/* Search Results */}
+      <div className="max-w-4xl mx-auto bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md">
         {isLoading ? (
-          <p>Loading...</p>
+          <p className="text-center text-gray-600 dark:text-gray-300 text-lg">
+            Loading nearby pharmacies...
+          </p>
         ) : searchResults.length > 0 ? (
           <>
-            <h2 className="section-title">
+            <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">
               {searchResults.length} pharmacies found
             </h2>
             <PharmacyList
@@ -136,8 +150,8 @@ const NearbyPharmacies: React.FC = () => {
             />
           </>
         ) : (
-          <p className="no-results">
-            No results found. Please refine your search.
+          <p className="text-center text-gray-600 dark:text-gray-400">
+            No results found. Try a different range.
           </p>
         )}
       </div>
