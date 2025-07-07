@@ -15,17 +15,14 @@ const isValidCoordinate = (coord: unknown): coord is [number, number] =>
   !isNaN(coord[0]) &&
   !isNaN(coord[1]);
 
-const isValidLatLng = (lat: unknown, lng: unknown): boolean =>
-  typeof lat === "number" &&
-  typeof lng === "number" &&
-  !isNaN(lat) &&
-  !isNaN(lng);
-
 const PharmacyMap: React.FC<PharmacyMapProps> = ({
   userCoordinates,
   pharmacies,
   userLocationError,
 }) => {
+  console.log("pharmacies");
+  console.log(pharmacies);
+
   return (
     <div className="pharmacy-map">
       {userLocationError ? (
@@ -45,28 +42,28 @@ const PharmacyMap: React.FC<PharmacyMapProps> = ({
           <Marker position={userCoordinates}>
             <Popup>Your Location</Popup>
           </Marker>
+          {pharmacies.map((pharmacy) => {
+            const lat = Number(pharmacy.latitude);
+            const lng = Number(pharmacy.longitude);
+            const isValid = !isNaN(lat) && !isNaN(lng);
 
-          {pharmacies.map((pharmacy) =>
-            isValidLatLng(pharmacy.latitude, pharmacy.longitude) ? (
-              <Marker
-                key={pharmacy.id}
-                position={[pharmacy.latitude, pharmacy.longitude]}
-              >
+            return isValid ? (
+              <Marker key={pharmacy.id} position={[lat, lng]}>
                 <Popup>
-                  {pharmacy.name}
+                  <strong>{pharmacy.name}</strong>
                   <br />
                   Distance:{" "}
                   {calculateDistance(
-                    pharmacy.latitude,
-                    pharmacy.longitude,
+                    lat,
+                    lng,
                     userCoordinates[0],
                     userCoordinates[1]
                   ).toFixed(2)}{" "}
-                  Km
+                  km
                 </Popup>
               </Marker>
-            ) : null
-          )}
+            ) : null;
+          })}
         </MapContainer>
       ) : (
         <p className="text-red-500">User location is invalid or unavailable.</p>
