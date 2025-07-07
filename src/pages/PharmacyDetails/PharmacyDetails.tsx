@@ -121,6 +121,7 @@ const PharmacyDetailPage: React.FC<PharmacyDetailPageProps> = ({
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setError("");
     setMessage("");
+    setSearchSubmitted(false);
     setSearchTerm(event.target.value);
   };
   const handleRetry = () => {
