@@ -1,13 +1,19 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
-import { useParams, useSearchParams, Link } from "react-router-dom";
+import {
+  useParams,
+  useSearchParams,
+  Link,
+  useLocation,
+} from "react-router-dom";
 import { useGeoLocation, defaultCoordinates } from "../../hooks/useGeoLocation";
 import { getPharmacyDetail } from "../../api/pharmacyService";
 import PharmacyMap from "../../components/MapView/MapView";
 import { FaSearch, FaHeartbeat, FaRedo } from "react-icons/fa";
 import { searchPharmacyMedications } from "../../api/medicationService";
 import defaultPharmacyImage from "../../assets/default-pharmacy.png";
+import { usePharmacyStore } from "../../store/usePharmacyStore";
 
 interface PharmacyDetailPageProps {
   calculateDistance: (
@@ -21,6 +27,10 @@ interface PharmacyDetailPageProps {
 const PharmacyDetailPage: React.FC<PharmacyDetailPageProps> = ({
   calculateDistance,
 }) => {
+  const medications = usePharmacyStore((state) => state.medications);
+  const clearMedications = usePharmacyStore((state) => state.clearMedications);
+  const location = useLocation();
+
   const [searchParams] = useSearchParams();
   const pharmacyId = searchParams.get("id");
   const [pharmacy, setPharmacy] = useState<any>(null);
@@ -58,7 +68,12 @@ const PharmacyDetailPage: React.FC<PharmacyDetailPageProps> = ({
     };
 
     fetchPharmacyDetails();
-  }, [pharmacyId]);
+
+    const cameFromSearch = location.state?.fromSearch;
+    if (!cameFromSearch) {
+      clearMedications();
+    }
+  }, [pharmacyId, location, clearMedications]);
 
   // Function to handle medication search
   const handleSearch = async (term = "") => {
@@ -199,6 +214,56 @@ const PharmacyDetailPage: React.FC<PharmacyDetailPageProps> = ({
                 </span>
               </p>
             </div>
+            {medications?.length > 0 && (
+              <div>
+                <h3 className="text-lg font-semibold mb-2">Search Results</h3>
+                <div className="overflow-x-auto rounded-md border border-gray-200 dark:border-gray-700">
+                  <table className="w-full text-sm text-left">
+                    <thead className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300">
+                      <tr>
+                        <th className="px-4 py-2">Drug Name</th>
+                        <th className="px-4 py-2">Price</th>
+                        <th className="px-4 py-2">Detail</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {medications.map((med: any) => {
+                        const matchedPharmacy = (
+                          med?.pharmacies as
+                            | { id: number; price?: number }[]
+                            | undefined
+                        )?.find((p) => p.id === pharmacy.id);
+                        return (
+                          <tr
+                            key={med.id}
+                            className="border-t border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
+                          >
+                            <td className="px-4 py-2">{med.name}</td>
+                            <td className="px-4 py-2">
+                              {matchedPharmacy?.price
+                                ? `${matchedPharmacy?.price} Birr`
+                                : "Price not available"}{" "}
+                            </td>
+                            <td className="px-4 py-2">
+                              <Link
+                                to={`/pharmacy/${encodeURIComponent(
+                                  pharmacy.name
+                                )}/${encodeURIComponent(med.name)}?pham_id=${
+                                  pharmacy.id
+                                }&med_id=${med.id}`}
+                                className="text-blue-600 hover:underline"
+                              >
+                                See Detail
+                              </Link>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Right: Map */}
