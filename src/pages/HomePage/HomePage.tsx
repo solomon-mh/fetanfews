@@ -7,7 +7,7 @@ import PharmacyList from "../../components/PharmacyList/PharmacyList";
 import { calculateDistance } from "../../utils/calculations";
 import { useGeoLocation, defaultCoordinates } from "../../hooks/useGeoLocation";
 import { CategoryType } from "../../utils/interfaces";
-import { browse_by_categories } from "../../api/pharmacyService";
+// import { browse_by_categories } from "../../api/pharmacyService";
 import { fetchPharmacyData } from "../../api/pharmacyService";
 import { PharmacyDataType } from "../../utils/interfaces";
 import { useError } from "../../contexts/ErrorContext";
@@ -17,7 +17,7 @@ const HomePage: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<CategoryType | null>(
     null
   );
-  const [categories, setCategories] = useState<CategoryType[]>([]);
+  // const [categories, setCategories] = useState<CategoryType[]>([]);
   const [_pharmacies, setPharmacies] = useState<PharmacyDataType[]>([]);
   const [filteredPharmacies, setFilteredPharmacies] = useState<any[]>([]);
 
@@ -30,8 +30,8 @@ const HomePage: React.FC = () => {
     setLoading(true);
     const getCategories = async () => {
       try {
-        const data: CategoryType[] = await browse_by_categories();
-        setCategories(data);
+        // const data: CategoryType[] = await browse_by_categories();
+        // setCategories(data);
       } catch (err) {
         setError("Failed to fetch categories.");
       } finally {
@@ -75,7 +75,7 @@ const HomePage: React.FC = () => {
         <h2 className="text-2xl font-semibold text-gray-800 dark:text-white mb-4">
           Browse by Medication Category
         </h2>
-        <ul className="flex flex-wrap gap-3">
+        {/* <ul className="flex flex-wrap gap-3">
           {categories.map((category) => (
             <li
               key={category.id}
@@ -97,11 +97,11 @@ const HomePage: React.FC = () => {
           ? "bg-lime-600 text-white dark:bg-lime-500"
           : "bg-gray-100 text-gray-700 hover:bg-blue-100 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-blue-900"
       }`}
-            // onClick={() => handleSearchByCategory(null)}
+            onClick={() => handleSearchByCategory(null)}
           >
             All Categories
           </li>
-        </ul>
+        </ul> */}
       </div>
       {userLocation.error && (
         <p className="text-center my-6 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900 border border-red-300 dark:border-red-700 px-4 py-3 rounded-md shadow-sm max-w-md mx-auto">
