@@ -90,7 +90,7 @@ function App() {
         </Route>
 
         <Route path="*" element={<NotFound />} />
-        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin" element={<AdminLogin />} />
 
         {/* Admin Layout Routes */}
         <Route
