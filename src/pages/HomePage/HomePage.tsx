@@ -115,7 +115,9 @@ const HomePage: React.FC = () => {
           : "Featured Pharmacies"}
       </h2>
       {filteredPharmacies.length === 0 ? (
-        <p>No pharmacy found for this category.</p>
+        <p className="text-center my-6 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900 border border-red-300 dark:border-red-700 px-4 py-3 rounded-md shadow-sm max-w-md mx-auto">
+          No pharmacy found for this category.
+        </p>
       ) : (
         <PharmacyList
           pharmacies={filteredPharmacies}
