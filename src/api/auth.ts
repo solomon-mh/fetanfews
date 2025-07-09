@@ -5,7 +5,15 @@ import { BaseUrl } from "../utils/BaseUrl";
 axios.defaults.withCredentials = true;
 axios.defaults.withXSRFToken = true;
 
-export const api = axios.create({
+export const publicApi = axios.create({
+  baseURL: BaseUrl,
+  headers: {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+  },
+  withCredentials: false,
+});
+export const privateApi = axios.create({
   baseURL: BaseUrl,
   headers: {
     "Content-Type": "application/json",
@@ -15,7 +23,7 @@ export const api = axios.create({
 });
 
 // Request interceptor
-api.interceptors.request.use(
+privateApi.interceptors.request.use(
   async (config) => {
     const method = config.method?.toLowerCase();
     const stateChangingMethods = ["post", "put", "patch", "delete"];
@@ -60,7 +68,7 @@ export const login = async (data: { username: string; password: string }) => {
     await axios.get(`${BaseUrl}/sanctum/csrf-cookie`, {
       withCredentials: true,
     });
-    const response = await api.post(`/login/`, data);
+    const response = await publicApi.post(`/login/`, data);
     return response;
   } catch (error: unknown) {
     if (
@@ -86,7 +94,7 @@ export const userRegister = async (data: SignUpData) => {
     await axios.get(`${BaseUrl}/sanctum/csrf-cookie`, {
       withCredentials: true,
     });
-    const response = await api.post("/register/", data);
+    const response = await privateApi.post("/register/", data);
     return response.data;
   } catch (error: unknown) {
     if (
@@ -103,20 +111,20 @@ export const userRegister = async (data: SignUpData) => {
 
 // Other existing functions remain the same...
 export const getCurrentUser = async () => {
-  const response = await api.get("/user");
+  const response = await privateApi.get("/user");
   return response;
 };
 
 export const Logout = async () => {
   try {
-    await api.post("/logout");
+    await privateApi.post("/logout");
   } catch (e) {
     console.error("Error logging out:", e);
   }
 };
 
 export const fetchUsers = async () => {
-  const response = await api.get("/accounts/users");
+  const response = await privateApi.get("/accounts/users");
   return response.data;
 };
 
@@ -125,7 +133,7 @@ export const changePassword = async (data: {
   new_password: string;
 }) => {
   try {
-    await api.put("/accounts/password_change/", data);
+    await privateApi.put("/accounts/password_change/", data);
   } catch (error: unknown) {
     if (
       error &&
