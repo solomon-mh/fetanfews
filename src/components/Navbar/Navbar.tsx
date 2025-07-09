@@ -7,6 +7,9 @@ import { HiMenu, HiX } from "react-icons/hi";
 
 const Header = () => {
   const { user, setUser } = useAuth();
+  console.log("user");
+  console.log(user);
+
   const [menuOpen, setMenuOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(
     () => localStorage.getItem("theme") === "dark"
