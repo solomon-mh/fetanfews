@@ -44,7 +44,6 @@ const PharmacyList: React.FC<PharmacyListProps> = ({
     indexOfLastItem
   );
   const totalPages = Math.ceil(pharmacies.length / itemsPerPage);
-
   return (
     <div className="pharmacies-list-wrapper dark:bg-gray-800 px-4 sm:px-6 lg:px-8 py-10">
       <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-4">
@@ -59,7 +58,7 @@ const PharmacyList: React.FC<PharmacyListProps> = ({
             transition={{ duration: 0.5 }}
           >
             <img
-              src={`http://127.0.0.1:8000${pharmacy.image}`}
+              src={pharmacy.image}
               alt={pharmacy.name}
               className="w-full h-40 object-cover rounded-lg mb-4"
               onError={(e) => {
