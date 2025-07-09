@@ -10,7 +10,7 @@ import AdminHome from "./admin/AdminDashboard/AdminDashboard";
 import { PharmacyContextProvider } from "./contexts/PharmacyContext";
 import { calculateDistance } from "./utils/calculations";
 import ManagePharmacies from "./admin/managePharmacy/ManagePharmacies";
-import PharmacyForm from "./pages/AddPharmacyForm/PharmcyPhorm";
+import PharmacyForm from "./pages/AddPharmacyForm/PharmcyForm";
 import PharmacyConfrimation from "./pages/Confrimation/PharmacyConfrimation";
 import PharmacyHelp from "./pages/PharmacyHelp/PharmacyHelp";
 import PrivateRoute from "./components/PrivateRoute";
