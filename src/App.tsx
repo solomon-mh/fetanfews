@@ -27,6 +27,7 @@ import ProtectedRoute from "./admin/ProtectedRoute/ProtectedRoute";
 import PharmacistReports from "./admin/reports/PharmacistReport";
 import PharmacistProfile from "./admin/PharmacistUtils/PharmacistProfile";
 import AdminReports from "./admin/reports/AdminReports";
+import PublicRoute from "./components/PublicRoute";
 function App() {
   return (
     <Router>
@@ -53,8 +54,22 @@ function App() {
           />
           <Route path="/user/change-password" element={<ChangePassword />} />
 
-          <Route path="/user/login" element={<Login />} />
-          <Route path="/user/signup" element={<SignUp />} />
+          <Route
+            path="/user/login"
+            element={
+              <PublicRoute redirectTo="/">
+                <Login />
+              </PublicRoute>
+            }
+          />
+          <Route
+            path="/user/signup"
+            element={
+              <PublicRoute redirectTo="/">
+                <SignUp />
+              </PublicRoute>
+            }
+          />
           <Route path="/nearby-pharmacies" element={<NearbyPharmacies />} />
           <Route
             path="/pharmacy-registration/form"
