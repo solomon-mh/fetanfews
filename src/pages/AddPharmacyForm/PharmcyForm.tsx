@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { containerVariants, itemVariants } from "../../utils/animateVariant";
 import { motion } from "framer-motion";
 import { formFields } from "./formFields";
+import { uploadToCloudinary } from "../../utils/uploadToCloudinary";
 
 interface PharmacyFormValues {
   name: string;
@@ -19,6 +20,7 @@ interface PharmacyFormValues {
   delivery_available: string;
   license_number: string;
   license_image?: File;
+  is_verified?: boolean;
 }
 
 const PharmacyForm: React.FC = () => {
@@ -26,29 +28,37 @@ const PharmacyForm: React.FC = () => {
     register,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors },
   } = useForm<PharmacyFormValues>({
     resolver: zodResolver(pharmacyFormSchema),
   });
+  watch();
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const onSubmit = async (data: PharmacyFormValues) => {
-    setErrorMessage(null);
-    const formData = new FormData();
-
-    Object.entries(data).forEach(([key, value]) => {
-      if (key === "image" || key === "license_image") {
-        if (value?.[0]) {
-          formData.append(key, value[0]);
-        }
-      } else if (value !== null && value !== undefined) {
-        formData.append(key, value);
-      }
-    });
-
     try {
-      const response = await addPharmacy(formData);
+      const [pharmacyImageUrl, licenseImageUrl] = await Promise.all([
+        data.image
+          ? uploadToCloudinary(data.image, "pharmacyies_images")
+          : Promise.resolve(null),
+        data.license_image
+          ? uploadToCloudinary(data.license_image, "pharmacyies_licenses")
+          : Promise.resolve(null),
+      ]);
+
+      const payload = {
+        ...data,
+        image: pharmacyImageUrl,
+        license_image: licenseImageUrl,
+        is_verified: false,
+        delivery_available: data.delivery_available === "true",
+      };
+
+      setErrorMessage(null);
+
+      const response = await addPharmacy(payload);
       console.log("Response:", response.data);
       navigate("/pharmacy-registration/success");
     } catch (error: unknown) {
@@ -128,10 +138,9 @@ const PharmacyForm: React.FC = () => {
             <input
               id="image"
               type="file"
-              {...register("image")}
               onChange={(e) => {
                 const file = e.target.files?.[0];
-                setValue("image", file);
+                setValue("image", file, { shouldValidate: true });
               }}
               className="block w-full text-sm text-gray-500 dark:text-gray-300"
             />
@@ -170,17 +179,23 @@ const PharmacyForm: React.FC = () => {
             )}
           </div>
 
-          <div>
+          <div className="mb-4">
             <label
               htmlFor="license_image"
               className="block text-sm font-medium mb-1"
             >
-              License Image
+              License Image (Required) *
             </label>
             <input
               id="license_image"
               type="file"
-              {...register("license_image")}
+              accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                setValue("license_image", file, {
+                  shouldValidate: true,
+                });
+              }}
               className="block w-full text-sm text-gray-500 dark:text-gray-300"
             />
             {errors.license_image && (
