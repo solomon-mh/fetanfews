@@ -1,39 +1,41 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { api } from "./auth";
+import { privateApi, publicApi } from "./auth";
 import axios from "axios";
 
 export const addPharmacy = (data: any) => {
-  return api.post("/pharmacies/", data, {
+  console.log(data);
+
+  return privateApi.post("/pharmacies/", data, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
   });
 };
 export const fetchPharmacyData = async () => {
-  const response = await api.get("/pharmacies/");
+  const response = await publicApi.get("/pharmacies/");
   return response.data;
 };
 export const editPharmacy = (id: number, data: any) => {
-  return api.put(`/pharmacies/${id}/`, data, {
+  return privateApi.put(`/pharmacies/${id}/`, data, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
   });
 };
 export const deletePharmacy = (id: number) => {
-  return api.delete(`/pharmacies/${id}/`);
+  return privateApi.delete(`/pharmacies/${id}/`);
 };
 export const getPharmacyDetail = async (Id: any) => {
   try {
-    const response = await api.get(`/pharmacies/${Id}/`);
+    const response = await publicApi.get(`/pharmacies/${Id}/`);
     return response;
   } catch (error) {
     throw new Error("Failed to fetch pharmacy details");
   }
 };
 export const addMedicationData = (data: any) => {
-  return api.post("/medications/", data, {
+  return privateApi.post("/medications/", data, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
@@ -41,7 +43,7 @@ export const addMedicationData = (data: any) => {
 };
 export const fetchMedicationsData = async () => {
   try {
-    const response = await api.get("/medications/");
+    const response = await publicApi.get("/medications/");
     return response.data;
   } catch (error: any) {
     // Check if response exists (handle server errors)
@@ -58,30 +60,30 @@ export const fetchMedicationsData = async () => {
 };
 
 export const editMedication = async (id: number, data: any) => {
-  return api.put(`/medications/${id}/`, data, {
+  return privateApi.put(`/medications/${id}/`, data, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
   });
 };
 export const deleteMedication = (id: number) => {
-  return api.delete(`/medications/${id}/`);
+  return privateApi.delete(`/medications/${id}/`);
 };
 
 // Fetch categories
 export const fetchCategoriesData = async () => {
-  const response = await api.get("/categories/");
+  const response = await publicApi.get("/categories/");
   return response.data;
 };
 export const browse_by_categories = async () => {
-  const response = await api.get("/pharmacies/browse_by_categories/");
+  const response = await publicApi.get("/pharmacies/browse_by_categories/");
   return response.data;
 };
 
 // Add a new category
 export const addCategroyData = async (data: any) => {
   try {
-    const response = await api.post("/categories/", data);
+    const response = await privateApi.post("/categories/", data);
     return response.data; // Return the created category data
   } catch (error) {
     console.error("Error creating category:", error);
@@ -92,7 +94,7 @@ export const addCategroyData = async (data: any) => {
 // Delete a category
 export const deleteCategroy = async (id: number) => {
   try {
-    const response = await api.delete(`/categories/${id}/`);
+    const response = await privateApi.delete(`/categories/${id}/`);
     return response.data;
   } catch (error) {
     console.error("Error deleting category:", error);
@@ -103,7 +105,7 @@ export const deleteCategroy = async (id: number) => {
 // Edit a category
 export const editCategroy = async (id: number, data: any) => {
   try {
-    const response = await api.put(`/categories/${id}/`, data);
+    const response = await privateApi.put(`/categories/${id}/`, data);
     return response.data;
   } catch (error) {
     console.error("Error updating category:", error);
@@ -112,11 +114,11 @@ export const editCategroy = async (id: number, data: any) => {
 };
 
 export const fetchPharmacistsData = async () => {
-  const response = await api.get("/pharmacists/");
+  const response = await publicApi.get("/pharmacists/");
   return response.data;
 };
 export const addPharmacistData = async (data: any) => {
-  const response = await api.post("/pharmacists/", data, {
+  const response = await privateApi.post("/pharmacists/", data, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
@@ -125,17 +127,17 @@ export const addPharmacistData = async (data: any) => {
 };
 
 export const deletePharmacist = async (id: number) => {
-  const response = await api.delete(`/pharmacists/${id}/`);
+  const response = await privateApi.delete(`/pharmacists/${id}/`);
   return response.data;
 };
 
 export const editPharmacist = async (id: number, data: any) => {
-  const response = await api.put(`/pharmacists/${id}/`, data);
+  const response = await privateApi.put(`/pharmacists/${id}/`, data);
   return response.data;
 };
 export const searchMedications = async (query: string) => {
   try {
-    const response = await api.get(`/medications/search/`, {
+    const response = await publicApi.get(`/medications/search/`, {
       params: { medication: query },
     });
 
@@ -154,7 +156,7 @@ export const searchMedications = async (query: string) => {
 };
 export const searchPharmacies = async (query = "") => {
   try {
-    const response = await api.get(`/pharmacies/search`, {
+    const response = await publicApi.get(`/pharmacies/search`, {
       params: { pharmacy: query },
     });
     return response.data;
@@ -180,7 +182,7 @@ export const searchByCategory = async (
       ? `/search_by_category/${categoryId}/${pharmacyId}/`
       : `/search_by_category/${categoryId}/`;
 
-    const response = await api.get(url);
+    const response = await publicApi.get(url);
     return response.data;
   } catch (error) {
     console.error("Error fetching data:", error);
@@ -195,7 +197,7 @@ export const getNearbyPharmacies = async (
   upper_limit: number
 ) => {
   try {
-    const response = await api.get(`/pharmacies/nearby/`, {
+    const response = await publicApi.get(`/pharmacies/nearby/`, {
       params: { latitude, longitude, lower_limit, upper_limit },
     });
     return response.data;
@@ -207,7 +209,7 @@ export const getNearbyPharmacies = async (
 
 export const getPharmacistDetails = async () => {
   try {
-    const response = await api.get("/pharmacist/get_or_update/");
+    const response = await publicApi.get("/pharmacist/get_or_update/");
     return response.data;
   } catch (error: any) {
     console.error("Error fetching pharmacist details:", error);
@@ -223,11 +225,15 @@ export const getPharmacistDetails = async () => {
 // Function to update pharmacist details
 export const updatePharmacistDetails = async (updatedData: any) => {
   try {
-    const response = await api.put("/pharmacist/get_or_update/", updatedData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+    const response = await publicApi.put(
+      "/pharmacist/get_or_update/",
+      updatedData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
     return response.data;
   } catch (error: any) {
     const errorMessage =
@@ -243,7 +249,7 @@ export const updatePharmacistDetails = async (updatedData: any) => {
 
 export const getPharmacyStatusReport = async () => {
   try {
-    const response = await api.get("/pharmacies/status-report/");
+    const response = await privateApi.get("/pharmacies/status-report/");
     return response.data;
   } catch (error) {
     console.error("Error fetching pharmacy status report:", error);
@@ -252,7 +258,7 @@ export const getPharmacyStatusReport = async () => {
 };
 export const fetchPharmaciesWithoutPharmacists = async () => {
   try {
-    const response = await api.get("/pharmacies-without-pharmacists/");
+    const response = await publicApi.get("/pharmacies-without-pharmacists/");
     return response.data;
   } catch (error) {
     console.error("Error fetching pharmacies without pharmacists:", error);
