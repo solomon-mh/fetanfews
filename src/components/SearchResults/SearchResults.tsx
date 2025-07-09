@@ -301,7 +301,7 @@ const SearchResults: React.FC = () => {
           userLocationError={userLocation.error}
         />
       ) : (
-        <p className="text-sm text-center text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900 border border-red-300 dark:border-red-700 px-4 py-3 rounded-md shadow-sm">
+        <p className="text-sm text-center text-red-600 dark:text-red-300 bg-red-50 dark:bg-transparent border border-red-300 dark:border-red-700 px-4 py-3 rounded-md shadow-sm">
           Please enable location services to view nearby pharmacies on map.
         </p>
       )}
