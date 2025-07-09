@@ -15,16 +15,17 @@ interface PharmacyFormValues {
   email: string;
   website?: string;
   operating_hours: string;
-  image?: FileList;
+  image?: File;
   delivery_available: string;
   license_number: string;
-  license_image?: FileList;
+  license_image?: File;
 }
 
 const PharmacyForm: React.FC = () => {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<PharmacyFormValues>({
     resolver: zodResolver(pharmacyFormSchema),
@@ -66,9 +67,7 @@ const PharmacyForm: React.FC = () => {
           typeof response.data === "object" &&
           "detail" in response.data
             ? (response.data as { detail?: string }).detail
-            : undefined) ||
-          JSON.stringify(response.data, null, 2) ||
-          errorMessage;
+            : undefined) || errorMessage;
       }
       setErrorMessage(`Failed to register pharmacy: ${errorMessage}`);
       console.error("Error:", errorMessage);
@@ -130,6 +129,10 @@ const PharmacyForm: React.FC = () => {
               id="image"
               type="file"
               {...register("image")}
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                setValue("image", file);
+              }}
               className="block w-full text-sm text-gray-500 dark:text-gray-300"
             />
           </div>
