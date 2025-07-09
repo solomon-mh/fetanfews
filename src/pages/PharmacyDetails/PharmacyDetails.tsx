@@ -227,7 +227,7 @@ const PharmacyDetailPage: React.FC<PharmacyDetailPageProps> = ({
                       </tr>
                     </thead>
                     <tbody>
-                      {medications.map((med: any) => {
+                      {medications.map((med: any, index: number) => {
                         const matchedPharmacy = (
                           med?.pharmacies as
                             | { id: number; price?: number }[]
@@ -235,7 +235,7 @@ const PharmacyDetailPage: React.FC<PharmacyDetailPageProps> = ({
                         )?.find((p) => p.id === pharmacy.id);
                         return (
                           <tr
-                            key={med.id}
+                            key={index}
                             className="border-t border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
                           >
                             <td className="px-4 py-2">{med.name}</td>
@@ -348,9 +348,9 @@ const PharmacyDetailPage: React.FC<PharmacyDetailPageProps> = ({
                     </tr>
                   </thead>
                   <tbody>
-                    {searchResults.map((med) => (
+                    {searchResults.map((med, index) => (
                       <tr
-                        key={med.id}
+                        key={index}
                         className="border-t border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
                       >
                         <td className="px-4 py-2">{med.name}</td>
