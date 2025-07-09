@@ -13,7 +13,6 @@ import { PharmacyDataType } from "../../utils/interfaces";
 import { useError } from "../../contexts/ErrorContext";
 import PharmacyMap from "../../components/MapView/MapView";
 import PharmacySkeleton from "../../components/common/PharmacySkeleton";
-import { useAuth } from "../../contexts/AuthContext";
 const HomePage: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<CategoryType | null>(
     null
@@ -26,7 +25,6 @@ const HomePage: React.FC = () => {
 
   const userLocation = useGeoLocation();
   const { setError } = useError();
-  const { user } = useAuth();
 
   useEffect(() => {
     setLoading(true);
@@ -46,12 +44,10 @@ const HomePage: React.FC = () => {
   useEffect(() => {
     const getPharmacies = async () => {
       try {
-        if (user) {
-          const data = await fetchPharmacyData();
-          setPharmacies(data);
-          setFilteredPharmacies(data);
-          setSelectedCategory(null);
-        }
+        const data = await fetchPharmacyData();
+        setPharmacies(data);
+        setFilteredPharmacies(data);
+        setSelectedCategory(null);
       } catch (err) {
         setError("Failed to fetch pharmacies.");
       } finally {
