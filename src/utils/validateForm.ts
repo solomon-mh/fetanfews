@@ -28,22 +28,16 @@ const requiredString = (field: string) =>
   z.string().min(1, { message: `${field} is required.` });
 const optionalUrl = z.string().url("Invalid URL.").optional().or(z.literal(""));
 
-const acceptedTypes = ["image/jpeg", "image/png", "application/pdf"];
+const acceptedImageTypes = ["image/jpeg", "image/png", "application/pdf"];
 
-const fileSchema = z.preprocess(
-  (val) => {
-    if (val instanceof FileList && val.length > 0) {
-      return val[0]; // Convert FileList to File
-    }
-    return undefined; // for optional
-  },
-  z
-    .instanceof(File, { message: "Input is not a file." })
-    .refine((file) => acceptedTypes.includes(file.type), {
-      message: "Only JPG, PNG, or PDF files are allowed.",
-    })
-    .optional() // optional: allow no file uploaded
-);
+export const requiredFileSchema = z
+  .instanceof(File)
+  .refine(
+    (file) => acceptedImageTypes.includes(file.type),
+    "Only .jpg, .jpeg, .png and .webp formats are supported."
+  );
+
+export const optionalFileSchema = requiredFileSchema.optional().nullable();
 
 export const formSchema = z
   .object({
@@ -71,10 +65,10 @@ export const pharmacyFormSchema = z.object({
   email: emailValidation,
   website: optionalUrl,
   operating_hours: requiredString("Operating hours"),
-  image: z.any().optional(),
+  image: optionalFileSchema,
   delivery_available: z.string(),
   license_number: requiredString("License number"),
-  license_image: fileSchema,
+  license_image: requiredFileSchema,
 });
 
 export const medicationSchema = z.object({
