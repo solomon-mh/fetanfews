@@ -51,9 +51,9 @@ const HeroSection: React.FC = () => {
               Frequently Searched Drugs
             </h2>
             <ul className="flex flex-wrap gap-3">
-              {frequentlySearchedDrugs.map((drug) => (
+              {frequentlySearchedDrugs.map((drug, index) => (
                 <li
-                  key={drug.id}
+                  key={drug.id ?? index}
                   onClick={() => handleDrugSearch(drug.name)}
                   className="cursor-pointer bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-sm hover:bg-indigo-200 transition"
                 >
