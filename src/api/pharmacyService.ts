@@ -2,7 +2,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { api } from "./auth";
 import axios from "axios";
-const API_BASE_URL = "http://localhost:8000/api";
 
 export const addPharmacy = (data: any) => {
   return api.post("/pharmacies/", data, {
@@ -27,7 +26,7 @@ export const deletePharmacy = (id: number) => {
 };
 export const getPharmacyDetail = async (Id: any) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/pharmacies/${Id}/`);
+    const response = await api.get(`/pharmacies/${Id}/`);
     return response;
   } catch (error) {
     throw new Error("Failed to fetch pharmacy details");
@@ -136,7 +135,7 @@ export const editPharmacist = async (id: number, data: any) => {
 };
 export const searchMedications = async (query: string) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/medications/search/`, {
+    const response = await api.get(`/medications/search/`, {
       params: { medication: query },
     });
 
@@ -155,7 +154,7 @@ export const searchMedications = async (query: string) => {
 };
 export const searchPharmacies = async (query = "") => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/pharmacies/search`, {
+    const response = await api.get(`/pharmacies/search`, {
       params: { pharmacy: query },
     });
     return response.data;
@@ -178,10 +177,10 @@ export const searchByCategory = async (
 ) => {
   try {
     const url = pharmacyId
-      ? `${API_BASE_URL}/search_by_category/${categoryId}/${pharmacyId}/`
-      : `${API_BASE_URL}/search_by_category/${categoryId}/`;
+      ? `/search_by_category/${categoryId}/${pharmacyId}/`
+      : `/search_by_category/${categoryId}/`;
 
-    const response = await axios.get(url);
+    const response = await api.get(url);
     return response.data;
   } catch (error) {
     console.error("Error fetching data:", error);
@@ -196,7 +195,7 @@ export const getNearbyPharmacies = async (
   upper_limit: number
 ) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/pharmacies/nearby/`, {
+    const response = await api.get(`/pharmacies/nearby/`, {
       params: { latitude, longitude, lower_limit, upper_limit },
     });
     return response.data;
