@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { api } from "../api/auth";
+import { privateApi } from "../api/auth";
 
 interface PharmacyContextType {
   numberOfPharmacies: number;
@@ -9,13 +9,17 @@ interface PharmacyContextType {
   loading: boolean;
 }
 
-const PharmacyContext = createContext<PharmacyContextType | undefined>(undefined);
+const PharmacyContext = createContext<PharmacyContextType | undefined>(
+  undefined
+);
 
 interface PharmacyContextProviderProps {
   children: React.ReactNode;
 }
 
-export const PharmacyContextProvider: React.FC<PharmacyContextProviderProps> = ({ children }) => {
+export const PharmacyContextProvider: React.FC<
+  PharmacyContextProviderProps
+> = ({ children }) => {
   const [numberOfPharmacies, setNumberOfPharmacies] = useState<number>(0);
   const [pendingPharmacies, setPendingPharmacies] = useState<number>(0);
   const [rejectedPharmacies, setRejectedPharmacies] = useState<number>(0);
@@ -24,7 +28,7 @@ export const PharmacyContextProvider: React.FC<PharmacyContextProviderProps> = (
 
   const getData = async () => {
     try {
-      const response = await api.get("/pharmacy_counts/"); 
+      const response = await privateApi.get("/pharmacy_counts/");
       const data = response.data;
 
       setNumberOfPharmacies(data.total);
@@ -60,7 +64,9 @@ export const PharmacyContextProvider: React.FC<PharmacyContextProviderProps> = (
 export const usePharmacyData = (): PharmacyContextType => {
   const context = useContext(PharmacyContext);
   if (!context) {
-    throw new Error("usePharmacyData must be used within a PharmacyContextProvider");
+    throw new Error(
+      "usePharmacyData must be used within a PharmacyContextProvider"
+    );
   }
   return context;
 };
