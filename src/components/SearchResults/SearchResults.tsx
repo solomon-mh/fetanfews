@@ -175,10 +175,10 @@ const SearchResults: React.FC = () => {
               </h2>
               <div className="space-y-6">
                 {searchResults.type === "pharmacy" &&
-                  sortedResults?.map((pharmacy: any) => (
+                  sortedResults?.map((pharmacy: any, index) => (
                     <button
                       className="block w-full text-left"
-                      key={pharmacy.id}
+                      key={index}
                       onClick={() => handleClick({ pharmacy })}
                     >
                       <div className="bg-white dark:bg-gray-900 p-4 rounded-lg shadow border dark:border-gray-700">
@@ -201,19 +201,21 @@ const SearchResults: React.FC = () => {
                         {searchParams.get("medication") &&
                           pharmacy?.medications?.length > 0 && (
                             <ul className="list-disc list-inside ml-4">
-                              {pharmacy?.medications?.map((med: any) => {
-                                const matchedPharmacy = med?.pharmacies?.find(
-                                  (p: any) => p.id === pharmacy.id
-                                );
-                                return (
-                                  <li key={med.id}>
-                                    💊 {med.name} –{" "}
-                                    {matchedPharmacy?.price
-                                      ? `${matchedPharmacy?.price} Birr`
-                                      : "Price not available"}{" "}
-                                  </li>
-                                );
-                              })}
+                              {pharmacy?.medications?.map(
+                                (med: any, index: number) => {
+                                  const matchedPharmacy = med?.pharmacies?.find(
+                                    (p: any) => p.id === pharmacy.id
+                                  );
+                                  return (
+                                    <li key={index}>
+                                      💊 {med.name} –{" "}
+                                      {matchedPharmacy?.price
+                                        ? `${matchedPharmacy?.price} Birr`
+                                        : "Price not available"}{" "}
+                                    </li>
+                                  );
+                                }
+                              )}
                             </ul>
                           )}
                       </div>
@@ -222,9 +224,9 @@ const SearchResults: React.FC = () => {
               </div>
               {searchResults.type === "medication" && (
                 <div className="space-y-6">
-                  {sortedResults?.map((pharmacy) => (
+                  {sortedResults?.map((pharmacy, index) => (
                     <button
-                      key={pharmacy.id}
+                      key={index}
                       className="block w-full text-left"
                       onClick={() => handleClick({ pharmacy })}
                     >
@@ -249,19 +251,21 @@ const SearchResults: React.FC = () => {
                           </strong>
                         </p>
                         <ul className="list-disc list-inside ml-4">
-                          {pharmacy.medications.map((med: any) => {
-                            const matchedPharmacy = med.pharmacies.find(
-                              (p: any) => p.id === pharmacy.id
-                            );
-                            return (
-                              <li key={med.id}>
-                                💊 {med.name} –{" "}
-                                {matchedPharmacy?.price
-                                  ? `${matchedPharmacy?.price} Birr`
-                                  : "Price not available"}{" "}
-                              </li>
-                            );
-                          })}
+                          {pharmacy.medications.map(
+                            (med: any, index: number) => {
+                              const matchedPharmacy = med.pharmacies.find(
+                                (p: any) => p.id === pharmacy.id
+                              );
+                              return (
+                                <li key={index}>
+                                  💊 {med.name} –{" "}
+                                  {matchedPharmacy?.price
+                                    ? `${matchedPharmacy?.price} Birr`
+                                    : "Price not available"}{" "}
+                                </li>
+                              );
+                            }
+                          )}
                         </ul>
                       </div>
                     </button>
