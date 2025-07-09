@@ -35,7 +35,6 @@ const PharmacyList: React.FC<PharmacyListProps> = ({
     );
     return distanceA - distanceB;
   });
-  console.log(userCoordinates[0], userCoordinates[1]);
 
   // Pagination logic
   const indexOfLastItem = currentPage * itemsPerPage;
