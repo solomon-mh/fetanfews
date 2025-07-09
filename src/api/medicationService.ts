@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from "axios";
-import { api } from "./auth";
+import { privateApi, publicApi } from "./auth";
 const API_BASE_URL = "http://localhost:8000/api";
 export const searchPharmacyMedications = async (
   pharmacyId: string,
@@ -50,7 +50,7 @@ export const getPharmacyMedicationDetail = async (
 
 export const fetchMedicationCounts = async () => {
   try {
-    const response = await api.get("/medications_counts/");
+    const response = await privateApi.get("/medications_counts/");
     return response.data;
   } catch (error) {
     console.error("Error fetching medication counts:", error);
@@ -72,7 +72,9 @@ export const fetchMostSearchedMedications = async () => {
 
 export const getPhaMostSearchedMedications = async () => {
   try {
-    const response = await api.get("/pharmacy/most-searched-medications/");
+    const response = await publicApi.get(
+      "/pharmacy/most-searched-medications/"
+    );
     return response.data;
   } catch (error) {
     console.error("Error fetching most searched medications:", error);
