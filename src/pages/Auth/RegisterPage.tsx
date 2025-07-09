@@ -8,8 +8,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { formSchema } from "../../utils/validateForm";
 import { FormErrors } from "../../utils/interfaces";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 
 const SignUp: React.FC = () => {
+  const { setUser } = useAuth();
   const [submissionMessage, setSubmissionMessage] = useState<string>("");
   const {
     register,
@@ -34,8 +36,9 @@ const SignUp: React.FC = () => {
       console.log("response");
       console.log(response);
 
-      if (response.access) {
+      if (response.user || response.status === 201) {
         setSubmissionMessage("User created successfully!");
+        setUser(response.user);
         navigate("/");
       } else {
         setSubmissionMessage("Error creating user");
