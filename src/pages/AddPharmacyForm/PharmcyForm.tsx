@@ -6,6 +6,7 @@ import { addPharmacy } from "../../api/pharmacyService";
 import { useNavigate } from "react-router-dom";
 import { containerVariants, itemVariants } from "../../utils/animateVariant";
 import { motion } from "framer-motion";
+import { formFields } from "./formFields";
 
 interface PharmacyFormValues {
   name: string;
@@ -101,50 +102,7 @@ const PharmacyForm: React.FC = () => {
           variants={itemVariants}
           className="space-y-5"
         >
-          {[
-            {
-              id: "name",
-              label: "Name",
-              type: "text",
-              placeholder: "Name of pharmacy",
-            },
-            {
-              id: "address",
-              label: "Address",
-              type: "text",
-              placeholder: "Address of pharmacy",
-            },
-            {
-              id: "phone",
-              label: "Phone",
-              type: "text",
-              placeholder: "Contact number",
-            },
-            {
-              id: "email",
-              label: "Email",
-              type: "email",
-              placeholder: "Contact email",
-            },
-            {
-              id: "website",
-              label: "Website (Optional)",
-              type: "url",
-              placeholder: "Enter URL if any",
-            },
-            {
-              id: "operating_hours",
-              label: "Operating Hours",
-              type: "text",
-              placeholder: "e.g., Mon-Fri: 9 AM - 8 PM",
-            },
-            {
-              id: "license_number",
-              label: "License Number",
-              type: "text",
-              placeholder: "Enter license number",
-            },
-          ].map(({ id, label, type, placeholder }) => (
+          {formFields.map(({ id, label, type, placeholder }) => (
             <div key={id}>
               <label htmlFor={id} className="block text-sm font-medium mb-1">
                 {label}
