@@ -8,6 +8,7 @@ import { containerVariants, itemVariants } from "../../utils/animateVariant";
 import { motion } from "framer-motion";
 import { formFields } from "./formFields";
 import { uploadToCloudinary } from "../../utils/uploadToCloudinary";
+import { useAuth } from "../../contexts/AuthContext";
 
 interface PharmacyFormValues {
   name: string;
@@ -24,6 +25,7 @@ interface PharmacyFormValues {
 }
 
 const PharmacyForm: React.FC = () => {
+  const { user } = useAuth();
   const {
     register,
     handleSubmit,
@@ -32,6 +34,10 @@ const PharmacyForm: React.FC = () => {
     formState: { errors },
   } = useForm<PharmacyFormValues>({
     resolver: zodResolver(pharmacyFormSchema),
+    defaultValues: {
+      phone: user?.phone ?? "",
+      email: user?.email ?? "",
+    },
   });
   watch();
   const navigate = useNavigate();
@@ -41,10 +47,10 @@ const PharmacyForm: React.FC = () => {
     try {
       const [pharmacyImageUrl, licenseImageUrl] = await Promise.all([
         data.image
-          ? uploadToCloudinary(data.image, "pharmacyies_images")
+          ? uploadToCloudinary(data.image, "pharmacies_images")
           : Promise.resolve(null),
         data.license_image
-          ? uploadToCloudinary(data.license_image, "pharmacyies_licenses")
+          ? uploadToCloudinary(data.license_image, "pharmacies_licenses")
           : Promise.resolve(null),
       ]);
 
@@ -80,7 +86,7 @@ const PharmacyForm: React.FC = () => {
             : undefined) || errorMessage;
       }
       setErrorMessage(`Failed to register pharmacy: ${errorMessage}`);
-      console.error("Error:", errorMessage);
+      console.error("Error:", error);
     }
   };
 
