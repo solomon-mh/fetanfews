@@ -2,7 +2,6 @@ import React from "react";
 import { Modal, Box, Typography, Button, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
-
 interface DeleteModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -32,23 +31,25 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
   return (
     <Modal open={isOpen} onClose={onClose}>
       <Box sx={style}>
-      <IconButton
+        <IconButton
           onClick={onClose}
           style={{
             position: "absolute",
             top: 8,
             right: 8,
-            color:'red',
+            color: "red",
           }}
         >
           <CloseIcon />
         </IconButton>
         <h2 id="confirmation-modal-title">Confirm Deletion</h2>
-        <Typography variant="body1" marginBottom={4}>
-        <p id="confirmation-modal-description">
+        <Typography
+          id="confirmation-modal-description"
+          variant="body1"
+          marginBottom={4}
+        >
           Are you sure you want to <span style={{ color: "red" }}>delete</span>{" "}
-            <strong>{itemName}</strong>? This action cannot be undone.
-            </p>
+          <strong>{itemName}</strong>? This action cannot be undone.
         </Typography>
         <Box display="flex" justifyContent="space-around">
           <Button variant="outlined" color="secondary" onClick={onClose}>
