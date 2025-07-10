@@ -43,10 +43,8 @@ export const formSchema = z
   .object({
     first_name: nameValidation,
     last_name: nameValidation,
-
     email: emailValidation,
-
-    phone_number: phoneValidation,
+    phone: phoneValidation,
     password: passwordValidation,
     confirmPassword: z
       .string()
@@ -83,6 +81,7 @@ export const medicationSchema = z.object({
   manufacturer: requiredString("Manufacturer"),
   expiry_date: requiredString("Expiry date"),
   side_effects: z.string().optional(),
+  stock_status: z.boolean().optional(),
   usage_instructions: z.string().optional(),
   quantity_available: z.number().min(1, "Quantity must be at least 1"),
   image: z.any().optional(),
