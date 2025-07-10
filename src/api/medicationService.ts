@@ -50,7 +50,7 @@ export const getPharmacyMedicationDetail = async (
 
 export const fetchMedicationCounts = async () => {
   try {
-    const response = await privateApi.get("/medications_counts/");
+    const response = await privateApi.get("/medications/counts");
     return response.data;
   } catch (error) {
     console.error("Error fetching medication counts:", error);
