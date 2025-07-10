@@ -123,16 +123,27 @@ const ManageMedications: React.FC = () => {
   };
 
   // Filter medications based on search query
-  const filteredMedications = medications.filter(
-    (medication) =>
-      medication.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (medication.name || "").toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredMedications = medications.filter((medication) => {
+    const currentUserId = user?.id;
+
+    // Check if medication matches search query
+    const matchesSearch = medication.name
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+
+    // Check if medication belongs to current user's pharmacy
+    const belongsToUserPharmacy = medication.pharmacies.some(
+      (pharmacy) => pharmacy?.user_id === currentUserId
+    );
+
+    // Only include if both conditions are true
+    return matchesSearch && belongsToUserPharmacy;
+  });
 
   // Paginate the filtered medications
   const paginatedMedications = filteredMedications.slice(
-    page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage
+    page - 1 * rowsPerPage,
+    (page + 1) * rowsPerPage
   );
 
   // Handle page change
@@ -147,7 +158,6 @@ const ManageMedications: React.FC = () => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
-
   const handleDeleteClick = (id: number, name: string) => {
     setDeleteId(id);
     setMedicationName(name);
@@ -307,6 +317,7 @@ const ManageMedications: React.FC = () => {
           onPageChange={handleChangePage}
           rowsPerPage={rowsPerPage}
           onRowsPerPageChange={handleChangeRowsPerPage}
+          rowsPerPageOptions={[5, 10, 25]}
         />
 
         {/* Form Modal */}
