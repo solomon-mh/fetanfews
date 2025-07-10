@@ -18,6 +18,7 @@ import { medicationSchema } from "../../utils/validateForm";
 import { medicationType } from "../../utils/interfaces";
 import { CategoryType } from "../../utils/interfaces";
 import { fetchCategoriesData } from "../../api/pharmacyService";
+import { uploadToCloudinary } from "../../utils/uploadToCloudinary";
 interface AddMedicationModalProps {
   open: boolean;
   handleClose: () => void;
@@ -37,9 +38,10 @@ type FormData = {
   expiry_date: string;
   prescription_required: boolean;
   side_effects: string;
+  stock_status: boolean;
   usage_instructions: string;
   quantity_available: number;
-  image: File | null;
+  image: string;
 };
 const AddMedicationModal: React.FC<AddMedicationModalProps> = ({
   open,
@@ -60,9 +62,10 @@ const AddMedicationModal: React.FC<AddMedicationModalProps> = ({
     expiry_date: "",
     prescription_required: false,
     side_effects: "",
+    stock_status: true,
     usage_instructions: "",
     quantity_available: 1,
-    image: null,
+    image: "",
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -72,30 +75,34 @@ const AddMedicationModal: React.FC<AddMedicationModalProps> = ({
       try {
         const data = await fetchCategoriesData();
         setCategories(data);
-      } catch (error: any) {
+      } catch {
         showSnackbar("Failed to fetch categories.", "error");
       }
     };
     fetchCategories();
-  }, []);
+  }, [showSnackbar]);
 
   useEffect(() => {
     if (isEdit && medication) {
-      console.log("editing medication", medication);
+      console.log("editing medication", medication.pharmacies[0].pivot.price);
+
       setFormData({
         name: medication.name,
-        price: Number(medication.price),
+        price: Number(medication.pharmacies[0].pivot.price),
         description: medication.description,
-        category: medication.category,
+        category: medication.category.name,
         dosage_form: medication.dosage_form,
         dosage_strength: medication.dosage_strength,
-        manufacturer: medication.manufacturer,
+        manufacturer: medication.pharmacies[0].pivot.manufacturer,
         expiry_date: medication.expiry_date,
         prescription_required: medication.prescription_required,
         side_effects: medication.side_effects,
+        stock_status: medication.pharmacies[0].pivot.stock_status,
         usage_instructions: medication.usage_instructions,
-        quantity_available: Number(medication.quantity_available),
-        image: null,
+        quantity_available: Number(
+          medication.pharmacies[0].pivot.quantity_available
+        ),
+        image: medication.image,
       });
     } else {
       setFormData({
@@ -109,9 +116,10 @@ const AddMedicationModal: React.FC<AddMedicationModalProps> = ({
         expiry_date: "",
         prescription_required: false,
         side_effects: "",
+        stock_status: true,
         usage_instructions: "",
         quantity_available: 1,
-        image: null,
+        image: "",
       });
     }
   }, [isEdit, medication]); // Run only when `isEdit` or `medication` changes
@@ -128,17 +136,19 @@ const AddMedicationModal: React.FC<AddMedicationModalProps> = ({
     setFormData({ ...formData, [name]: checked });
   };
 
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
-      console.log("updaloedde data", file);
+      const medicationUrl = await uploadToCloudinary(file, "medications");
       // Check if the file is an image
       if (!file.type.startsWith("image/")) {
         showSnackbar("Please upload a valid image file.", "error");
         return;
       }
 
-      setFormData({ ...formData, image: file });
+      setFormData({ ...formData, image: medicationUrl });
     }
   };
 
@@ -147,8 +157,8 @@ const AddMedicationModal: React.FC<AddMedicationModalProps> = ({
       ...formData,
       price: Number(formData.price),
       quantity_available: Number(formData.quantity_available),
+      stock_status: true,
     });
-
     if (!parsed.success) {
       const fieldErrors: Record<string, string> = {};
       parsed.error.errors.forEach((err) => {
@@ -171,9 +181,10 @@ const AddMedicationModal: React.FC<AddMedicationModalProps> = ({
         expiry_date: "",
         prescription_required: false,
         side_effects: "",
+        stock_status: false,
         usage_instructions: "",
         quantity_available: 1,
-        image: null,
+        image: "",
       });
     }
   };
@@ -232,17 +243,22 @@ const AddMedicationModal: React.FC<AddMedicationModalProps> = ({
               value={
                 categories.find((cat) => cat.id === formData.category) || null
               }
-              onChange={(event, newValue) => {
+              onChange={(_event, newValue) => {
                 setFormData({
                   ...formData,
                   category: newValue ? newValue.id : "",
                 });
               }}
+              renderOption={(props, option) => (
+                <li {...props} key={option.id}>
+                  {option.name}
+                </li>
+              )}
               renderInput={(params) => (
                 <TextField
                   {...params}
                   label="Category"
-                  placeholder="select category"
+                  placeholder="Select category"
                   error={!!errors.category}
                   helperText={errors.category}
                 />
@@ -269,7 +285,6 @@ const AddMedicationModal: React.FC<AddMedicationModalProps> = ({
               name="quantity_available"
               type="number"
               placeholder="quantity for a unit"
-
               value={formData.quantity_available}
               onChange={handleInputChange}
               fullWidth
