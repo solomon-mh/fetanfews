@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   TableContainer,
   Table,
@@ -56,14 +56,14 @@ const ManageCategories: React.FC = () => {
     type: "success" as "success" | "error",
   });
   const { user } = useAuth();
-  const fetchCategories = async () => {
+  const fetchCategories = useCallback(async () => {
     try {
       const data = await fetchCategoriesData();
       setCategories(data);
     } catch (error) {
       showSnackbar("Failed to fetch categories.", "error");
     }
-  };
+  }, []);
 
   const handleOpenModal = (category: CategoryType | null = null) => {
     setErrors({ name: "", description: "" });
@@ -130,7 +130,7 @@ const ManageCategories: React.FC = () => {
     }
   };
   const handleChangePage = (
-    event: React.MouseEvent<HTMLButtonElement> | null,
+    _event: React.MouseEvent<HTMLButtonElement> | null,
     newPage: number
   ) => {
     setPage(newPage);
@@ -152,7 +152,7 @@ const ManageCategories: React.FC = () => {
 
   useEffect(() => {
     fetchCategories();
-  }, []);
+  }, [fetchCategories]);
 
   const validateInputs = () => {
     let valid = true;
@@ -254,8 +254,8 @@ const ManageCategories: React.FC = () => {
           <TableBody>
             {filteredCategories
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((category) => (
-                <TableRow key={category.id}>
+              .map((category, index) => (
+                <TableRow key={index}>
                   <TableCell>{category.name}</TableCell>
                   <TableCell>{category.description}</TableCell>
                   {user?.role === "admin" && (
