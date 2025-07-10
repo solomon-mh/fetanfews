@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useCallback } from "react";
 import {
   Area,
   AreaChart,
@@ -14,9 +14,12 @@ import SnackbarComponent from "../modals/SnackbarComponent";
 import { fetchMedicationsData } from "../../api/pharmacyService";
 import { medicationType } from "../../utils/interfaces";
 const DrugAvailabilityChart: React.FC = () => {
-  const showSnackbar = (message: string, type: "success" | "error") => {
-    setSnackbar({ open: true, message, type });
-  };
+  const showSnackbar = useCallback(
+    (message: string, type: "success" | "error") => {
+      setSnackbar({ open: true, message, type });
+    },
+    []
+  );
   const closeSnackbar = () => {
     setSnackbar({ ...snackbar, open: false });
   };
