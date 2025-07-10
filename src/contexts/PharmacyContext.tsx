@@ -28,7 +28,7 @@ export const PharmacyContextProvider: React.FC<
 
   const getData = async () => {
     try {
-      const response = await privateApi.get("/pharmacy_counts/");
+      const response = await privateApi.get("/pharmacies/counts");
       const data = response.data;
 
       setNumberOfPharmacies(data.total);
