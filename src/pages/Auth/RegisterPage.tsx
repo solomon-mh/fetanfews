@@ -6,7 +6,7 @@ import drugStore from "../../assets/images/drugstore.jpg";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { formSchema } from "../../utils/validateForm";
-import { FormErrors } from "../../utils/interfaces";
+import { FormErrors, UserRole } from "../../utils/interfaces";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 
@@ -29,16 +29,14 @@ const SignUp: React.FC = () => {
     const payload = {
       ...rest,
       password_confirmation: confirmPassword,
+      role: UserRole.USER,
     };
 
     try {
       const response = await userRegister(payload);
-      console.log("response");
-      console.log(response);
-
       if (response.user || response.status === 201) {
         setSubmissionMessage("User created successfully!");
-        setUser(response.user);
+        setUser(response?.user);
         navigate("/");
       } else {
         setSubmissionMessage("Error creating user");
@@ -49,8 +47,8 @@ const SignUp: React.FC = () => {
             message: "User with this email already registered",
           });
         }
-        if (response.phone_number) {
-          setError("phone_number", {
+        if (response.phone) {
+          setError("phone", {
             type: "server",
             message: "User with this phone number already registered",
           });
@@ -135,11 +133,11 @@ const SignUp: React.FC = () => {
             <label className="block mb-1 text-sm font-medium">Phone</label>
             <input
               type="text"
-              {...register("phone_number")}
+              {...register("phone")}
               placeholder="e.g. 0911xxxxxx"
               className="w-full px-4 py-2 border rounded-md bg-gray-100 dark:bg-gray-800 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500"
             />
-            {renderError("phone_number")}
+            {renderError("phone")}
           </div>
 
           <div>
