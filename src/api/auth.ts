@@ -55,22 +55,22 @@ privateApi.interceptors.request.use(
 );
 
 // Helper function to get cookies
-const getCookie = (name: string): string | undefined => {
+const getCookie = (name: string): string | null => {
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop()?.split(";").shift();
+  if (parts.length === 2)
+    return decodeURIComponent(parts.pop()!.split(";").shift()!);
+  return null;
 };
 
 // Auth functions
 export const login = async (data: { username: string; password: string }) => {
   try {
-    // Ensure CSRF cookie is set before login
-    await axios.get(`${BaseUrl}/sanctum/csrf-cookie`, {
-      withCredentials: true,
-    });
-    const response = await publicApi.post(`/login/`, data);
+    const response = await privateApi.post(`/login/`, data);
     return response;
   } catch (error: unknown) {
+    console.log(error);
+
     if (
       error &&
       typeof error === "object" &&
@@ -94,6 +94,8 @@ export const userRegister = async (data: SignUpData) => {
     await axios.get(`${BaseUrl}/sanctum/csrf-cookie`, {
       withCredentials: true,
     });
+    console.log(data);
+
     const response = await privateApi.post("/register/", data);
     return response.data;
   } catch (error: unknown) {
