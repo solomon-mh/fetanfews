@@ -10,12 +10,14 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({
   children,
   requiredRole,
 }) => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
 
   const location = useLocation();
-
+  if (loading) {
+    return <div className="py-44 text-5xl">Loading...</div>;
+  }
   // If no user is found, redirect to login
-  if (user === null) {
+  if (!user) {
     return (
       <Navigate
         to={requiredRole === "admin" ? "/admin/login" : "/user/login"}
