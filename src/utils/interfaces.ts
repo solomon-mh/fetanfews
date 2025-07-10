@@ -5,7 +5,7 @@ export interface LoginCredentials {
 }
 
 export interface SignUpData {
-  phone_number: string;
+  phone: string;
   password: string;
   email: string;
   first_name: string;
@@ -33,6 +33,7 @@ export interface IMedication {
 }
 export interface PharmacyDataType {
   id: number;
+  user_id?: number;
   name: string;
   address: string;
   phone: string;
@@ -45,6 +46,7 @@ export interface PharmacyDataType {
   longitude: number;
   operating_hours: string;
   status: "Approved" | "Pending" | "Rejected"; // Restrict possible values
+  pivot: MedPharPivot;
 }
 
 export interface PharmacyDetailProps {
@@ -80,6 +82,12 @@ export interface pharmacyFormData {
   image: File | null;
   status: string;
 }
+interface MedPharPivot {
+  manufacturer: string;
+  price: string;
+  quantity_available: string;
+  stock_status: boolean;
+}
 export interface pharmacyType {
   id: number;
   name: string;
@@ -93,6 +101,7 @@ export interface pharmacyType {
   delivery_available: boolean;
   status: string;
   image: File | null;
+  pivot: MedPharPivot;
 }
 export interface AddPharmacyModalProps {
   openForm: boolean;
@@ -126,7 +135,7 @@ export enum UserRole {
 export interface CustomUser {
   id: number;
   email: string | null;
-  phone_number: string | null;
+  phone: string | null;
   first_name: string;
   last_name: string;
   role: UserRole;
@@ -138,24 +147,21 @@ export interface CustomUser {
 export interface ChildrenProps {
   children: ReactNode;
 }
-
 export interface medicationType {
   id: number;
   name: string;
-  price: string;
   description: string;
-  category_name: string;
+  category: { name: string };
   dosage_form: string;
   dosage_strength: string;
-  manufacturer: string;
   expiry_date: string;
   prescription_required: boolean;
   side_effects: string;
   usage_instructions: string;
-  quantity_available: string;
-  image: File | null;
-  stock_status: boolean;
+  image: string;
+  pharmacies: PharmacyDataType[];
 }
+
 export interface pharmacistType {
   id: number;
   user: CustomUser;
