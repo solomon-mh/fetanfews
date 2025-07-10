@@ -26,7 +26,7 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import CloseIcon from "@mui/icons-material/Close";
 
-import { CategoryType } from "../../utils/interfaces";
+import { CategoryType, UserRole } from "../../utils/interfaces";
 import SnackbarComponent from "../modals/SnackbarComponent";
 import DeleteModal from "../modals/DeleteModal";
 import { useAuth } from "../../contexts/AuthContext";
@@ -222,7 +222,8 @@ const ManageCategories: React.FC = () => {
             width: "30%",
           }}
         />
-        {user?.role === "admin" && (
+        {(user?.role === UserRole.ADMIN ||
+          user?.role === UserRole.PHARMACIST) && (
           <Button
             variant="contained"
             color="primary"
