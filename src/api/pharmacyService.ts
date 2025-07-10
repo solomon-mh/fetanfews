@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { BaseUrl } from "../utils/BaseUrl";
 import { privateApi, publicApi } from "./auth";
 import axios from "axios";
 
-export const addPharmacy = (data: any) => {
-  console.log(data);
-
+export const addPharmacy = async (data: any) => {
+  await axios.get(`${BaseUrl}/sanctum/csrf-cookie`, {
+    withCredentials: true,
+  });
   return privateApi.post("/pharmacies/", data, {
     headers: {
       "Content-Type": "multipart/form-data",
@@ -62,7 +64,7 @@ export const fetchMedicationsData = async () => {
 export const editMedication = async (id: number, data: any) => {
   return privateApi.put(`/medications/${id}/`, data, {
     headers: {
-      "Content-Type": "multipart/form-data",
+      "Content-Type": "appplication/json",
     },
   });
 };
