@@ -28,6 +28,15 @@ const Header: React.FC<propTypes> = ({
   const { user } = useAuth();
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  }, [darkMode]);
   const handleToggle = () => onToggleSidebar();
   const handleToggleShrunk = () => {
     setIsFullscreen(!isFullscreen);
