@@ -41,10 +41,6 @@ const AdminHome: React.FC = () => {
 
   return (
     <div className="min-h-screen p-6 bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
-      <h1 className="text-4xl font-extrabold mb-10 text-indigo-600 dark:text-indigo-400">
-        Welcome to Your Dashboard
-      </h1>
-
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-12">
         {user?.role === "admin"
           ? pharmacyStatusOptions.map((type, index) => (
