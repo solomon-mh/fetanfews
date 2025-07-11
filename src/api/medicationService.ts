@@ -57,6 +57,15 @@ export const fetchMedicationCounts = async () => {
     throw error;
   }
 };
+export const fetchPharmacyMedicationCounts = async (id: number) => {
+  try {
+    const response = await privateApi.get(`/${id}/medications/counts`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching medication counts:", error);
+    throw error;
+  }
+};
 
 export const fetchMostSearchedMedications = async () => {
   try {
