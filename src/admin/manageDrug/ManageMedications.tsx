@@ -92,7 +92,10 @@ const ManageMedications: React.FC = () => {
         await editMedication(selectedMedication.id, data);
         showSnackbar("Medication updated successfully.", "success");
       } else {
-        await addMedicationData(data);
+        const res = await addMedicationData(data);
+        console.log("res");
+        console.log(res);
+
         showSnackbar("Medication added successfully.", "success");
       }
       fetchMedications();
@@ -217,7 +220,20 @@ const ManageMedications: React.FC = () => {
             </Button>
           )}
         </Box>
-        <Table>
+        <Table
+          sx={{
+            backgroundColor: "background.paper",
+            color: "text.primary",
+            "& th": {
+              backgroundColor: (theme) =>
+                theme.palette.mode === "dark" ? "#1e1e1e" : "#f5f5f5",
+              color: (theme) => theme.palette.text.primary,
+            },
+            "& td": {
+              color: (theme) => theme.palette.text.primary,
+            },
+          }}
+        >
           <TableHead>
             <TableRow>
               <TableCell>Image</TableCell>
