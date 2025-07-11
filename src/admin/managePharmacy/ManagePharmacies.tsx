@@ -71,7 +71,7 @@ const ManagePharmacies: React.FC = () => {
     status: "",
     latitude: "",
     longitude: "",
-    image: null,
+    image: "",
   });
 
   const fetchPharmacy = async () => {
@@ -100,7 +100,7 @@ const ManagePharmacies: React.FC = () => {
         status: pharmacy.status || "",
         latitude: pharmacy.latitude.toString() || "",
         longitude: pharmacy.longitude.toString() || "",
-        image: null,
+        image: "",
       });
     } else {
       setIsEdit(false);
@@ -117,7 +117,7 @@ const ManagePharmacies: React.FC = () => {
         delivery_available: false,
         latitude: "",
         longitude: "",
-        image: null,
+        image: "",
         status: "",
       });
     }
@@ -138,7 +138,7 @@ const ManagePharmacies: React.FC = () => {
       delivery_available: false,
       latitude: "",
       longitude: "",
-      image: null,
+      image: "",
       status: "",
     });
   };
@@ -217,7 +217,7 @@ const ManagePharmacies: React.FC = () => {
   );
 
   // Handle page change
-  const handleChangePage = (event: unknown, newPage: number) => {
+  const handleChangePage = (_event: unknown, newPage: number) => {
     setPage(newPage);
   };
 
@@ -305,7 +305,7 @@ const ManagePharmacies: React.FC = () => {
                 <TableRow key={pharmacy.id}>
                   <TableCell sx={{ display: "flex", gap: "10px" }}>
                     <img
-                      src={`http://127.0.0.1:8000${pharmacy.image}`} // Ensure full URL
+                      src={pharmacy.image} // Ensure full URL
                       alt="No image"
                       style={{
                         width: "50px",
