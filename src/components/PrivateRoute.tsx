@@ -20,7 +20,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({
   if (!user) {
     return (
       <Navigate
-        to={requiredRole === "admin" ? "/admin/login" : "/user/login"}
+        to={requiredRole === "admin" ? "/admin" : "/user/login"}
         state={{ from: location }}
         replace
       />
