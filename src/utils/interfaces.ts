@@ -79,10 +79,10 @@ export interface pharmacyFormData {
   website: string;
   email: string;
   delivery_available: boolean;
-  image: File | null;
+  image: "";
   status: string;
 }
-interface MedPharPivot {
+export interface MedPharPivot {
   manufacturer: string;
   price: string;
   quantity_available: string;
@@ -160,6 +160,7 @@ export interface medicationType {
   usage_instructions: string;
   image: string;
   pharmacies: PharmacyDataType[];
+  pivot?: MedPharPivot;
 }
 
 export interface pharmacistType {
