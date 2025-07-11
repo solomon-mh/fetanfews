@@ -7,9 +7,9 @@ import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import { useContext, useEffect, useState } from "react";
 import { Modal, Button } from "@mui/material";
 import { ColorContext } from "../../contexts/ColorContext";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
-import { Logout } from "../../api/auth";
+import { logout } from "../../api/auth";
 
 interface propTypes {
   onToggleSidebar: () => void;
@@ -25,8 +25,7 @@ const Header: React.FC<propTypes> = ({
   const [open, setOpen] = useState(false);
   const { darkMode, dispatch } = useContext(ColorContext);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const { user } = useAuth();
-  const navigate = useNavigate();
+  const { user, setUser } = useAuth();
 
   useEffect(() => {
     if (darkMode) {
@@ -44,8 +43,8 @@ const Header: React.FC<propTypes> = ({
   };
 
   const handleLogout = async () => {
-    await Logout();
-    navigate("/admin/login");
+    await logout();
+    setUser(null);
   };
 
   const fetchNotifications = async () => {
