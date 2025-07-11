@@ -1,29 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { BaseUrl } from "../utils/BaseUrl";
 import { privateApi, publicApi } from "./auth";
 import axios from "axios";
 
 export const addPharmacy = async (data: any) => {
-  await axios.get(`${BaseUrl}/sanctum/csrf-cookie`, {
-    withCredentials: true,
-  });
-  return privateApi.post("/pharmacies/", data, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
+  return privateApi.post("/pharmacies/", data);
 };
 export const fetchPharmacyData = async () => {
   const response = await publicApi.get("/pharmacies/");
   return response.data;
 };
 export const editPharmacy = (id: number, data: any) => {
-  return privateApi.put(`/pharmacies/${id}/`, data, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
+  return privateApi.put(`/pharmacies/${id}/`, data);
 };
 export const deletePharmacy = (id: number) => {
   return privateApi.delete(`/pharmacies/${id}/`);
@@ -266,4 +254,8 @@ export const fetchPharmaciesWithoutPharmacists = async () => {
     console.error("Error fetching pharmacies without pharmacists:", error);
     throw error;
   }
+};
+export const getPharmacistsPharmacy = async (userId: number) => {
+  const response = await privateApi.get(`/pharmacies/by-user/${userId}`);
+  return response.data;
 };
