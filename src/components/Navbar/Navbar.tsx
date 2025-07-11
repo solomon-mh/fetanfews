@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
-import { Logout } from "../../api/auth";
+import { logout } from "../../api/auth";
 import { FaMoon, FaSun } from "react-icons/fa";
 import { HiMenu, HiX } from "react-icons/hi";
 
@@ -23,7 +23,7 @@ const Header = () => {
   }, [darkMode]);
 
   const handleLogout = async () => {
-    await Logout();
+    await logout();
     setUser(null);
     setMenuOpen(false);
   };
