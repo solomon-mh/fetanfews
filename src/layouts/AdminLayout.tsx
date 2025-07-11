@@ -61,7 +61,7 @@ const AdminLayout: React.FC = () => {
 
         {/* Main Content */}
         <main
-          className={`flex-1 ml-0 md:ml-0 transition-all duration-300 ease-in-out px-4 py-6 md:px-8 md:py-6 ${
+          className={`flex-1 ml-0 md:ml-0  transition-all duration-300 ease-in-out px-4 py-6 md:px-8 md:py-6 ${
             isSidebarShrunk ? "md:ml-20" : "md:ml-64"
           }`}
         >
