@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 import { changePassword } from "../../api/auth";
 import { z } from "zod";
 import SnackbarComponent from "../../admin/modals/SnackbarComponent";
+import { FiEye, FiEyeOff } from "react-icons/fi";
 
 const formSchema = z
   .object({
@@ -36,18 +37,23 @@ const ChangePassword = () => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const [formErrors, setFormErrors] = useState<any>({});
-  const navigate = useNavigate();
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
     type: "success" as "success" | "error",
   });
 
+  const navigate = useNavigate();
+
   const handleChangePassword = async (e: React.FormEvent) => {
-    setFormErrors({});
     e.preventDefault();
+    setFormErrors({});
 
     try {
       formSchema.parse({
@@ -59,15 +65,16 @@ const ChangePassword = () => {
       const data = {
         current_password: currentPassword,
         new_password: newPassword,
+        new_password_confirmation: confirmPassword,
       };
 
-      // Call changePassword API
       await changePassword(data);
       showSnackbar("Password updated successfully", "success");
-      setErrorMessage("");
-      setFormErrors({});
 
-      // Redirect to the previous page after success
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+
       navigate(-1);
     } catch (err: any) {
       if (err instanceof z.ZodError) {
@@ -81,12 +88,18 @@ const ChangePassword = () => {
       }
     }
   };
+
   const showSnackbar = (message: string, type: "success" | "error") => {
     setSnackbar({ open: true, message, type });
   };
+
   const closeSnackbar = () => {
     setSnackbar({ ...snackbar, open: false });
   };
+
+  const inputClass =
+    "w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500";
+
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex items-center justify-center px-4">
       <div className="w-full max-w-md p-8 bg-white dark:bg-gray-800 rounded-2xl shadow-lg">
@@ -94,15 +107,9 @@ const ChangePassword = () => {
           Change Your Password
         </h2>
 
-        {errorMessage && (
-          <div className="mb-4 text-red-500 text-sm text-center">
-            {errorMessage}
-          </div>
-        )}
-
         <form onSubmit={handleChangePassword} className="space-y-6">
           {/* Current Password */}
-          <div>
+          <div className="relative">
             <label
               htmlFor="current-password"
               className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
@@ -110,13 +117,20 @@ const ChangePassword = () => {
               Current Password
             </label>
             <input
-              type="password"
+              type={showCurrentPassword ? "text" : "password"}
               id="current-password"
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={inputClass}
               required
             />
+            <button
+              type="button"
+              onClick={() => setShowCurrentPassword((prev) => !prev)}
+              className="absolute right-3 top-9 text-gray-600 dark:text-gray-300"
+            >
+              {showCurrentPassword ? <FiEyeOff /> : <FiEye />}
+            </button>
             {formErrors.current_password && (
               <p className="text-red-500 text-sm mt-1">
                 {formErrors.current_password}
@@ -125,7 +139,7 @@ const ChangePassword = () => {
           </div>
 
           {/* New Password */}
-          <div>
+          <div className="relative">
             <label
               htmlFor="new-password"
               className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
@@ -133,13 +147,20 @@ const ChangePassword = () => {
               New Password
             </label>
             <input
-              type="password"
+              type={showNewPassword ? "text" : "password"}
               id="new-password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={inputClass}
               required
             />
+            <button
+              type="button"
+              onClick={() => setShowNewPassword((prev) => !prev)}
+              className="absolute right-3 top-9 text-gray-600 dark:text-gray-300"
+            >
+              {showNewPassword ? <FiEyeOff /> : <FiEye />}
+            </button>
             {formErrors.new_password && (
               <p className="text-red-500 text-sm mt-1">
                 {formErrors.new_password}
@@ -148,7 +169,7 @@ const ChangePassword = () => {
           </div>
 
           {/* Confirm Password */}
-          <div>
+          <div className="relative">
             <label
               htmlFor="confirm-password"
               className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
@@ -156,13 +177,20 @@ const ChangePassword = () => {
               Confirm New Password
             </label>
             <input
-              type="password"
+              type={showConfirmPassword ? "text" : "password"}
               id="confirm-password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={inputClass}
               required
             />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword((prev) => !prev)}
+              className="absolute right-3 top-9 text-gray-600 dark:text-gray-300"
+            >
+              {showConfirmPassword ? <FiEyeOff /> : <FiEye />}
+            </button>
             {formErrors.confirm_password && (
               <p className="text-red-500 text-sm mt-1">
                 {formErrors.confirm_password}
