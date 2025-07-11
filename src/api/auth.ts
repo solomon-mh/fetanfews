@@ -2,16 +2,12 @@ import axios from "axios";
 import { SignUpData } from "../utils/interfaces";
 import { BaseUrl } from "../utils/BaseUrl";
 
-axios.defaults.withCredentials = true;
-axios.defaults.withXSRFToken = true;
-
 export const publicApi = axios.create({
   baseURL: BaseUrl,
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
   },
-  withCredentials: false,
 });
 export const privateApi = axios.create({
   baseURL: BaseUrl,
@@ -19,34 +15,18 @@ export const privateApi = axios.create({
     "Content-Type": "application/json",
     Accept: "application/json",
   },
-  withCredentials: true, // Essential for cookies
 });
 
 // Request interceptor
 privateApi.interceptors.request.use(
-  async (config) => {
-    const method = config.method?.toLowerCase();
-    const stateChangingMethods = ["post", "put", "patch", "delete"];
+  (config) => {
+    // Get the auth token from your storage (cookie, localStorage, etc.)
+    const authToken =
+      localStorage.getItem("auth_token") || getCookie("auth_token");
 
-    // Always try to get the token from cookies first
-    const xsrfToken = getCookie("XSRF-TOKEN");
-
-    if (xsrfToken) {
-      config.headers["X-XSRF-TOKEN"] = xsrfToken;
-    } else if (stateChangingMethods.includes(method ?? "")) {
-      // If no token and it's a state-changing method, fetch CSRF cookie first
-      try {
-        await axios.get(`${BaseUrl}/sanctum/csrf-cookie`, {
-          withCredentials: true,
-        });
-        const newToken = getCookie("XSRF-TOKEN");
-        if (newToken) {
-          config.headers["X-XSRF-TOKEN"] = newToken;
-        }
-      } catch (error) {
-        console.error("CSRF token fetch failed:", error);
-        return Promise.reject(error);
-      }
+    // If token exists, add it to the Authorization header
+    if (authToken) {
+      config.headers.Authorization = `Bearer ${authToken}`;
     }
 
     return config;
@@ -54,19 +34,12 @@ privateApi.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Helper function to get cookies
-const getCookie = (name: string): string | null => {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2)
-    return decodeURIComponent(parts.pop()!.split(";").shift()!);
-  return null;
-};
-
 // Auth functions
 export const login = async (data: { username: string; password: string }) => {
   try {
-    const response = await privateApi.post(`/login/`, data);
+    const response = await publicApi.post(`/login/`, data);
+    // Store token (choose one method)
+    localStorage.setItem("auth_token", response.data.token); // or
     return response;
   } catch (error: unknown) {
     console.log(error);
@@ -90,12 +63,6 @@ export const login = async (data: { username: string; password: string }) => {
 
 export const userRegister = async (data: SignUpData) => {
   try {
-    // Ensure CSRF cookie is set before registration
-    await axios.get(`${BaseUrl}/sanctum/csrf-cookie`, {
-      withCredentials: true,
-    });
-    console.log(data);
-
     const response = await privateApi.post("/register/", data);
     return response.data;
   } catch (error: unknown) {
@@ -117,9 +84,16 @@ export const getCurrentUser = async () => {
   return response;
 };
 
-export const Logout = async () => {
+export const logout = async () => {
   try {
     await privateApi.post("/logout");
+    // Clear token
+    localStorage.removeItem("auth_token"); // or
+    document.cookie =
+      "auth_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+
+    // Clear axios auth header
+    delete privateApi.defaults.headers.common.Authorization;
   } catch (e) {
     console.error("Error logging out:", e);
   }
@@ -135,7 +109,7 @@ export const changePassword = async (data: {
   new_password: string;
 }) => {
   try {
-    await privateApi.put("/accounts/password_change/", data);
+    await privateApi.put("/change-password/", data);
   } catch (error: unknown) {
     if (
       error &&
@@ -157,3 +131,12 @@ export const changePassword = async (data: {
     throw new Error("Something went wrong.");
   }
 };
+
+function getCookie(name: string): string | null {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) {
+    return parts.pop()!.split(";").shift() || null;
+  }
+  return null;
+}
