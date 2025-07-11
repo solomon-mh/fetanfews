@@ -23,8 +23,8 @@ export const AuthProvider: React.FC<ChildrenProps> = ({ children }) => {
       try {
         const response = await getCurrentUser();
         setUser(response.data);
-      } catch (error) {
-        console.error("User not authenticated", error);
+      } catch {
+        console.error("User not authenticated");
         setUser(null);
       } finally {
         setLoading(false);
