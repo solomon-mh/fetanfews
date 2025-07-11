@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react";
 import SnackbarComponent from "../modals/SnackbarComponent";
 import { medicationType } from "../../utils/interfaces";
 import { fetchMedicationsData } from "../../api/pharmacyService";
+import defaultImage from "../../assets/default-pill-image.png";
+import { usePharmacyStore } from "../../store/usePharmacyStore";
 
 interface MedicationTableProps {
   filter: string;
@@ -11,13 +13,13 @@ interface MedicationTableProps {
 const MedicationTable: React.FC<MedicationTableProps> = ({
   filter = "all",
 }) => {
-  const [medications, setMedications] = useState<medicationType[]>([]);
+  const [_medications, setMedications] = useState<medicationType[]>([]);
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
     type: "success" as "success" | "error",
   });
-
+  const { pharmacyMed } = usePharmacyStore();
   const [currentPage, setCurrentPage] = useState(1);
   const [medicationsPerPage] = useState(10);
   const [searchQuery, setSearchQuery] = useState("");
@@ -44,22 +46,22 @@ const MedicationTable: React.FC<MedicationTableProps> = ({
 
   // Reset search query when filter changes
   useEffect(() => {
-    setSearchQuery(""); // Reset search query when the filter changes
-    setCurrentPage(1); // Reset to the first page whenever the filter changes
+    setSearchQuery("");
+    setCurrentPage(1);
   }, [filter]);
-
   // Apply filtering based on stock status, expiry date, and search query
-  const filteredMedications = medications.filter((medication) => {
-    if (filter === "inStock" && medication.stock_status !== true) return false;
-    if (filter === "outOfStock" && medication.stock_status !== false)
-      return false;
-    if (filter === "expired" && new Date(medication.expiry_date) >= new Date())
-      return false;
-    if (
-      searchQuery &&
-      !medication.name.toLowerCase().includes(searchQuery.toLowerCase())
-    )
-      return false;
+  const filteredMedications = pharmacyMed.filter((medication) => {
+    const inStock = medication.pivot?.stock_status === true;
+    const isExpired = new Date(medication.expiry_date) < new Date();
+    const matchesSearch =
+      !searchQuery ||
+      medication.name.toLowerCase().includes(searchQuery.toLowerCase());
+
+    if (filter === "inStock" && inStock) return false;
+    if (filter === "outOfStock" && !inStock) return false;
+    if (filter === "expired" && !isExpired) return false;
+    if (!matchesSearch) return false;
+
     return true;
   });
 
@@ -70,7 +72,6 @@ const MedicationTable: React.FC<MedicationTableProps> = ({
     indexOfFirstMedication,
     indexOfLastMedication
   );
-
   const totalPages = Math.ceil(filteredMedications.length / medicationsPerPage);
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
@@ -81,7 +82,7 @@ const MedicationTable: React.FC<MedicationTableProps> = ({
 
   return (
     <>
-      <div className="medication-table">
+      <div className="medication-table dark:text-zinc-50">
         <h2>
           {filter === "all"
             ? "All Medications"
@@ -91,19 +92,42 @@ const MedicationTable: React.FC<MedicationTableProps> = ({
             ? "Out-of-Stock Medications"
             : "Expired Medications"}
         </h2>
-
+        <div className="my-6">
+          <input
+            type="text"
+            placeholder="Search Medications..."
+            value={searchQuery}
+            onChange={handleSearchChange}
+            className="search-input"
+          />
+        </div>
         {currentMedications.length === 0 ? (
-          <p className="no-data">No {filter} medications found.</p>
+          <>
+            <div className="flex flex-col items-center justify-center p-6 rounded-xl border border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-center shadow-sm">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-12 w-12 text-gray-400 dark:text-gray-500 mb-3"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <p className="text-gray-600 dark:text-gray-300 text-lg font-medium">
+                No {filter} medications found.
+              </p>
+              <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
+                We couldn't find any information to display right now.
+              </p>
+            </div>
+          </>
         ) : (
           <>
-            <input
-              type="text"
-              placeholder="Search Medications..."
-              value={searchQuery}
-              onChange={handleSearchChange}
-              className="search-input"
-            />
-
             <table>
               <thead>
                 <tr>
@@ -125,33 +149,40 @@ const MedicationTable: React.FC<MedicationTableProps> = ({
                   <tr key={medication.id}>
                     <td>
                       <img
-                        src={`http://127.0.0.1:8000${medication.image}`}
+                        src={medication.image}
                         alt="No Image"
                         style={{
                           width: "50px",
                           height: "50px",
                           objectFit: "cover",
                         }}
+                        onError={(e) => {
+                          e.currentTarget.src = defaultImage;
+                        }}
                       />
                     </td>
                     <td>{medication.name}</td>
-                    <td>{medication.price} Birr</td>
+                    <td>{medication.pivot?.price} Birr</td>
                     <td
                       className={
-                        medication.stock_status ? "in-stock" : "out-of-stock"
+                        medication.pivot?.stock_status
+                          ? "in-stock"
+                          : "out-of-stock"
                       }
                     >
-                      {medication.stock_status ? "In Stock" : "Out of Stock"}
+                      {medication.pivot?.stock_status
+                        ? "In Stock"
+                        : "Out of Stock"}
                     </td>
-                    <td>{medication.category_name}</td>
+                    <td>{medication?.category?.name}</td>
                     <td>{medication.dosage_form}</td>
                     <td>{medication.dosage_strength}</td>
-                    <td>{medication.manufacturer}</td>
+                    <td>{medication.pivot?.manufacturer}</td>
                     <td>
                       {new Date(medication.expiry_date).toLocaleDateString()}
                     </td>
                     <td>{medication.prescription_required ? "Yes" : "No"}</td>
-                    <td>{medication.quantity_available}</td>
+                    <td>{medication.pivot?.quantity_available}</td>
                   </tr>
                 ))}
               </tbody>
