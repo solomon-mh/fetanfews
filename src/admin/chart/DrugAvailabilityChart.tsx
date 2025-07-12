@@ -62,8 +62,6 @@ const DrugAvailabilityChart: React.FC = () => {
             return expiryDate < currentDate;
           }).length;
         } else if (user?.role === "pharmacist") {
-          console.log(pharmacyMed);
-
           inStock = pharmacyMed.filter(
             (med: medicationType) => med.pivot?.stock_status
           ).length;
