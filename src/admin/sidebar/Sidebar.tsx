@@ -10,6 +10,7 @@ import {
   Logout as LogoutIcon,
 } from "@mui/icons-material";
 import { useAuth } from "../../contexts/AuthContext";
+import { logout } from "../../api/auth";
 
 interface SidebarProps {
   onLinkClick: () => void;
@@ -18,8 +19,12 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isShrunk }) => {
   const { pathname } = useLocation();
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
 
+  const handleLogout = async () => {
+    await logout();
+    setUser(null);
+  };
   const isActive = (path: string) => pathname === path;
 
   const menuItemClasses = (path: string) =>
@@ -137,7 +142,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isShrunk }) => {
         {/* LOGOUT (You can wire this later to actual logic) */}
         <li
           className="flex items-center gap-3 p-3 mt-6 hover:bg-red-100 dark:hover:bg-red-700 text-red-500 cursor-pointer"
-          onClick={() => console.log("Log out clicked")}
+          onClick={() => handleLogout()}
         >
           <LogoutIcon className="text-lg" />
           {!isShrunk && <span>Log Out</span>}
