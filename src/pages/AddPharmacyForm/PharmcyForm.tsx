@@ -64,8 +64,7 @@ const PharmacyForm: React.FC = () => {
 
       setErrorMessage(null);
 
-      const response = await addPharmacy(payload);
-      console.log("Response:", response.data);
+      await addPharmacy(payload);
       navigate("/pharmacy-registration/success");
     } catch (error: unknown) {
       let errorMessage = "An error occurred. Please try again.";
