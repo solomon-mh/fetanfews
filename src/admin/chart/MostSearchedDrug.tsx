@@ -11,25 +11,27 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { getPhaMostSearchedMedications } from "../../api/medicationService";
+import { useAuth } from "../../contexts/AuthContext";
 
 const MostSearchedMedicationsChart = () => {
   const [chartData, setChartData] = useState([]);
   const [error, setError] = useState("");
-
+  const { user } = useAuth();
   useEffect(() => {
     const fetchMedications = async () => {
       try {
-        const data = await getPhaMostSearchedMedications();
+        if (user) {
+          const data = await getPhaMostSearchedMedications(user?.id);
+          // Format the data for the chart
+          const formattedData = data.map(
+            (medication: { name: string; search_count: number }) => ({
+              name: medication.name,
+              total: medication.search_count,
+            })
+          );
 
-        // Format the data for the chart
-        const formattedData = data.map(
-          (medication: { name: string; search_count: number }) => ({
-            name: medication.name,
-            total: medication.search_count,
-          })
-        );
-
-        setChartData(formattedData);
+          setChartData(formattedData);
+        }
       } catch (err: any) {
         setError("Error fetching medications");
       }
