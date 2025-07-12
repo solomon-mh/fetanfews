@@ -1,7 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
-import { getPharmacyMedicationDetail } from "../../api/medicationService";
+import {
+  addPhaMostSearchedMedications,
+  getPharmacyMedicationDetail,
+} from "../../api/medicationService";
 import drugImage from "../../assets/images/drugs.jpeg";
 import defaultMedicationImage from "../../assets/default-pill-image.png";
 
@@ -38,6 +41,23 @@ const MedicationDetail = () => {
 
     fetchMedicationDetails();
   }, [pharmacyId, medicationId]);
+
+  useEffect(() => {
+    const trackSearch = async () => {
+      try {
+        await addPhaMostSearchedMedications({
+          name: medication?.name,
+          pharmacy_id: Number(pharmacyId),
+        });
+      } catch (error) {
+        console.error("Failed to track search:", error);
+      }
+    };
+
+    if (medication?.name && pharmacyId) {
+      trackSearch();
+    }
+  }, [medication?.name, pharmacyId]);
 
   if (loading) return <p>Loading medication details...</p>;
   if (error) return <p className="error">{error}</p>;
