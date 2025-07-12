@@ -197,9 +197,11 @@ export const getNearbyPharmacies = async (
   }
 };
 
-export const getPharmacistDetails = async () => {
+export const getPharmacyInfo = async (userId: number) => {
   try {
-    const response = await publicApi.get("/pharmacist/get_or_update/");
+    const response = await publicApi.get(
+      `/pharmacies/get-pharmacy-info/?user_id=${userId}`
+    );
     return response.data;
   } catch (error: any) {
     console.error("Error fetching pharmacist details:", error);
