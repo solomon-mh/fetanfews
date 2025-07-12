@@ -79,10 +79,22 @@ export const fetchMostSearchedMedications = async () => {
   }
 };
 
-export const getPhaMostSearchedMedications = async () => {
+export const addPhaMostSearchedMedications = async (data: any) => {
   try {
-    const response = await publicApi.get(
-      "/pharmacy/most-searched-medications/"
+    const response = await publicApi.post(
+      "/pharmacies/most-searched-medications/",
+      data
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching most searched medications:", error);
+    throw error;
+  }
+};
+export const getPhaMostSearchedMedications = async (pharmacist_id: number) => {
+  try {
+    const response = await privateApi.get(
+      `/pharmacies/most-searched-medications/?pharmacist_id=${pharmacist_id}`
     );
     return response.data;
   } catch (error) {
