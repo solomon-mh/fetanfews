@@ -95,22 +95,30 @@ export const pharmacySchema = z.object({
   email: emailValidation,
   website: optionalUrl,
   operating_hours: requiredString("Operating hours"),
-  delivery_available: z.string(),
+  delivery_available: z.union([z.string(), z.boolean()]),
   latitude: requiredString("Latitude "),
   longitude: requiredString("Longitude "),
 });
 
 export const pharmasistDetailSchema = z.object({
   license_number: requiredString("License Number"),
-  license_image: z.instanceof(File).optional().nullable(),
-
-  pharmacy: z.object({
-    name: requiredString("Pharmacy Name "),
-    phone: phoneValidation,
-    email: emailValidation,
-    operating_hours: requiredString("Operating Hours "),
-    website: optionalUrl,
-    delivery_available: z.string(),
-    image: z.instanceof(File).optional().nullable(),
-  }),
+  license_image: requiredFileSchema,
+  name: requiredString("Pharmacy Name "),
+  phone: phoneValidation,
+  email: emailValidation,
+  operating_hours: requiredString("Operating Hours "),
+  website: optionalUrl,
+  delivery_available: z.string(),
+  image: optionalFileSchema,
+});
+export const updatePharmacySchema = z.object({
+  license_number: requiredString("License Number"),
+  license_image: optionalFileSchema,
+  name: requiredString("Pharmacy Name "),
+  phone: phoneValidation,
+  email: emailValidation,
+  operating_hours: requiredString("Operating Hours "),
+  website: optionalUrl,
+  delivery_available: z.union([z.string(), z.boolean()]),
+  image: optionalFileSchema,
 });
