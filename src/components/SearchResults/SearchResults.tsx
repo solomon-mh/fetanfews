@@ -274,9 +274,28 @@ const SearchResults: React.FC = () => {
               )}
             </>
           ) : (
-            <p className="text-center my-6 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900 border border-red-300 dark:border-red-700 px-4 py-3 rounded-md shadow-sm">
-              No results found. Please refine your search.
-            </p>
+            <div className="flex flex-col items-center justify-center p-6 rounded-xl border border-dashed border-red-300 dark:border-red-600 bg-gray-50 dark:bg-gray-800 text-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-12 w-12 text-red-400 dark:text-red-500 mb-3"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <p className="text-red-400 text-lg font-medium">
+                No results found.
+              </p>
+              <p className="text-red-400 text mt-1">
+                Sorry, We couldn't find any medication right now.
+              </p>
+            </div>
           )}
         </div>
       </div>
