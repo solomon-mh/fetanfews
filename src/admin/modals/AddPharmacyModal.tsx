@@ -274,7 +274,13 @@ const AddPharmacyModal: React.FC<AddPharmacyModalProps> = ({
               </Button>
               {formData.image && (
                 <Typography variant="body2" sx={{ mt: 1 }}>
-                  Selected File: {formData.image.name}
+                  Selected File:{" "}
+                  {typeof formData.image === "object" &&
+                  "name" in formData.image
+                    ? (formData.image as File).name
+                    : typeof formData.image === "string"
+                    ? formData.image
+                    : ""}
                 </Typography>
               )}
             </Grid>
