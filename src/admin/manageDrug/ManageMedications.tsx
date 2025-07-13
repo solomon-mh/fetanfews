@@ -175,13 +175,13 @@ const ManageMedications: React.FC = () => {
   return (
     <>
       <div className="manage-medications">
-        <div className="w-full mb-4 flex items-center gap-4 max-w-d mx-auto p-4 rounded-xl bg-white dark:bg-gray-900 shadow-md">
+        <div className="w-full mb-4 flex flex-col md:flex-row items-center gap-4 max-w-d mx-auto md:p-4 rounded-xl bg-white dark:bg-gray-900 shadow-md">
           <div>
             <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
               Manage Medications
             </h3>
           </div>
-          <div className="flex gap-4 ml-auto mr-4">
+          <div className="flex flex-col md:flex-row gap-4 ml-auto mr-4">
             <div className="relative">
               <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
               <input
@@ -318,7 +318,7 @@ const ManageMedications: React.FC = () => {
           rowsPerPage={rowsPerPage}
           onRowsPerPageChange={handleChangeRowsPerPage}
           rowsPerPageOptions={[5, 10, 25]}
-          className="dark:bg-gray-700 dark:text-white"
+          className="dark:bg-gray-800 dark:text-white"
         />
 
         {/* Form Modal */}
