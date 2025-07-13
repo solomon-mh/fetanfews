@@ -1,5 +1,4 @@
-import React from "react";
-import { Modal, Box, Typography, Button, IconButton } from "@mui/material";
+import React, { useEffect } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 
 interface DeleteModalProps {
@@ -15,52 +14,66 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
   handleDelete,
   itemName,
 }) => {
-  const style = {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: 400,
-    bgcolor: "background.paper",
-    borderRadius: 3,
-    boxShadow: 24,
-    p: 4,
-    textAlign: "center",
-  };
+  // Optional: Close on ESC key
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
+  }, [onClose]);
+
+  if (!isOpen) return null;
+
+  const handleBackdropClick = () => onClose();
+  const stopPropagation = (e: React.MouseEvent) => e.stopPropagation();
 
   return (
-    <Modal open={isOpen} onClose={onClose}>
-      <Box sx={style}>
-        <IconButton
+    <div
+      className="fixed inset-0 flex items-center justify-center bg-black/50"
+      onClick={handleBackdropClick}
+    >
+      <div
+        className="relative w-full max-w-md mx-4 sm:mx-auto bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded-xl shadow-lg p-6"
+        onClick={stopPropagation}
+      >
+        {/* Close Button */}
+        <button
           onClick={onClose}
-          style={{
-            position: "absolute",
-            top: 8,
-            right: 8,
-            color: "red",
-          }}
+          className="absolute top-4 border rounded-full p-1 right-6 text-red-500 hover:text-red-600"
         >
           <CloseIcon />
-        </IconButton>
-        <h2 id="confirmation-modal-title">Confirm Deletion</h2>
-        <Typography
-          id="confirmation-modal-description"
-          variant="body1"
-          marginBottom={4}
-        >
-          Are you sure you want to <span style={{ color: "red" }}>delete</span>{" "}
+        </button>
+
+        {/* Title */}
+        <h2 className="text-xl font-semibold mb-4 text-center">
+          Confirm Deletion
+        </h2>
+
+        {/* Message */}
+        <p className="mb-6 text-center text-lg">
+          Are you sure you want to{" "}
+          <span className="text-red-500 font-semibold">delete</span>{" "}
           <strong>{itemName}</strong>? This action cannot be undone.
-        </Typography>
-        <Box display="flex" justifyContent="space-around">
-          <Button variant="outlined" color="secondary" onClick={onClose}>
+        </p>
+
+        {/* Buttons */}
+        <div className="flex justify-center gap-4">
+          <button
+            onClick={onClose}
+            className="px-4 w-full py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+          >
             Cancel
-          </Button>
-          <Button variant="contained" color="error" onClick={handleDelete}>
+          </button>
+          <button
+            onClick={handleDelete}
+            className="px-4 w-full py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition"
+          >
             Delete
-          </Button>
-        </Box>
-      </Box>
-    </Modal>
+          </button>
+        </div>
+      </div>
+    </div>
   );
 };
 

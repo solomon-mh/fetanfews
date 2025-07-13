@@ -129,7 +129,7 @@ const PharmacistProfile = () => {
   };
   if (error) return <p className="text-red-500">{error}</p>;
   return (
-    <div className="max-w-3xl mx-auto p-6 bg-white dark:bg-gray-900 rounded-lg shadow-md text-gray-800 dark:text-gray-100">
+    <div className="max-w-5xl mx-auto p-6 bg-white dark:bg-gray-900 rounded-lg shadow-md text-gray-800 dark:text-gray-100">
       <h2 className="text-2xl font-semibold mb-6 text-center">
         General Settings
       </h2>
@@ -184,7 +184,7 @@ const PharmacistProfile = () => {
             )}
           </div>
           {licenseImagePreview && (
-            <div className="mb-2">
+            <div className="my-2">
               <img
                 src={licenseImagePreview}
                 alt="Current License"
@@ -316,7 +316,7 @@ const PharmacistProfile = () => {
             )}
           </div>
           {pharmacyImagePreview && (
-            <div className="mb-2">
+            <div className="my-2">
               <img
                 src={pharmacyImagePreview}
                 alt="Current Pharmacy Logo"
