@@ -41,7 +41,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isShrunk }) => {
 
   return (
     <div
-      className={`h-full fixed hidden lg:block py-8 px-4 bg-white dark:bg-gray-900 text-sm border-r dark:border-gray-700 
+      className={`h-full fixed py-8 px-4 bg-white dark:bg-gray-900 text-lg border-r dark:border-gray-700 
 			transition-all duration-300 ease-in-out ${
         isShrunk ? "w-20" : "w-64"
       } overflow-y-auto`}
@@ -50,7 +50,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isShrunk }) => {
         {/* MAIN */}
         <Link to="/admin/dashboard" onClick={onLinkClick}>
           <li className={menuItemClasses("/admin/dashboard")}>
-            <DashboardIcon className="text-sm" />
+            <DashboardIcon className="text-lg" />
             {!isShrunk && <span>Dashboard</span>}
           </li>
         </Link>
@@ -61,13 +61,13 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isShrunk }) => {
             <p className={sectionTitle}>{!isShrunk && "Pharmacies"}</p>
             <Link to="/admin/manage-pharmacies" onClick={onLinkClick}>
               <li className={menuItemClasses("/admin/manage-pharmacies")}>
-                <GroupIcon className="text-sm" />
+                <GroupIcon className="text-lg" />
                 {!isShrunk && <span>Manage Pharmacies</span>}
               </li>
             </Link>
             <Link to="/admin/manage-pharmacists" onClick={onLinkClick}>
               <li className={menuItemClasses("/admin/manage-pharmacists")}>
-                <GroupIcon className="text-sm" />
+                <GroupIcon className="text-lg" />
                 {!isShrunk && <span>Pharmacists</span>}
               </li>
             </Link>
@@ -78,13 +78,13 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isShrunk }) => {
         <p className={sectionTitle}>{!isShrunk && "Drugs"}</p>
         <Link to="/admin/manage-categories" onClick={onLinkClick}>
           <li className={menuItemClasses("/admin/manage-categories")}>
-            <MedicalInformation className="text-sm" />
+            <MedicalInformation className="text-lg" />
             {!isShrunk && <span>Drug Category</span>}
           </li>
         </Link>
         <Link to="/admin/manage-drugs" onClick={onLinkClick}>
           <li className={menuItemClasses("/admin/manage-drugs")}>
-            <ControlPoint className="text-sm" />
+            <ControlPoint className="text-lg" />
             {!isShrunk && <span>Manage Drugs</span>}
           </li>
         </Link>
@@ -95,7 +95,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isShrunk }) => {
             <p className={sectionTitle}>{!isShrunk && "Users"}</p>
             <Link to="/admin/users" onClick={onLinkClick}>
               <li className={menuItemClasses("/admin/users")}>
-                <GroupIcon className="text-sm" />
+                <GroupIcon className="text-lg" />
                 {!isShrunk && <span>View Users</span>}
               </li>
             </Link>
@@ -119,7 +119,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isShrunk }) => {
                 : "/admin/reports"
             )}
           >
-            <AssessmentIcon className="text-sm" />
+            <AssessmentIcon className="text-lg" />
             {!isShrunk && <span>Reports</span>}
           </li>
         </Link>
@@ -128,13 +128,13 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isShrunk }) => {
         <p className={sectionTitle}>{!isShrunk && "Settings"}</p>
         <Link to="/admin/pharmacist/settings" onClick={onLinkClick}>
           <li className={menuItemClasses("/admin/pharmacist/settings")}>
-            <SettingsRoundedIcon className="text-sm" />
+            <SettingsRoundedIcon className="text-lg" />
             {!isShrunk && <span>Settings</span>}
           </li>
         </Link>
         <Link to="/admin/profile" onClick={onLinkClick}>
           <li className={menuItemClasses("/admin/profile")}>
-            <AccountCircleIcon className="text-sm" />
+            <AccountCircleIcon className="text-xl" />
             {!isShrunk && <span>Profile</span>}
           </li>
         </Link>
@@ -144,7 +144,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLinkClick, isShrunk }) => {
           className="flex items-center mt-auto mb-12 gap-3 p-3 hover:bg-red-100 dark:hover:bg-transparent border border-transparent rounded-2xl dark:hover:border-red-400 text-red-500 cursor-pointer"
           onClick={() => handleLogout()}
         >
-          <LogoutIcon className="text-sm" />
+          <LogoutIcon className="text-lg" />
           {!isShrunk && <span>Log Out</span>}
         </li>
       </ul>
