@@ -69,13 +69,15 @@ const Header: React.FC<propTypes> = ({
     <div className="w-full bg-white dark:bg-gray-800 shadow-sm px-4 py-3 flex justify-between items-center sticky top-0 z-50">
       {/* Logo & Menu */}
       <div className="flex items-center space-x-4">
-        <MenuIcon
-          className="text-gray-700 dark:text-gray-200 cursor-pointer"
-          onClick={handleToggle}
-        />
+        <div className="ld:hidden">
+          <MenuIcon
+            className="text-gray-700 dark:text-gray-200 cursor-pointer"
+            onClick={handleToggle}
+          />
+        </div>
         <Link
           to="/admin/dashboard"
-          className="text-xl font-bold text-indigo-600 dark:text-indigo-400"
+          className="text-xl hidden lg:block font-bold text-indigo-600 dark:text-indigo-400"
         >
           Admin Dashboard
         </Link>
@@ -84,7 +86,7 @@ const Header: React.FC<propTypes> = ({
       {/* User & Controls */}
       <div className="flex items-center space-x-4 text-sm font-medium">
         {user ? (
-          <>
+          <div className="hidden md:dislay">
             <span className="text-gray-700 dark:text-gray-300">
               WELCOME, {user.first_name.toUpperCase()}
             </span>
@@ -105,7 +107,7 @@ const Header: React.FC<propTypes> = ({
             >
               CHANGE PASSWORD
             </Link>
-          </>
+          </div>
         ) : (
           <Link to="/admin/login" className="text-indigo-500 hover:underline">
             Login

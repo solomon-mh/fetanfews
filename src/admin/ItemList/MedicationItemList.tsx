@@ -154,11 +154,11 @@ const MedItemLists: React.FC<ItemListsProps> = ({
       transition={{ duration: 0.4 }}
       className="group bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl border border-gray-200 dark:border-gray-700 rounded-2xl p-5 transition-all duration-100 cursor-pointer w-full max-w-md mx-auto"
     >
-      <div className="flex justify-between items-center mb-4">
+      <div className="justify-between items-center mb-4">
         <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
           {data.title}
         </h2>
-        <span className="flex items-center gap-1 text-green-600 dark:text-green-400 font-medium">
+        <span className="gap-1 text-green-600 dark:text-green-400 font-medium">
           <KeyboardArrowUpIcon />
           {medCounts.total > 0
             ? ((data.count / medCounts.total) * 100).toFixed(2)
