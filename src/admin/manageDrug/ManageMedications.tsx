@@ -2,25 +2,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect, useCallback } from "react";
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  Typography,
-  Button,
-  TextField,
-  Box,
-  TablePagination,
-  InputAdornment,
-} from "@mui/material";
+import { TablePagination } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Edit } from "@mui/icons-material";
 import AddMedicationModal from "../modals/AddMedicationModal";
 import DeleteModal from "../modals/DeleteModal";
 import SearchIcon from "@mui/icons-material/Search";
-import { medicationType } from "../../utils/interfaces";
+import { medicationType, UserRole } from "../../utils/interfaces";
 import {
   addMedicationData,
   fetchMedicationsData,
@@ -30,7 +18,6 @@ import {
 import SnackbarComponent from "../modals/SnackbarComponent";
 import { useAuth } from "../../contexts/AuthContext";
 import axios from "axios";
-import Tooltip from "@mui/material/Tooltip";
 import defaultMedicationImage from "../../assets/default-pill-image.png";
 
 const ManageMedications: React.FC = () => {
@@ -188,144 +175,141 @@ const ManageMedications: React.FC = () => {
   return (
     <>
       <div className="manage-medications">
-        <Box className="top-section">
-          <Typography className="title" variant="h4" gutterBottom>
-            Manage Medications
-          </Typography>
+        <div className="w-full mb-4 flex items-center gap-4 max-w-d mx-auto p-4 rounded-xl bg-white dark:bg-gray-900 shadow-md">
+          <div>
+            <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
+              Manage Medications
+            </h3>
+          </div>
+          <div className="flex gap-4 ml-auto mr-4">
+            <div className="relative">
+              <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
+              <input
+                type="text"
+                id="Search"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search medications..."
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-500 transition duration-200"
+              />
+            </div>
+            {user?.role === UserRole.PHARMACIST && (
+              <button
+                onClick={() => handleOpenForm()}
+                className="bg-gray-600 cursor-pointer hover:bg-gray-700 text-white font-medium px-4 py-2 rounded-lg transition duration-200"
+              >
+                Add Medication
+              </button>
+            )}
+          </div>
+        </div>
+        <div className="overflow-x-auto rounded-xl shadow-md bg-white dark:bg-gray-900">
+          <table className="min-w-[1500px] w-full text-sm text-left text-gray-800 dark:text-gray-100">
+            <thead className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-100">
+              <tr>
+                <th className="px-4 py-3">Image</th>
+                <th className="px-4 py-3">Medication Name</th>
+                <th className="px-4 py-3">Category</th>
+                <th className="px-4 py-3">Price</th>
+                <th className="px-4 py-3">Stock Status</th>
+                <th className="px-4 py-3">Dosage Form</th>
+                <th className="px-4 py-3">Dosage Strength</th>
+                <th className="px-4 py-3">Manufacturer</th>
+                <th className="px-4 py-3">Expiry Date</th>
+                <th className="px-4 py-3">Prescription Required</th>
+                <th className="px-4 py-3">Side Effects</th>
+                <th className="px-4 py-3">Usage Instructions</th>
+                <th className="px-4 py-3">Available Quantity</th>
+                <th className="px-4 py-3"></th>
+              </tr>
+            </thead>
 
-          <TextField
-            className="search-bar"
-            label="Search Medications"
-            variant="outlined"
-            fullWidth
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-          />
-          {user?.role === "pharmacist" && (
-            <Button
-              className="add-button"
-              variant="contained"
-              color="primary"
-              size="large"
-              onClick={() => handleOpenForm()}
-            >
-              Add Medication
-            </Button>
-          )}
-        </Box>
-        <Table
-          sx={{
-            backgroundColor: "background.paper",
-            color: "text.primary",
-            "& th": {
-              backgroundColor: (theme) =>
-                theme.palette.mode === "dark" ? "#1e1e1e" : "#f5f5f5",
-              color: (theme) => theme.palette.text.primary,
-            },
-            "& td": {
-              color: (theme) => theme.palette.text.primary,
-            },
-          }}
-        >
-          <TableHead>
-            <TableRow>
-              <TableCell>Image</TableCell>
-              <TableCell>Medication Name</TableCell>
-              <TableCell>Category</TableCell>
-              <TableCell>Price</TableCell>
-              <TableCell>Stock Status</TableCell>
-              <TableCell>Dosage Form</TableCell>
-              <TableCell>Dosage Strength</TableCell>
-              <TableCell>Manufacturer</TableCell>
-              <TableCell>Expiry Date</TableCell>
-              <TableCell>Prescription Required</TableCell>
-              <TableCell>Side Effects</TableCell>
-              <TableCell>Usage Instructions</TableCell>
-              <TableCell>Available Quantity</TableCell>
-              <TableCell>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {paginatedMedications.map((medication, index) => {
-              const currentUserId = user?.id;
-              const userPharmacy = medication.pharmacies.find(
-                (pharmacy) => pharmacy?.user_id === currentUserId
-              );
+            <tbody>
+              {paginatedMedications.map((medication, index) => {
+                const currentUserId = user?.id;
+                const userPharmacy = medication.pharmacies.find(
+                  (pharmacy) => pharmacy?.user_id === currentUserId
+                );
 
-              // If the user doesn't own this medication via any pharmacy, skip
-              if (!userPharmacy) return null;
+                if (!userPharmacy) return null;
 
-              return (
-                <TableRow key={index}>
-                  <TableCell>
-                    <img
-                      src={medication.image}
-                      alt="No image"
-                      style={{
-                        width: "50px",
-                        height: "50px",
-                        objectFit: "cover",
-                      }}
-                      onError={(e) => {
-                        e.currentTarget.src = defaultMedicationImage;
-                      }}
-                    />
-                  </TableCell>
-                  <TableCell>{medication.name}</TableCell>
-                  <TableCell>{medication?.category?.name}</TableCell>
-                  <TableCell>{userPharmacy.pivot.price} Birr</TableCell>
-                  <TableCell>
-                    {userPharmacy.pivot.stock_status
-                      ? "In Stock"
-                      : "Out of Stock"}
-                  </TableCell>
-                  <TableCell>{medication.dosage_form}</TableCell>
-                  <TableCell>{medication.dosage_strength}</TableCell>
-                  <TableCell>{userPharmacy.pivot.manufacturer}</TableCell>
-                  <TableCell>{medication.expiry_date}</TableCell>
-                  <TableCell>
-                    {medication.prescription_required ? "Yes" : "No"}
-                  </TableCell>
-                  <TableCell>
-                    <Tooltip title={medication.side_effects}>
-                      <span className="truncate-tooltip">
-                        {medication.side_effects}
-                      </span>
-                    </Tooltip>
-                  </TableCell>
-                  <TableCell>
-                    <Tooltip title={medication.usage_instructions}>
-                      <span className="truncate-tooltip">
-                        {medication.usage_instructions}
-                      </span>
-                    </Tooltip>
-                  </TableCell>
-                  <TableCell>{userPharmacy.pivot.quantity_available}</TableCell>
-                  <TableCell>
-                    <Button onClick={() => handleOpenForm(medication)}>
-                      <Edit />
-                    </Button>
-                    <Button
-                      onClick={() =>
-                        handleDeleteClick(medication.id, medication.name)
-                      }
+                return (
+                  <tr
+                    key={index}
+                    className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition"
+                  >
+                    <td className="px-4 py-2">
+                      <img
+                        src={medication.image}
+                        alt="No image"
+                        className="w-12 h-12 object-cover rounded"
+                        onError={(e) => {
+                          e.currentTarget.src = defaultMedicationImage;
+                        }}
+                      />
+                    </td>
+                    <td className="px-4 py-2">{medication.name}</td>
+                    <td className="px-4 py-2">{medication?.category?.name}</td>
+                    <td className="px-4 py-2">
+                      {userPharmacy.pivot.price} Birr
+                    </td>
+                    <td className="px-4 py-2">
+                      {userPharmacy.pivot.stock_status ? (
+                        <span className="text-green-600 font-medium">
+                          In Stock
+                        </span>
+                      ) : (
+                        <span className="text-red-500 font-medium">
+                          Out of Stock
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-4 py-2">{medication.dosage_form}</td>
+                    <td className="px-4 py-2">{medication.dosage_strength}</td>
+                    <td className="px-4 py-2">
+                      {userPharmacy.pivot.manufacturer}
+                    </td>
+                    <td className="px-4 py-2">{medication.expiry_date}</td>
+                    <td className="px-4 py-2">
+                      {medication.prescription_required ? "Yes" : "No"}
+                    </td>
+                    <td
+                      className="px-4 py-2 max-w-[160px] truncate"
+                      title={medication.side_effects}
                     >
-                      <DeleteIcon style={{ color: "red" }} />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-
+                      {medication.side_effects}
+                    </td>
+                    <td
+                      className="px-4 py-2 max-w-[160px] truncate"
+                      title={medication.usage_instructions}
+                    >
+                      {medication.usage_instructions}
+                    </td>
+                    <td className="px-4 py-2">
+                      {userPharmacy.pivot.quantity_available}
+                    </td>
+                    <td className="px-4 py-2 space-x-2">
+                      <button
+                        onClick={() => handleOpenForm(medication)}
+                        className="p-2 text-blue-600 hover:text-blue-700 cursor-pointer"
+                      >
+                        <Edit className="w-6 h-6" />
+                      </button>
+                      <button
+                        onClick={() =>
+                          handleDeleteClick(medication.id, medication.name)
+                        }
+                        className="p-2 text-red-600 hover:text-red-700 cursor-pointer"
+                      >
+                        <DeleteIcon className="w-6 h-6" />
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
         <TablePagination
           component="div"
           count={filteredMedications.length}
@@ -334,6 +318,7 @@ const ManageMedications: React.FC = () => {
           rowsPerPage={rowsPerPage}
           onRowsPerPageChange={handleChangeRowsPerPage}
           rowsPerPageOptions={[5, 10, 25]}
+          className="dark:bg-gray-700 dark:text-white"
         />
 
         {/* Form Modal */}

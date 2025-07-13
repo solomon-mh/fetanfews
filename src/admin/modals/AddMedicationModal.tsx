@@ -1,18 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from "react";
-import {
-  Modal,
-  Box,
-  Typography,
-  TextField,
-  Button,
-  Grid,
-  MenuItem,
-  IconButton,
-  Switch,
-  FormControlLabel,
-  Autocomplete,
-} from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { medicationSchema } from "../../utils/validateForm";
 import { medicationType } from "../../utils/interfaces";
@@ -51,6 +38,7 @@ const AddMedicationModal: React.FC<AddMedicationModalProps> = ({
   isEdit,
   showSnackbar,
 }) => {
+  const dosageForms = ["Tablet", "Capsule", "Syrup", "Injection"];
   const [formData, setFormData] = useState<FormData>({
     name: "",
     price: 1,
@@ -130,7 +118,10 @@ const AddMedicationModal: React.FC<AddMedicationModalProps> = ({
     const { name, value } = event.target;
     setFormData({ ...formData, [name]: value });
   };
-
+  const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = event.target;
+    setFormData({ ...formData, [name]: value });
+  };
   const handleSwitchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = event.target;
     setFormData({ ...formData, [name]: checked });
@@ -151,6 +142,7 @@ const AddMedicationModal: React.FC<AddMedicationModalProps> = ({
       setFormData({ ...formData, image: medicationUrl });
     }
   };
+  const handleBackdropClick = () => handleClose();
 
   const validateAndSubmit = () => {
     const parsed = medicationSchema.safeParse({
@@ -188,246 +180,284 @@ const AddMedicationModal: React.FC<AddMedicationModalProps> = ({
       });
     }
   };
-
-  const style = {
-    position: "absolute" as const,
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: 600,
-    bgcolor: "background.paper",
-    borderRadius: 3,
-    boxShadow: 24,
-    p: 4,
-    overflowY: "auto",
-    maxHeight: "90vh",
-  };
-
   return (
-    <Modal open={open} onClose={handleClose}>
-      <Box sx={style}>
-        <Typography variant="h6" component="h2" marginBottom={2}>
+    <div
+      className={`${
+        open ? "flex" : "hidden"
+      } fixed inset-0 z-30 items-center justify-center bg-black/50`}
+      onClick={handleBackdropClick}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 rounded-2xl p-8 relative shadow-2xl border border-gray-200 dark:border-gray-700"
+      >
+        <h2 className="text-2xl font-semibold mb-6 text-center">
           {isEdit ? "Edit Medication" : "Add Medication"}
-        </Typography>
-        <IconButton
-          aria-label="close"
+        </h2>
+        <button
           onClick={handleClose}
-          sx={{
-            position: "absolute",
-            top: 8,
-            right: 8,
-            color: (theme) => theme.palette.error.main,
-          }}
+          className="absolute top-4 right-4 p-2 text-red-600 hover:text-white hover:bg-red-600 transition rounded-full"
         >
-          <CloseIcon />
-        </IconButton>
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label="Name"
+          <CloseIcon className="w-5 h-5" />
+        </button>
+
+        <form className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          {/* Input and Select fields */}
+          <div>
+            <label className="block text-sm font-medium mb-1">Name</label>
+            <input
+              type="text"
               name="name"
-              placeholder="medication name"
               value={formData.name}
               onChange={handleInputChange}
-              fullWidth
+              placeholder="Medication name"
+              className={`w-full px-4 py-2 rounded-lg border dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition ${
+                errors.name && "border-red-500"
+              }`}
               required
-              error={!!errors.name}
-              helperText={errors.name}
             />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Autocomplete
-              options={categories}
-              getOptionLabel={(option) => option.name || ""}
-              isOptionEqualToValue={(option, value) => option.id === value.id}
-              value={
-                categories.find((cat) => cat.id === formData.category) || null
-              }
-              onChange={(_event, newValue) => {
+            {errors.name && (
+              <p className="text-xs text-red-500 mt-1">{errors.name}</p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">Category</label>
+            <select
+              name="category"
+              value={formData.category}
+              onChange={(e) =>
                 setFormData({
                   ...formData,
-                  category: newValue ? newValue.id : "",
-                });
-              }}
-              renderOption={(props, option) => (
-                <li {...props} key={option.id}>
-                  {option.name}
-                </li>
-              )}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Category"
-                  placeholder="Select category"
-                  error={!!errors.category}
-                  helperText={errors.category}
-                />
-              )}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label="Price"
-              name="price"
+                  category: Number(e.target.value),
+                })
+              }
+              className={`w-full px-4 py-2 rounded-lg border dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition ${
+                errors.category && "border-red-500"
+              }`}
+              required
+            >
+              <option value="">Select category</option>
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
+            {errors.category && (
+              <p className="text-xs text-red-500 mt-1">{errors.category}</p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              Price (Birr)
+            </label>
+            <input
               type="number"
-              placeholder="price in Birr"
+              name="price"
               value={formData.price}
               onChange={handleInputChange}
-              fullWidth
+              className={`w-full px-4 py-2 rounded-lg border dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition ${
+                errors.price && "border-red-500"
+              }`}
               required
-              error={!!errors.price}
-              helperText={errors.price}
             />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label="Quantity Available"
-              name="quantity_available"
+            {errors.price && (
+              <p className="text-xs text-red-500 mt-1">{errors.price}</p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              Quantity Available
+            </label>
+            <input
               type="number"
-              placeholder="quantity for a unit"
+              name="quantity_available"
               value={formData.quantity_available}
               onChange={handleInputChange}
-              fullWidth
+              className={`w-full px-4 py-2 rounded-lg border dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition ${
+                errors.quantity_available && "border-red-500"
+              }`}
               required
-              error={!!errors.quantity_available}
-              helperText={errors.quantity_available}
             />
-          </Grid>
+            {errors.quantity_available && (
+              <p className="text-xs text-red-500 mt-1">
+                {errors.quantity_available}
+              </p>
+            )}
+          </div>
 
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label="Dosage Form"
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              Dosage Form
+            </label>
+            <select
               name="dosage_form"
-              placeholder="select dosage form"
-              select
               value={formData.dosage_form}
-              onChange={handleInputChange}
-              fullWidth
+              onChange={handleSelectChange}
+              className={`w-full px-4 py-2 rounded-lg border dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition ${
+                errors.dosage_form && "border-red-500"
+              }`}
               required
-              error={!!errors.dosage_form}
-              helperText={errors.dosage_form}
             >
-              <MenuItem value="tablet">Tablet</MenuItem>
-              <MenuItem value="capsule">Capsule</MenuItem>
-              <MenuItem value="syrup">Syrup</MenuItem>
-              <MenuItem value="injection">Injection</MenuItem>
-            </TextField>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label="Dosage Strength"
+              <option value="">Select dosage form</option>
+              {dosageForms.map((form) => (
+                <option key={form} value={form}>
+                  {form}
+                </option>
+              ))}
+            </select>
+            {errors.dosage_form && (
+              <p className="text-xs text-red-500 mt-1">{errors.dosage_form}</p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              Dosage Strength
+            </label>
+            <input
+              type="text"
               name="dosage_strength"
-              placeholder="dosage strength"
               value={formData.dosage_strength}
               onChange={handleInputChange}
-              fullWidth
+              className={`w-full px-4 py-2 rounded-lg border dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition ${
+                errors.dosage_strength && "border-red-500"
+              }`}
               required
-              error={!!errors.dosage_strength}
-              helperText={errors.dosage_strength}
             />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label="Manufacturer"
+            {errors.dosage_strength && (
+              <p className="text-xs text-red-500 mt-1">
+                {errors.dosage_strength}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              Manufacturer
+            </label>
+            <input
+              type="text"
               name="manufacturer"
-              placeholder="manufacturer name"
               value={formData.manufacturer}
               onChange={handleInputChange}
-              fullWidth
+              className={`w-full px-4 py-2 rounded-lg border dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition ${
+                errors.manufacturer && "border-red-500"
+              }`}
               required
-              error={!!errors.manufacturer}
-              helperText={errors.manufacturer}
             />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label="Expiry Date"
-              name="expiry_date"
+            {errors.manufacturer && (
+              <p className="text-xs text-red-500 mt-1">{errors.manufacturer}</p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              Expiry Date
+            </label>
+            <input
               type="date"
-              placeholder="expiry date"
-              InputLabelProps={{ shrink: true }}
+              name="expiry_date"
               value={formData.expiry_date}
               onChange={handleInputChange}
-              fullWidth
+              className={`w-full px-4 py-2 rounded-lg border dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition ${
+                errors.expiry_date && "border-red-500"
+              }`}
               required
-              error={!!errors.expiry_date}
-              helperText={errors.expiry_date}
             />
-          </Grid>
+            {errors.expiry_date && (
+              <p className="text-xs text-red-500 mt-1">{errors.expiry_date}</p>
+            )}
+          </div>
 
-          <Grid item xs={12} sm={6}>
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={formData.prescription_required}
-                  onChange={handleSwitchChange}
-                  name="prescription_required"
-                />
-              }
-              label="Prescription Required"
+          <div className="flex items-center gap-2 col-span-2">
+            <input
+              type="checkbox"
+              name="prescription_required"
+              checked={formData.prescription_required}
+              onChange={handleSwitchChange}
             />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            Upload Image
+            <label className="text-sm">Prescription Required</label>
+          </div>
+
+          <div className="col-span-2">
+            <label className="block text-sm font-medium mb-1">
+              Upload Image
+            </label>
             <input type="file" name="image" onChange={handleImageChange} />
-          </Grid>
+          </div>
 
-          <Grid item xs={12} sm={12}>
-            <TextField
-              label="Description"
+          <div className="col-span-2">
+            <label className="block text-sm font-medium mb-1">
+              Description
+            </label>
+            <textarea
               name="description"
-              placeholder="medication description"
+              rows={3}
               value={formData.description}
               onChange={handleInputChange}
-              multiline
-              rows={3}
-              fullWidth
+              className="w-full px-4 py-2 rounded-lg border dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
             />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              label="Side Effects"
+          </div>
+
+          <div className="col-span-2">
+            <label className="block text-sm font-medium mb-1">
+              Side Effects
+            </label>
+            <textarea
               name="side_effects"
-              placeholder="medication side effects"
+              rows={3}
               value={formData.side_effects}
               onChange={handleInputChange}
-              multiline
-              rows={3}
-              fullWidth
-              error={!!errors.side_effects}
-              helperText={errors.side_effects}
+              className={`w-full px-4 py-2 rounded-lg border dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition ${
+                errors.side_effects && "border-red-500"
+              }`}
             />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              label="Usage Instructions"
+            {errors.side_effects && (
+              <p className="text-xs text-red-500 mt-1">{errors.side_effects}</p>
+            )}
+          </div>
+
+          <div className="col-span-2">
+            <label className="block text-sm font-medium mb-1">
+              Usage Instructions
+            </label>
+            <textarea
               name="usage_instructions"
-              placeholder="medication usage instructions"
+              rows={3}
               value={formData.usage_instructions}
               onChange={handleInputChange}
-              multiline
-              rows={3}
-              fullWidth
-              error={!!errors.usage_instructions}
-              helperText={errors.usage_instructions}
+              className={`w-full px-4 py-2 rounded-lg border dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition ${
+                errors.usage_instructions && "border-red-500"
+              }`}
             />
-          </Grid>
-        </Grid>
+            {errors.usage_instructions && (
+              <p className="text-xs text-red-500 mt-1">
+                {errors.usage_instructions}
+              </p>
+            )}
+          </div>
+        </form>
 
-        <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 3 }}>
-          <Button onClick={handleClose} sx={{ mr: 2, color: "red" }}>
+        <div className="mt-8 flex justify-end gap-3">
+          <button
+            onClick={handleClose}
+            className="px-6 w-full py-2 border border-red-500 text-red-500 hover:bg-red-100 dark:hover:bg-red-300 rounded-lg transition"
+          >
             Cancel
-          </Button>
-          <Button
+          </button>
+          <button
             onClick={validateAndSubmit}
-            variant="contained"
-            color="primary"
+            className="px-6 w-full py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition"
           >
             {isEdit ? "Update" : "Add"}
-          </Button>
-        </Box>
-      </Box>
-    </Modal>
+          </button>
+        </div>
+      </div>
+    </div>
   );
 };
 
