@@ -29,6 +29,9 @@ import PharmacistProfile from "./admin/PharmacistUtils/PharmacistProfile";
 import AdminReports from "./admin/reports/AdminReports";
 import PublicRoute from "./components/PublicRoute";
 import PharmacistProfilePage from "./pages/PharmacyDetails/PharmacistProfilePage";
+import AboutUsPage from "./pages/AboutUs/AboutUs";
+import ServicesPage from "./pages/Services/ServicePage";
+import ContactSection from "./pages/Contact/ContactPage";
 function App() {
   return (
     <Router>
@@ -43,6 +46,9 @@ function App() {
           }
         >
           <Route path="/" element={<HomePage />} />
+          <Route path="/about" element={<AboutUsPage />} />
+          <Route path="/services" element={<ServicesPage />} />
+          <Route path="/contact" element={<ContactSection />} />
           <Route
             path="/pharmacy/:pharmacyName"
             element={
