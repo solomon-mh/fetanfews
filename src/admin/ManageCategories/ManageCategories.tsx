@@ -1,21 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect, useCallback } from "react";
-import {
-  TableContainer,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-  Button,
-  IconButton,
-  Modal,
-  TextField,
-  Box,
-  Typography,
-  InputAdornment,
-  TablePagination,
-} from "@mui/material";
+import { TablePagination } from "@mui/material";
 import { Edit, Delete } from "@mui/icons-material";
 import {
   fetchCategoriesData,
@@ -187,101 +172,81 @@ const ManageCategories: React.FC = () => {
   );
 
   return (
-    <div>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          mb: 2,
-          padding: "1rem",
-          border: "1px solid #ccc",
-          borderRadius: "4px",
-          background: "white",
-        }}
-      >
-        <Typography variant="h4">Drug Categories</Typography>
-        <TextField
-          className="search-bar"
-          label="Search "
-          variant="outlined"
-          fullWidth
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon />
-              </InputAdornment>
-            ),
-          }}
-          sx={{
-            marginRight: "1rem",
-            marginLeft: "auto",
-            background: "white",
-            width: "30%",
-          }}
-        />
-        {(user?.role === UserRole.ADMIN ||
-          user?.role === UserRole.PHARMACIST) && (
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => handleOpenModal()}
-            sx={{
-              backgroundColor: "green",
-              color: "#fff",
-              fontSize: "1rem",
-              fontWeight: "500",
-              textTransform: "uppercase",
-              padding: "10px 20px",
-              borderRadius: "50px",
-            }}
-          >
-            Add Category
-          </Button>
-        )}
-      </Box>
+    <div className="w-full">
+      <div className="w-full mb-4 flex items-center gap-4 max-w-d mx-auto p-4 rounded-xl bg-white dark:bg-gray-900 shadow-md">
+        <div>
+          <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
+            Drug Categories
+          </h3>
+        </div>
+        <div className="flex gap-4 ml-auto mr-4">
+          <div className="relative">
+            <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
+            <input
+              type="text"
+              id="Search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search categories..."
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-500 transition duration-200"
+            />
+          </div>
+          {user?.role === UserRole.PHARMACIST && (
+            <button
+              onClick={() => handleOpenModal()}
+              className="bg-gray-600 cursor-pointer hover:bg-gray-700 text-white font-medium px-4 py-2 rounded-lg transition duration-200"
+            >
+              Add Category
+            </button>
+          )}
+        </div>
+      </div>
 
-      <TableContainer>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Description</TableCell>
-              {user?.role === "admin" && <TableCell>Actions</TableCell>}
-            </TableRow>
-          </TableHead>
-          <TableBody>
+      <div className="overflow-x-auto rounded-xl shadow-md bg-white dark:bg-gray-800">
+        <table className="min-w-full table-auto text-sm text-left text-gray-800 dark:text-gray-100">
+          <thead className="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-100">
+            <tr>
+              <th className="px-4 py-3 font-semibold">Name</th>
+              <th className="px-4 py-3 font-semibold">Description</th>
+              {user?.role === "admin" && (
+                <th className="px-4 py-3 font-semibold">Actions</th>
+              )}
+            </tr>
+          </thead>
+
+          <tbody>
             {filteredCategories
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((category, index) => (
-                <TableRow key={index}>
-                  <TableCell>{category.name}</TableCell>
-                  <TableCell>{category.description}</TableCell>
+                <tr
+                  key={index}
+                  className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
+                >
+                  <td className="px-4 py-3">{category.name}</td>
+                  <td className="px-4 py-3">{category.description}</td>
                   {user?.role === "admin" && (
-                    <TableCell>
-                      <IconButton
-                        color="primary"
+                    <td className="px-4 py-3 space-x-2">
+                      <button
                         onClick={() => handleOpenModal(category)}
+                        className="p-2 rounded-full bg-blue-100 hover:bg-blue-200 text-blue-600 dark:bg-blue-900 dark:hover:bg-blue-800 dark:text-blue-300 transition"
                       >
-                        <Edit />
-                      </IconButton>
-                      <Button
-                        style={{ color: "red" }}
+                        <Edit className="w-4 h-4" />
+                      </button>
+                      <button
                         onClick={() =>
                           handleDeleteClick(category.id, category.name)
                         }
+                        className="p-2 rounded-full bg-red-100 hover:bg-red-200 text-red-600 dark:bg-red-900 dark:hover:bg-red-800 dark:text-red-300 transition"
                       >
-                        <Delete />
-                      </Button>
-                    </TableCell>
+                        <Delete className="w-4 h-4" />
+                      </button>
+                    </td>
                   )}
-                </TableRow>
+                </tr>
               ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+          </tbody>
+        </table>
+      </div>
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
@@ -290,70 +255,102 @@ const ManageCategories: React.FC = () => {
         page={page}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
+        sx={{
+          mt: 2,
+          backgroundColor: "background.paper",
+          borderRadius: "12px",
+          boxShadow: 2,
+        }}
+        className="dark:bg-gray-700 dark:text-white"
       />
-      {/* Add/Edit Modal */}
-      <Modal open={modalOpen} onClose={handleCloseModal}>
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: 400,
-            bgcolor: "background.paper",
-            boxShadow: 24,
-            p: 4,
-          }}
+
+      {/* Modal */}
+      {modalOpen && (
+        <div
+          className="fixed inset-0 flex items-center justify-center bg-black/50"
+          onClick={handleCloseModal}
         >
-          <IconButton
-            aria-label="close"
-            onClick={handleCloseModal}
-            sx={{
-              position: "absolute",
-              top: 8,
-              right: 8,
-              color: (theme) => theme.palette.error.main,
-            }}
+          <div
+            className="relative w-full max-w-md mx-auto bg-white dark:bg-gray-900 rounded-xl shadow-xl p-6 animate-fade-in"
+            onClick={(e) => e.stopPropagation()}
           >
-            <CloseIcon />
-          </IconButton>
-          <Typography variant="h6" gutterBottom>
-            {isEdit ? "Edit Category" : "Add Category"}
-          </Typography>
-          <TextField
-            fullWidth
-            label="Name"
-            name="name"
-            value={formData.name}
-            onChange={handleInputChange}
-            margin="normal"
-            required
-            error={!!errors.name}
-            helperText={errors.name}
-          />
-          <TextField
-            fullWidth
-            label="Description"
-            name="description"
-            value={formData.description}
-            onChange={handleInputChange}
-            margin="normal"
-            multiline
-            rows={4}
-            required
-            error={!!errors.description}
-            helperText={errors.description}
-          />
-          <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
-            <Button onClick={handleCloseModal} sx={{ mr: 1, color: "red" }}>
-              Cancel
-            </Button>
-            <Button variant="contained" color="primary" onClick={handleSubmit}>
-              {isEdit ? "Update" : "Add"}
-            </Button>
-          </Box>
-        </Box>
-      </Modal>
+            {/* Close Button */}
+            <button
+              onClick={handleCloseModal}
+              className="absolute top-4 border rounded-full p-1 right-6 text-red-500 hover:text-red-600"
+            >
+              <CloseIcon />
+            </button>
+
+            {/* Title */}
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">
+              {isEdit ? "Edit Category" : "Add Category"}
+            </h2>
+
+            {/* Name Input */}
+            <div className="mb-4">
+              <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
+                Name
+              </label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleInputChange}
+                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
+                  errors.name
+                    ? "border-red-500 focus:ring-red-500"
+                    : "border-gray-300 dark:border-gray-700 focus:ring-blue-500"
+                } bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100`}
+                required
+              />
+              {errors.name && (
+                <p className="text-sm text-red-500 mt-1">{errors.name}</p>
+              )}
+            </div>
+
+            {/* Description Input */}
+            <div className="mb-4">
+              <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
+                Description
+              </label>
+              <textarea
+                name="description"
+                value={formData.description}
+                onChange={handleInputChange}
+                rows={3}
+                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
+                  errors.description
+                    ? "border-red-500 focus:ring-red-500"
+                    : "border-gray-300 dark:border-gray-700 focus:ring-blue-500"
+                } bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100`}
+                required
+              />
+              {errors.description && (
+                <p className="text-sm text-red-500 mt-1">
+                  {errors.description}
+                </p>
+              )}
+            </div>
+
+            {/* Buttons */}
+            <div className="flex justify-end mt-6">
+              <button
+                onClick={handleCloseModal}
+                className="w-full  mr-2 px-4 py-2 text-sm text-red-600 hover:text-red-700"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSubmit}
+                className="w-full px-4 py-2 text-sm bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition duration-200"
+              >
+                {isEdit ? "Update" : "Add"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {/* Snackbar */}
       <SnackbarComponent
         open={snackbar.open}
@@ -361,6 +358,8 @@ const ManageCategories: React.FC = () => {
         type={snackbar.type}
         onClose={closeSnackbar}
       />
+
+      {/* Delete Modal */}
       <DeleteModal
         isOpen={isDelModalOpen}
         onClose={handleDelModalClose}
