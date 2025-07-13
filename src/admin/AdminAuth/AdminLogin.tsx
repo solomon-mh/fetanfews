@@ -39,9 +39,9 @@ const AdminLogin: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 px-4">
-      <div className="w-full max-w-md bg-white dark:bg-gray-800 shadow-lg rounded-2xl p-8">
-        <h2 className="text-2xl font-bold text-center text-gray-800 dark:text-white mb-6">
+    <div className="min-h-screen flex items-center justify-center bg-gray-900 px-4">
+      <div className="w-full max-w-md bg-gray-800 shadow-lg rounded-2xl p-8">
+        <h2 className="text-2xl font-bold text-center text-white mb-6">
           Admin Login
         </h2>
         {error && (
