@@ -13,7 +13,7 @@ interface MedicationTableProps {
 const MedicationTable: React.FC<MedicationTableProps> = ({
   filter = "all",
 }) => {
-  const [_medications, setMedications] = useState<medicationType[]>([]);
+  const [, setMedications] = useState<medicationType[]>([]);
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
@@ -21,7 +21,7 @@ const MedicationTable: React.FC<MedicationTableProps> = ({
   });
   const { pharmacyMed } = usePharmacyStore();
   const [currentPage, setCurrentPage] = useState(1);
-  const [medicationsPerPage] = useState(10);
+  const [medicationsPerPage, setMedicationsPerPage] = useState(5);
   const [searchQuery, setSearchQuery] = useState("");
 
   const showSnackbar = (message: string, type: "success" | "error") => {
@@ -64,7 +64,6 @@ const MedicationTable: React.FC<MedicationTableProps> = ({
 
     return true;
   });
-
   // Pagination logic
   const indexOfLastMedication = currentPage * medicationsPerPage;
   const indexOfFirstMedication = indexOfLastMedication - medicationsPerPage;
@@ -98,7 +97,7 @@ const MedicationTable: React.FC<MedicationTableProps> = ({
             placeholder="Search Medications..."
             value={searchQuery}
             onChange={handleSearchChange}
-            className="search-input"
+            className="w-full  px-4 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-300 transition"
           />
         </div>
         {currentMedications.length === 0 ? (
@@ -128,82 +127,117 @@ const MedicationTable: React.FC<MedicationTableProps> = ({
           </>
         ) : (
           <>
-            <table>
-              <thead>
-                <tr>
-                  <th>Image</th>
-                  <th>Name</th>
-                  <th>Price</th>
-                  <th>Stock Status</th>
-                  <th>Category</th>
-                  <th>Dosage Form</th>
-                  <th>Dosage Strength</th>
-                  <th>Manufacturer</th>
-                  <th>Expiry Date</th>
-                  <th>Prescription Required</th>
-                  <th>Quantity Available</th>
-                </tr>
-              </thead>
-              <tbody>
-                {currentMedications.map((medication) => (
-                  <tr key={medication.id}>
-                    <td>
-                      <img
-                        src={medication.image}
-                        alt="No Image"
-                        style={{
-                          width: "50px",
-                          height: "50px",
-                          objectFit: "cover",
-                        }}
-                        onError={(e) => {
-                          e.currentTarget.src = defaultImage;
-                        }}
-                      />
-                    </td>
-                    <td>{medication.name}</td>
-                    <td>{medication.pivot?.price} Birr</td>
-                    <td
-                      className={
-                        medication.pivot?.stock_status
-                          ? "in-stock"
-                          : "out-of-stock"
-                      }
-                    >
-                      {medication.pivot?.stock_status
-                        ? "In Stock"
-                        : "Out of Stock"}
-                    </td>
-                    <td>{medication?.category?.name}</td>
-                    <td>{medication.dosage_form}</td>
-                    <td>{medication.dosage_strength}</td>
-                    <td>{medication.pivot?.manufacturer}</td>
-                    <td>
-                      {new Date(medication.expiry_date).toLocaleDateString()}
-                    </td>
-                    <td>{medication.prescription_required ? "Yes" : "No"}</td>
-                    <td>{medication.pivot?.quantity_available}</td>
+            <div className="overflow-x-auto rounded-xl shadow-md dark:bg-gray-900 bg-white">
+              <table className="min-w-full text-sm text-left text-gray-800 dark:text-gray-100">
+                <thead className="bg-gray-100 dark:bg-gray-800 text-xs uppercase text-gray-700 dark:text-gray-300">
+                  <tr>
+                    <th className="px-4 py-3">Image</th>
+                    <th className="px-4 py-3">Name</th>
+                    <th className="px-4 py-3">Price</th>
+                    <th className="px-4 py-3">Stock</th>
+                    <th className="px-4 py-3">Category</th>
+                    <th className="px-4 py-3">Dosage Form</th>
+                    <th className="px-4 py-3">Strength</th>
+                    <th className="px-4 py-3">Manufacturer</th>
+                    <th className="px-4 py-3">Expiry</th>
+                    <th className="px-4 py-3">Rx</th>
+                    <th className="px-4 py-3">Qty</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                  {currentMedications.map((medication) => (
+                    <tr
+                      key={medication.id}
+                      className="hover:bg-gray-50 dark:hover:bg-gray-800 transition"
+                    >
+                      <td className="px-4 py-2">
+                        <img
+                          src={medication.image}
+                          alt="No Image"
+                          className="w-10 h-10 rounded object-cover"
+                          onError={(e) => {
+                            e.currentTarget.src = defaultImage;
+                          }}
+                        />
+                      </td>
+                      <td className="px-4 py-2">{medication.name}</td>
+                      <td className="px-4 py-2">
+                        {medication.pivot?.price} Birr
+                      </td>
+                      <td
+                        className={`px-4 py-2 font-medium ${
+                          medication.pivot?.stock_status
+                            ? "text-green-600 dark:text-green-400"
+                            : "text-red-600 dark:text-red-400"
+                        }`}
+                      >
+                        {medication.pivot?.stock_status
+                          ? "In Stock"
+                          : "Out of Stock"}
+                      </td>
+                      <td className="px-4 py-2">
+                        {medication?.category?.name}
+                      </td>
+                      <td className="px-4 py-2">{medication.dosage_form}</td>
+                      <td className="px-4 py-2">
+                        {medication.dosage_strength}
+                      </td>
+                      <td className="px-4 py-2">
+                        {medication.pivot?.manufacturer}
+                      </td>
+                      <td className="px-4 py-2">
+                        {new Date(medication.expiry_date).toLocaleDateString()}
+                      </td>
+                      <td className="px-4 py-2">
+                        {medication.prescription_required ? "Yes" : "No"}
+                      </td>
+                      <td className="px-4 py-2">
+                        {medication.pivot?.quantity_available}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
             {/* Pagination Controls */}
-            <div className="pagination">
-              <button
-                onClick={() => paginate(currentPage - 1)}
-                disabled={currentPage === 1}
-              >
-                Previous
-              </button>
-              <span>
+            <div className="flex items-center gap-2 text-xs justify-end-safe mt-4">
+              <div className="mx-2">
+                <label htmlFor="rows" className="mx-2">
+                  Rows per Page
+                </label>
+                <select
+                  name="rows"
+                  id="rows"
+                  value={medicationsPerPage}
+                  onChange={(e) =>
+                    setMedicationsPerPage(Number(e.target.value))
+                  }
+                  className="px-2 py-1 border border-gray-300 dark:border-gray-800 rounded dark:bg-gray-800 dark:text-white"
+                >
+                  <option value="5">5</option>
+                  <option value="10">10</option>
+                  <option value="15">15</option>
+                  <option value="20">20</option>
+                  <option value="25">25</option>
+                </select>
+              </div>
+              <span className="text-xs text-gray-700 dark:text-gray-300">
                 Page {currentPage} of {totalPages}
               </span>
               <button
+                onClick={() => paginate(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="text-base px-2 py-2 bg-gry-200  text-gray-800 dark:text-gray-200 rounded cursor-pointer disabled:opacity-50"
+              >
+                &lt;
+              </button>
+              <button
                 onClick={() => paginate(currentPage + 1)}
                 disabled={currentPage === totalPages}
+                className="text-base py-2 bg-gay-200  text-gray-800 dark:text-gray-200 rounded cursor-pointer disabled:opacity-50"
               >
-                Next
+                &gt;
               </button>
             </div>
           </>

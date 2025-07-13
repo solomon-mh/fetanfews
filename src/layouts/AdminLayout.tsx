@@ -5,7 +5,7 @@ import { Outlet } from "react-router-dom";
 
 const AdminLayout: React.FC = () => {
   const sidebarRef = useRef<HTMLDivElement>(null);
-  const [isSidebarVisible, setIsSidebarVisible] = useState<boolean>(false);
+  const [, setIsSidebarVisible] = useState<boolean>(false);
   const [isSidebarShrunk, setIsSidebarShrunk] = useState<boolean>(false);
 
   // Toggle sidebar visibility
@@ -45,24 +45,15 @@ const AdminLayout: React.FC = () => {
       {/* Main layout */}
       <div className="flex flex-1">
         {/* Sidebar */}
-        <div
-          ref={sidebarRef}
-          className={`fixed z-40 md:relative top-0 left-0 h-full transition-all duration-300 ease-in-out 
-						bg-white dark:bg-gray-800 shadow-md md:shadow-none
-						${isSidebarVisible ? "w-64" : "w-0"} 
-						${isSidebarShrunk ? "md:w-20" : "md:w-64"} 
-						overflow-hidden`}
-        >
-          <Sidebar
-            onLinkClick={() => setIsSidebarVisible(false)}
-            isShrunk={isSidebarShrunk}
-          />
-        </div>
+        <Sidebar
+          onLinkClick={() => setIsSidebarVisible((prev) => !prev)}
+          isShrunk={isSidebarShrunk}
+        />
 
         {/* Main Content */}
         <main
-          className={`flex-1 ml-0 md:ml-0  transition-all duration-300 ease-in-out px-4 py-6 md:px-8 md:py-6 ${
-            isSidebarShrunk ? "md:ml-20" : "md:ml-64"
+          className={`flex-1 ml-0 md:ml-0  transition-all duration-300 ease-in-out px-4 py-6 md:px-8  ${
+            isSidebarShrunk ? "md:ml-20" : "lg:ml-60"
           }`}
         >
           <Outlet />
