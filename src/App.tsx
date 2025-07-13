@@ -28,6 +28,7 @@ import PharmacistReports from "./admin/reports/PharmacistReport";
 import PharmacistProfile from "./admin/PharmacistUtils/PharmacistProfile";
 import AdminReports from "./admin/reports/AdminReports";
 import PublicRoute from "./components/PublicRoute";
+import PharmacistProfilePage from "./pages/PharmacyDetails/PharmacistProfilePage";
 function App() {
   return (
     <Router>
@@ -138,6 +139,7 @@ function App() {
             />
           </Route>
           <Route path="/admin/change-password" element={<ChangePassword />} />
+          <Route path="/admin/profile" element={<PharmacistProfilePage />} />
         </Route>
       </Routes>
     </Router>
