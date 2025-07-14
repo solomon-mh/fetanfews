@@ -1,17 +1,17 @@
 import { create } from "zustand";
-import { medicationType } from "../utils/interfaces";
+import { IMedication, medicationType } from "../utils/interfaces";
 
-interface Medication {
-  id: number;
-  name: string;
-  price: string;
-  pharmacies: [];
-}
+// export interface IMedication {
+//   id: number;
+//   name: string;
+//   price: number;
+//   pharmacies: [];
+// }
 interface PharmacyStore {
-  medications: Medication[];
+  medications: IMedication[];
   pharmacyMed: medicationType[];
   setPharmacyMed: (meds: medicationType[]) => void;
-  setMedications: (meds: Medication[]) => void;
+  setMedications: (meds: IMedication[]) => void;
   clearMedications: () => void;
 }
 
