@@ -23,7 +23,25 @@ const MedicationDetail = () => {
   const [searchParams] = useSearchParams();
   const pharmacyId = searchParams.get("pham_id");
   const medicationId = searchParams.get("med_id");
-  const [medication, setMedication] = useState<any>(null);
+  interface MedicationPivot {
+    price: number;
+    manufacturer: string;
+  }
+
+  interface Medication {
+    name: string;
+    description?: string;
+    dosage_form: string;
+    dosage_strength: string;
+    expiry_date: string;
+    prescription_required: boolean;
+    side_effects?: string;
+    usage_instructions?: string;
+    image?: string;
+    pivot: MedicationPivot;
+  }
+
+  const [medication, setMedication] = useState<Medication | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -46,7 +64,7 @@ const MedicationDetail = () => {
         } else {
           setMedication(data);
         }
-      } catch (err) {
+      } catch {
         setError("Failed to fetch medication details");
       } finally {
         setLoading(false);
@@ -204,24 +222,22 @@ const MedicationDetail = () => {
         </motion.div>
 
         {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 px-12 lg:px-24">
           {/* Image Section */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.4 }}
-            className="flex justify-center lg:justify-start"
+            className="flex justify-center lg:justify-end"
           >
-            <div className="relative w-full max-w-md">
+            <div className="relative w-full max-w-md lg:max-w-lg">
               <motion.div
                 whileHover={{ scale: 1.02 }}
                 className="overflow-hidden rounded-2xl shadow-xl border-4 border-white dark:border-gray-800"
               >
                 <img
                   src={
-                    medication.image
-                      ? `http://127.0.0.1:8000${medication.image}`
-                      : defaultMedicationImage
+                    medication.image ? medication.image : defaultMedicationImage
                   }
                   alt={medication.name}
                   className="w-full h-auto object-cover"
@@ -234,7 +250,7 @@ const MedicationDetail = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.8 }}
-                className="absolute -bottom-4 -right-4 bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-lg"
+                className="absolute lg:relative lg:w-fit lg:px-3 -bottom-4 -right-4 bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-lg"
               >
                 <span className="font-bold">{medication.pivot.price} Birr</span>
               </motion.div>
