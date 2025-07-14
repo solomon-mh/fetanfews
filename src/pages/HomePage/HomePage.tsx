@@ -70,41 +70,11 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="home-page dark:bg-gray-900 dark:text-white">
-      <HeroSection />
-      <div className="browse-categories-wrapper dark:bg-gray-800 px-4 sm:px-6 lg:px-8 py-6">
-        <h2 className="text-2xl font-semibold text-gray-800 dark:text-white mb-4">
-          Browse by Medication Category
-        </h2>
-        {/* <ul className="flex flex-wrap gap-3">
-          {categories.map((category) => (
-            <li
-              key={category.id}
-              className={`cursor-pointer px-4 py-2 rounded-full text-sm font-medium transition 
-        ${
-          selectedCategory?.name === category.name
-            ? "bg-lime-600 text-white dark:bg-lime-500"
-            : "bg-gray-100 text-gray-700 hover:bg-blue-100 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-blue-900"
-        }`}
-              // onClick={() => handleSearchByCategory(category)}
-            >
-              {category.name}
-            </li>
-          ))}
-          <li
-            className={`cursor-pointer px-4 py-2 rounded-full text-sm font-medium transition 
-      ${
-        !selectedCategory?.name
-          ? "bg-lime-600 text-white dark:bg-lime-500"
-          : "bg-gray-100 text-gray-700 hover:bg-blue-100 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-blue-900"
-      }`}
-            onClick={() => handleSearchByCategory(null)}
-          >
-            All Categories
-          </li>
-        </ul> */}
+      <div>
+        <HeroSection />
       </div>
       {userLocation.error && (
-        <p className="text-center my-6 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900 border border-red-300 dark:border-red-700 px-4 py-3 rounded-md shadow-sm max-w-md mx-auto">
+        <p className="text-center my-6 text-red-600 dark:text-red-300 bg-red-50 dark:bg-transparent border border-red-300 dark:border-red-700 px-4 py-3 rounded-md shadow-sm max-w-md mx-auto">
           {userLocation.error}
         </p>
       )}
@@ -115,7 +85,7 @@ const HomePage: React.FC = () => {
           : "Featured Pharmacies"}
       </h2>
       {filteredPharmacies.length === 0 ? (
-        <p className="text-center my-6 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900 border border-red-300 dark:border-red-700 px-4 py-3 rounded-md shadow-sm max-w-md mx-auto">
+        <p className="text-center my-6 text-red-600 dark:text-red-300 bg-red-50 dark:bg-transparent border border-red-300 dark:border-red-700 px-4 py-3 rounded-md shadow-sm max-w-md mx-auto">
           No pharmacy found for this category.
         </p>
       ) : (

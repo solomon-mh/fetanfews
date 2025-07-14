@@ -59,7 +59,6 @@ export const pharmacyFormSchema = z.object({
   name: requiredString("Name is required"),
   address: requiredString("Address"),
   phone: phoneValidation,
-
   email: emailValidation,
   website: optionalUrl,
   operating_hours: requiredString("Operating hours"),

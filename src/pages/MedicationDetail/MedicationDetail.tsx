@@ -1,23 +1,32 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useParams, useSearchParams } from "react-router-dom";
 import {
   addPhaMostSearchedMedications,
   getPharmacyMedicationDetail,
 } from "../../api/medicationService";
-import drugImage from "../../assets/images/drugs.jpeg";
+import {
+  FaPills,
+  FaMoneyBillWave,
+  FaCalendarAlt,
+  FaFlask,
+  FaIndustry,
+  FaPrescriptionBottleAlt,
+  FaExclamationTriangle,
+  FaBookMedical,
+} from "react-icons/fa";
 import defaultMedicationImage from "../../assets/default-pill-image.png";
+import { RiMedicineBottleLine } from "react-icons/ri";
 
 const MedicationDetail = () => {
   const { pharmacyName } = useParams();
-
   const [searchParams] = useSearchParams();
-
   const pharmacyId = searchParams.get("pham_id");
   const medicationId = searchParams.get("med_id");
   const [medication, setMedication] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+
   useEffect(() => {
     const fetchMedicationDetails = async () => {
       if (!pharmacyId || !medicationId) {
@@ -27,16 +36,21 @@ const MedicationDetail = () => {
       }
 
       setLoading(true);
-      const { data, error } = await getPharmacyMedicationDetail(
-        pharmacyId,
-        medicationId
-      );
-      if (error) {
-        setError(error);
-      } else {
-        setMedication(data);
+      try {
+        const { data, error } = await getPharmacyMedicationDetail(
+          pharmacyId,
+          medicationId
+        );
+        if (error) {
+          setError(error);
+        } else {
+          setMedication(data);
+        }
+      } catch (err) {
+        setError("Failed to fetch medication details");
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     fetchMedicationDetails();
@@ -45,100 +59,266 @@ const MedicationDetail = () => {
   useEffect(() => {
     const trackSearch = async () => {
       try {
-        await addPhaMostSearchedMedications({
-          name: medication?.name,
-          pharmacy_id: Number(pharmacyId),
-        });
+        if (medication?.name && pharmacyId) {
+          await addPhaMostSearchedMedications({
+            name: medication.name,
+            pharmacy_id: Number(pharmacyId),
+          });
+        }
       } catch (error) {
         console.error("Failed to track search:", error);
       }
     };
 
-    if (medication?.name && pharmacyId) {
-      trackSearch();
-    }
+    trackSearch();
   }, [medication?.name, pharmacyId]);
 
-  if (loading) return <p>Loading medication details...</p>;
-  if (error) return <p className="error">{error}</p>;
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+          className="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full"
+        />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900 px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg text-center max-w-md"
+        >
+          <div className="text-red-500 dark:text-red-400 text-5xl mb-4">
+            <FaExclamationTriangle />
+          </div>
+          <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-2">
+            Error Loading Medication
+          </h2>
+          <p className="text-gray-600 dark:text-gray-300 mb-4">{error}</p>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+          >
+            Try Again
+          </motion.button>
+        </motion.div>
+      </div>
+    );
+  }
+
+  if (!medication) return null;
+
+  const detailItems = [
+    {
+      icon: <FaMoneyBillWave className="text-green-500" />,
+      label: "Price",
+      value: `${medication.pivot.price} Birr`,
+      color: "text-green-600 dark:text-green-400",
+    },
+    {
+      icon: <RiMedicineBottleLine className="text-blue-500" />,
+      label: "Description",
+      value: medication.description || "No description available",
+      color: "text-gray-700 dark:text-gray-300",
+    },
+    {
+      icon: <FaPills className="text-purple-500" />,
+      label: "Dosage Form",
+      value: medication.dosage_form,
+      color: "text-gray-700 dark:text-gray-300",
+    },
+    {
+      icon: <FaFlask className="text-amber-500" />,
+      label: "Dosage Strength",
+      value: medication.dosage_strength,
+      color: "text-gray-700 dark:text-gray-300",
+    },
+    {
+      icon: <FaIndustry className="text-indigo-500" />,
+      label: "Manufacturer",
+      value: medication.pivot.manufacturer,
+      color: "text-gray-700 dark:text-gray-300",
+    },
+    {
+      icon: <FaCalendarAlt className="text-red-500" />,
+      label: "Expiry Date",
+      value: new Date(medication.expiry_date).toLocaleDateString(),
+      color: "text-gray-700 dark:text-gray-300",
+    },
+    {
+      icon: <FaPrescriptionBottleAlt className="text-yellow-500" />,
+      label: "Prescription Required",
+      value: medication.prescription_required ? "Yes" : "No",
+      color: medication.prescription_required
+        ? "text-red-500"
+        : "text-green-500",
+    },
+    {
+      icon: <FaExclamationTriangle className="text-orange-500" />,
+      label: "Side Effects",
+      value: medication.side_effects || "N/A",
+      color: "text-gray-700 dark:text-gray-300",
+    },
+    {
+      icon: <FaBookMedical className="text-teal-500" />,
+      label: "Usage Instructions",
+      value: medication.usage_instructions || "N/A",
+      color: "text-gray-700 dark:text-gray-300",
+    },
+  ];
 
   return (
-    <div className="bg-white dark:bg-gray-900 min-h-screen py-24 px-4 sm:px-6 lg:px-8 text-gray-800 dark:text-gray-100">
-      <div className="max-w-5xl mx-auto space-y-10">
-        <div className="space-y-6">
-          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-center">
-            {medication?.name}{" "}
-            <span className="text-lg font-medium text-gray-500 dark:text-gray-400">
-              (From{" "}
-              {pharmacyName
-                ? decodeURIComponent(pharmacyName)
-                : "Unknown Pharmacy"}
-              )
-            </span>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-950 min-h-screen py-30 px-4 sm:px-6 lg:px-8"
+    >
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <motion.div
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-12"
+        >
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-blue-600 dark:from-indigo-400 dark:to-blue-400">
+            {medication.name}
           </h1>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className="mt-2 text-lg text-gray-600 dark:text-gray-400"
+          >
+            Available at{" "}
+            {pharmacyName ? decodeURIComponent(pharmacyName) : "this pharmacy"}
+          </motion.p>
+        </motion.div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
-            {/* Medication Image */}
-            <div className="w-full max-w-md mx-auto lg:mx-0">
-              <img
-                src={
-                  medication.image
-                    ? `http://127.0.0.1:8000${medication.image}`
-                    : drugImage
-                }
-                alt={medication.name}
-                className="w-full h-auto object-cover rounded-2xl shadow-lg border dark:border-gray-700"
-                onError={(e) => {
-                  e.currentTarget.src = defaultMedicationImage;
-                }}
-              />
+        {/* Main Content */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Image Section */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.4 }}
+            className="flex justify-center lg:justify-start"
+          >
+            <div className="relative w-full max-w-md">
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                className="overflow-hidden rounded-2xl shadow-xl border-4 border-white dark:border-gray-800"
+              >
+                <img
+                  src={
+                    medication.image
+                      ? `http://127.0.0.1:8000${medication.image}`
+                      : defaultMedicationImage
+                  }
+                  alt={medication.name}
+                  className="w-full h-auto object-cover"
+                  onError={(e) => {
+                    e.currentTarget.src = defaultMedicationImage;
+                  }}
+                />
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.8 }}
+                className="absolute -bottom-4 -right-4 bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-lg"
+              >
+                <span className="font-bold">{medication.pivot.price} Birr</span>
+              </motion.div>
+            </div>
+          </motion.div>
+
+          {/* Details Section */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.6 }}
+            className="space-y-6"
+          >
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6">
+              <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+                <FaPills className="text-indigo-600 dark:text-indigo-400" />
+                Medication Details
+              </h2>
+
+              <div className="space-y-4">
+                <AnimatePresence>
+                  {detailItems.map((item, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.7 + index * 0.05 }}
+                      className="flex items-start gap-4"
+                    >
+                      <div className="mt-1">{item.icon}</div>
+                      <div>
+                        <p className="font-semibold text-gray-800 dark:text-gray-200">
+                          {item.label}
+                        </p>
+                        <p className={`${item.color}`}>{item.value}</p>
+                      </div>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </div>
             </div>
 
-            {/* Medication Details */}
-            <div className="space-y-4 text-sm sm:text-base">
-              <p>
-                <span className="font-semibold">💰 Price:</span>{" "}
-                <span className="text-green-600 dark:text-green-400 font-medium">
-                  {medication.pivot.price} Birr
-                </span>
-              </p>
-              <p>
-                <span className="font-semibold">📝 Description:</span>{" "}
-                {medication.description || "No description available."}
-              </p>
-              <p>
-                <span className="font-semibold">💊 Dosage Form:</span>{" "}
-                {medication.dosage_form}
-              </p>
-              <p>
-                <span className="font-semibold">🧪 Dosage Strength:</span>{" "}
-                {medication.dosage_strength}
-              </p>
-              <p>
-                <span className="font-semibold">🏭 Manufacturer:</span>{" "}
-                {medication.pivot.manufacturer}
-              </p>
-              <p>
-                <span className="font-semibold">📅 Expiry Date:</span>{" "}
-                {new Date(medication.expiry_date).toLocaleDateString()}
-              </p>
-              <p>
-                <span className="font-semibold">🧾 Prescription Required:</span>{" "}
-                {medication.prescription_required ? "Yes" : "No"}
-              </p>
-              <p>
-                <span className="font-semibold">⚠️ Side Effects:</span>{" "}
-                {medication.side_effects || "N/A"}
-              </p>
-              <p>
-                <span className="font-semibold">📖 Usage Instructions:</span>{" "}
-                {medication.usage_instructions || "N/A"}
-              </p>
-            </div>
-          </div>
+            {/* Additional Info */}
+            {(medication.side_effects || medication.usage_instructions) && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1 }}
+                className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6"
+              >
+                <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+                  <FaBookMedical className="text-indigo-600 dark:text-indigo-400" />
+                  Important Information
+                </h2>
+
+                {medication.side_effects && (
+                  <div className="mb-4">
+                    <h3 className="font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
+                      <FaExclamationTriangle className="text-orange-500" />
+                      Side Effects
+                    </h3>
+                    <p className="text-gray-700 dark:text-gray-300 mt-1">
+                      {medication.side_effects}
+                    </p>
+                  </div>
+                )}
+
+                {medication.usage_instructions && (
+                  <div>
+                    <h3 className="font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
+                      <FaBookMedical className="text-teal-500" />
+                      Usage Instructions
+                    </h3>
+                    <p className="text-gray-700 dark:text-gray-300 mt-1">
+                      {medication.usage_instructions}
+                    </p>
+                  </div>
+                )}
+              </motion.div>
+            )}
+          </motion.div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
