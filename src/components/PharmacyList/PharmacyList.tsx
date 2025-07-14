@@ -72,7 +72,7 @@ const PharmacyList: React.FC<PharmacyListProps> = ({
 
   return (
     <div className="pharmacies-list-wrapper bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-950 px-4 sm:px-6 lg:px-8 py-12">
-      <div className="px-12 lg:px-12 mx-auto">
+      <div className="px-4 lg:px-12 mx-auto">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -156,7 +156,7 @@ const PharmacyList: React.FC<PharmacyListProps> = ({
                     <div className="flex justify-between items-center pt-2">
                       <div className="flex items-center gap-2 bg-blue-50 dark:bg-blue-900/20 px-3 py-1 rounded-full">
                         <FaMapMarkerAlt className="text-blue-500 dark:text-blue-400 text-xs" />
-                        <span className="text-xs font-medium">
+                        <span className="text-xs font-medium dark:text-white">
                           {calculateDistance(
                             pharmacy.latitude,
                             pharmacy.longitude,
