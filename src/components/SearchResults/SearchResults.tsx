@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search } from "../../utils/handleSearch";
 import { useGeoLocation, defaultCoordinates } from "../../hooks/useGeoLocation";
-import PharmacyMap from "../../components/MapView/MapView";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { calculateDistance } from "../../utils/calculations";
 import { usePharmacyStore } from "../../store/usePharmacyStore";
@@ -14,7 +13,7 @@ import {
   FaTimesCircle,
 } from "react-icons/fa";
 import { RiMedicineBottleLine } from "react-icons/ri";
-import { BiCurrentLocation } from "react-icons/bi";
+import { medicationType, pharmacyType } from "../../utils/interfaces";
 
 const SearchResults: React.FC = () => {
   const setMedications = usePharmacyStore((state) => state.setMedications);
@@ -45,7 +44,7 @@ const SearchResults: React.FC = () => {
   const handleClick = ({
     pharmacy,
   }: {
-    pharmacy: { id: number; name: string; medications: any[] };
+    pharmacy: { id: number; name: string; medications: medicationType[] };
   }) => {
     setMedications(pharmacy.medications || []);
     navigate(
@@ -98,13 +97,13 @@ const SearchResults: React.FC = () => {
     });
   } else if (sortBy === "price") {
     sortedResults.sort((a, b) => {
-      const getLowestPrice = (pharmacy: any): number => {
+      const getLowestPrice = (pharmacy: pharmacyType): number => {
         if (!pharmacy.medications || pharmacy.medications.length === 0)
           return Infinity;
         const prices = pharmacy.medications
-          .map((med: any) => {
+          .map((med: medicationType) => {
             const match = med.pharmacies?.find(
-              (p: any) => p.id === pharmacy.id
+              (p: { id: number }) => p.id === pharmacy.id
             );
             return match?.price ?? Infinity;
           })
@@ -128,13 +127,13 @@ const SearchResults: React.FC = () => {
         userCoordinates[0],
         userCoordinates[1]
       );
-      const getLowestPrice = (pharmacy: any): number => {
+      const getLowestPrice = (pharmacy: pharmacyType): number => {
         if (!pharmacy.medications || pharmacy.medications.length === 0)
           return Infinity;
         const prices = pharmacy.medications
-          .map((med: any) => {
+          .map((med: medicationType) => {
             const match = med.pharmacies?.find(
-              (p: any) => p.id === pharmacy.id
+              (p: { id: number }) => p.id === pharmacy.id
             );
             return match?.price ?? Infinity;
           })
@@ -147,13 +146,12 @@ const SearchResults: React.FC = () => {
       return distA !== distB ? distA - distB : priceA - priceB;
     });
   }
-
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="search-results-page px-4 md:px-10 py-8 space-y-8 text-gray-800 dark:text-gray-100 max-w-7xl mx-auto"
+      className="search-results-page px-4 md:px-10 space-y-8 text-gray-800 dark:text-gray-100 mx-auto"
     >
       {/* Search Summary */}
       <motion.div
@@ -164,12 +162,12 @@ const SearchResults: React.FC = () => {
       >
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-2xl font-bold flex items-center gap-2">
-              <FaSearch className="text-indigo-600 dark:text-indigo-400" />
+            <p className="text-2xl py-2  font-bold flex items-center gap-2">
+              <FaSearch className="text-indigo-600 text-3xl dark:text-indigo-400" />
               Search Results
-            </h1>
+            </p>
             <p className="text-gray-600 dark:text-gray-300">
-              {medication && `Medication: ${medication}`}
+              {medication && `Medication: ${medication}`} &nbsp;
               {pharmacy && `Pharmacy: ${pharmacy}`}
             </p>
           </div>
@@ -200,7 +198,7 @@ const SearchResults: React.FC = () => {
       </motion.div>
 
       {/* Results Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div>
         {/* Results List */}
         <motion.div
           initial={{ x: -20, opacity: 0 }}
@@ -228,9 +226,9 @@ const SearchResults: React.FC = () => {
               </h2>
 
               <AnimatePresence>
-                <div className="space-y-4">
+                <div className="space-y-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
                   {searchResults.type === "pharmacy" &&
-                    sortedResults?.map((pharmacy: any, index) => (
+                    sortedResults?.map((pharmacy: pharmacyType, index) => (
                       <motion.button
                         key={pharmacy.id}
                         initial={{ opacity: 0, y: 20 }}
@@ -241,7 +239,11 @@ const SearchResults: React.FC = () => {
                         className="block w-full text-left"
                         onClick={() => handleClick({ pharmacy })}
                       >
-                        <div className="bg-white dark:bg-gray-800 p-5 rounded-xl shadow-sm hover:shadow-md border border-gray-100 dark:border-gray-700 transition-all">
+                        <div
+                          className={`bg-white  ${
+                            pharmacy?.medications?.length > 0 ? "h-64" : "h-24"
+                          } dark:bg-gray-800 p-5 rounded-xl shadow-sm hover:shadow-md border border-gray-100 dark:border-gray-700 transition-all overflow-hidden"`}
+                        >
                           <div className="flex justify-between items-start">
                             <h3 className="text-lg font-semibold mb-2">
                               {pharmacy.name}
@@ -250,8 +252,8 @@ const SearchResults: React.FC = () => {
                               <FaMapMarkerAlt className="text-blue-500 dark:text-blue-400 text-xs" />
                               <span className="text-xs font-medium">
                                 {calculateDistance(
-                                  pharmacy.latitude,
-                                  pharmacy.longitude,
+                                  Number(pharmacy.latitude),
+                                  Number(pharmacy.longitude),
                                   userCoordinates[0],
                                   userCoordinates[1]
                                 ).toFixed(2)}{" "}
@@ -267,10 +269,11 @@ const SearchResults: React.FC = () => {
                             pharmacy?.medications?.length > 0 && (
                               <ul className="space-y-2">
                                 {pharmacy?.medications?.map(
-                                  (med: any, index: number) => {
+                                  (med: medicationType, index: number) => {
                                     const matchedPharmacy =
                                       med?.pharmacies?.find(
-                                        (p: any) => p.id === pharmacy.id
+                                        (p: { id: number }) =>
+                                          p.id === pharmacy.id
                                       );
                                     return (
                                       <li
@@ -299,6 +302,74 @@ const SearchResults: React.FC = () => {
                         </div>
                       </motion.button>
                     ))}
+                  {searchResults.type === "medication" &&
+                    sortedResults?.map((item: pharmacyType, index) => (
+                      <motion.button
+                        key={item.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 * index }}
+                        whileHover={{ y: -3 }}
+                        whileTap={{ scale: 0.98 }}
+                        className="block w-full text-left"
+                        onClick={() => handleClick({ pharmacy: item })}
+                      >
+                        <div className="bg-white h-64 dark:bg-gray-800 p-5 rounded-xl shadow-sm hover:shadow-md border border-gray-100 dark:border-gray-700 transition-all overflow-hidden">
+                          <div className="flex justify-between items-start">
+                            <h3 className="text-lg font-semibold mb-2">
+                              {item.name}
+                            </h3>
+                            <div className="flex items-center gap-2 bg-blue-50 dark:bg-blue-900/20 px-2 py-1 rounded-full">
+                              <FaMapMarkerAlt className="text-blue-500 dark:text-blue-400 text-xs" />
+                              <span className="text-xs font-medium">
+                                {calculateDistance(
+                                  Number(item.latitude),
+                                  Number(item.longitude),
+                                  userCoordinates[0],
+                                  userCoordinates[1]
+                                ).toFixed(2)}{" "}
+                                km
+                              </span>
+                            </div>
+                          </div>
+                          <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
+                            {item.address}
+                          </p>
+
+                          {item.medications?.length > 0 && (
+                            <div>
+                              <h4 className="font-medium mb-2">
+                                Available medications:
+                              </h4>
+                              <ul className="space-y-2">
+                                {item.medications.map(
+                                  (med: medicationType, index: number) => (
+                                    <li
+                                      key={index}
+                                      className="flex items-center gap-2"
+                                    >
+                                      <FaPills className="text-emerald-500" />
+                                      <span className="text-sm">
+                                        {med.name} –{" "}
+                                        {item.price ? (
+                                          <span className="font-semibold text-emerald-600 dark:text-emerald-400">
+                                            {item.price} Birr
+                                          </span>
+                                        ) : (
+                                          <span className="text-gray-500">
+                                            Price not available
+                                          </span>
+                                        )}
+                                      </span>
+                                    </li>
+                                  )
+                                )}
+                              </ul>
+                            </div>
+                          )}
+                        </div>
+                      </motion.button>
+                    ))}
                 </div>
               </AnimatePresence>
             </>
@@ -310,7 +381,7 @@ const SearchResults: React.FC = () => {
             >
               <motion.div
                 animate={{ scale: [1, 1.1, 1] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
+                transition={{ duration: 1.5, repeat: 4 }}
               >
                 <FaTimesCircle className="text-5xl text-red-400 dark:text-red-500 mb-4" />
               </motion.div>
@@ -323,56 +394,6 @@ const SearchResults: React.FC = () => {
               </p>
             </motion.div>
           )}
-        </motion.div>
-
-        {/* Map Section */}
-        <motion.div
-          initial={{ x: 20, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ delay: 0.6 }}
-          className="lg:col-span-1"
-        >
-          <div className="sticky top-6 space-y-6">
-            <h2 className="text-xl font-semibold flex items-center gap-2">
-              <FaMapMarkerAlt className="text-indigo-600 dark:text-indigo-400" />
-              Pharmacy Map
-            </h2>
-
-            {userLocation.latitude && userLocation.longitude ? (
-              <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md border border-gray-100 dark:border-gray-700">
-                <PharmacyMap
-                  userCoordinates={userCoordinates}
-                  pharmacies={
-                    searchResults.type === "pharmacy"
-                      ? searchResults.data
-                      : searchResults.data.map((entry) => ({
-                          id: entry.id,
-                          name: entry.name,
-                          latitude: entry.latitude,
-                          longitude: entry.longitude,
-                          ...entry,
-                        }))
-                  }
-                  userLocationError={userLocation.error}
-                />
-              </div>
-            ) : (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="p-4 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 text-amber-800 dark:text-amber-200 flex items-start gap-3"
-              >
-                <BiCurrentLocation className="text-xl mt-0.5" />
-                <div>
-                  <h3 className="font-medium mb-1">Location Required</h3>
-                  <p className="text-sm">
-                    Please enable location services to view pharmacies on the
-                    map.
-                  </p>
-                </div>
-              </motion.div>
-            )}
-          </div>
         </motion.div>
       </div>
     </motion.div>
