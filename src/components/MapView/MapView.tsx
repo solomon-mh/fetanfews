@@ -7,6 +7,7 @@ interface PharmacyMapProps {
   userCoordinates: [number, number];
   pharmacies: PharmacyDataType[];
   userLocationError?: string | null;
+  centerCoordinates?: [number, number];
 }
 
 const isValidCoordinate = (coord: unknown): coord is [number, number] =>
@@ -20,6 +21,7 @@ const PharmacyMap: React.FC<PharmacyMapProps> = ({
   userCoordinates,
   pharmacies,
   userLocationError,
+  centerCoordinates,
 }) => {
   return (
     <div className="pharmacy-map p-4">
@@ -27,7 +29,7 @@ const PharmacyMap: React.FC<PharmacyMapProps> = ({
         <p className="error-message">{userLocationError}</p>
       ) : isValidCoordinate(userCoordinates) ? (
         <MapContainer
-          center={userCoordinates}
+          center={centerCoordinates || userCoordinates}
           zoom={13}
           style={{ height: "500px", width: "100%", padding: "8px" }}
           scrollWheelZoom={false}
