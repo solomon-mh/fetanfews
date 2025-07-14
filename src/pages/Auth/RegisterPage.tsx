@@ -108,7 +108,7 @@ const SignUp: React.FC = () => {
   };
 
   const renderInputField = (
-    name: keyof FormErrors,
+    name: keyof FormErrors & string,
     label: string,
     type: string,
     placeholder: string,
@@ -202,7 +202,7 @@ const SignUp: React.FC = () => {
                 "first_name",
                 "First Name",
                 "text",
-                "John",
+                "Lemma",
                 <FiUser className="h-5 w-5 text-gray-400" />
               )}
 
@@ -210,7 +210,7 @@ const SignUp: React.FC = () => {
                 "last_name",
                 "Last Name",
                 "text",
-                "Doe",
+                "Abebe",
                 <FiUser className="h-5 w-5 text-gray-400" />
               )}
             </div>
