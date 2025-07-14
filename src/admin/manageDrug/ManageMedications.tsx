@@ -310,16 +310,18 @@ const ManageMedications: React.FC = () => {
             </tbody>
           </table>
         </div>
-        <TablePagination
-          component="div"
-          count={filteredMedications.length}
-          page={page}
-          onPageChange={handleChangePage}
-          rowsPerPage={rowsPerPage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-          rowsPerPageOptions={[5, 10, 25]}
-          className="dark:bg-gray-800 dark:text-white"
-        />
+        {paginatedMedications.length < 0 && (
+          <TablePagination
+            component="div"
+            count={filteredMedications.length}
+            page={page}
+            onPageChange={handleChangePage}
+            rowsPerPage={rowsPerPage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+            rowsPerPageOptions={[5, 10, 25]}
+            className="dark:bg-gray-800 dark:text-white"
+          />
+        )}
 
         {/* Form Modal */}
       </div>

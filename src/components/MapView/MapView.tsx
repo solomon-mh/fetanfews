@@ -22,14 +22,14 @@ const PharmacyMap: React.FC<PharmacyMapProps> = ({
   userLocationError,
 }) => {
   return (
-    <div className="pharmacy-map">
+    <div className="pharmacy-map p-4">
       {userLocationError ? (
         <p className="error-message">{userLocationError}</p>
       ) : isValidCoordinate(userCoordinates) ? (
         <MapContainer
           center={userCoordinates}
           zoom={13}
-          style={{ height: "400px", width: "100%" }}
+          style={{ height: "500px", width: "100%", padding: "8px" }}
           scrollWheelZoom={false}
         >
           <TileLayer

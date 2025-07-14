@@ -4,6 +4,8 @@ import { privateApi, publicApi } from "./auth";
 import axios from "axios";
 
 export const addPharmacy = async (data: any) => {
+  console.log(data);
+
   return privateApi.post("/pharmacies/", data);
 };
 export const fetchPharmacyData = async () => {

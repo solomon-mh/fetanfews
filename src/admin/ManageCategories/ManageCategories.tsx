@@ -247,22 +247,24 @@ const ManageCategories: React.FC = () => {
           </tbody>
         </table>
       </div>
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
-        component="div"
-        count={filteredCategories.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-        sx={{
-          mt: 2,
-          backgroundColor: "background.paper",
-          borderRadius: "12px",
-          boxShadow: 2,
-        }}
-        className="dark:bg-gray-700 dark:text-white"
-      />
+      {filteredCategories.length > 0 && (
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={filteredCategories.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+          sx={{
+            mt: 2,
+            backgroundColor: "background.paper",
+            borderRadius: "12px",
+            boxShadow: 2,
+          }}
+          className="dark:bg-gray-700 dark:text-white"
+        />
+      )}
 
       {/* Modal */}
       {modalOpen && (
