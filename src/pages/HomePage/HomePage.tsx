@@ -17,6 +17,7 @@ const HomePage: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<CategoryType | null>(
     null
   );
+  const [showError, setShowError] = useState(false);
   // const [categories, setCategories] = useState<CategoryType[]>([]);
   const [_pharmacies, setPharmacies] = useState<PharmacyDataType[]>([]);
   const [filteredPharmacies, setFilteredPharmacies] = useState<any[]>([]);
@@ -48,16 +49,22 @@ const HomePage: React.FC = () => {
         setPharmacies(data);
         setFilteredPharmacies(data);
         setSelectedCategory(null);
+        setShowError(false);
       } catch (err) {
         setError("Failed to fetch pharmacies.");
       } finally {
         setLoading(false);
+        setShowError(false);
       }
     };
 
     getPharmacies();
   }, [setError]);
-
+  useEffect(() => {
+    setTimeout(() => {
+      setShowError(true);
+    }, 2400);
+  }, []);
   // Default coordinates for the map if geolocation fails
   const userCoordinates: [number, number] =
     userLocation.latitude && userLocation.longitude
@@ -105,9 +112,11 @@ const HomePage: React.FC = () => {
           userLocationError={userLocation.error}
         />
       ) : (
-        <p className="text-center my-6 text-red-600 dark:text-red-300 bg-red-50 dark:bg-transparent border border-red-300 dark:border-red-700 px-4 py-3 rounded-md shadow-sm max-w-md mx-auto">
-          Please enable location services to view nearby pharmacies.
-        </p>
+        showError && (
+          <p className="text-center my-6 text-red-600 dark:text-red-300 bg-red-50 dark:bg-transparent border border-red-300 dark:border-red-700 px-4 py-3 rounded-md shadow-sm max-w-md mx-auto">
+            Please enable location services to view nearby pharmacies.
+          </p>
+        )
       )}
       {!selectedCategory && <WhyUseFetanfews />}
     </div>
