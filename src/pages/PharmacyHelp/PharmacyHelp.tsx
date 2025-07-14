@@ -231,7 +231,7 @@ const PharmacyHelp: React.FC = () => {
           </motion.button>
 
           {/* Slides */}
-          <div className="relative h-auto min-h-[300px]">
+          <div className="relative h-auto min-h-[400px]">
             <AnimatePresence custom={direction} initial={false}>
               <motion.div
                 key={currentIndex}
