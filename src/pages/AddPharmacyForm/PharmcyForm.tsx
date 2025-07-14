@@ -35,6 +35,8 @@ const PharmacyForm: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const userLocation = useGeoLocation();
   const { user } = useAuth();
+  console.log(user);
+
   const {
     register,
     handleSubmit,
