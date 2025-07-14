@@ -95,7 +95,7 @@ const HomePage: React.FC = () => {
         />
       )}
       {/* Map Section */}
-      <h2 className="section-title text-xl italic px-12 py-4">
+      <h2 className="section-title text-xl font-bold italic px-12 py-4">
         Find Pharmacies on Google Map
       </h2>
       {userLocation.latitude && userLocation.longitude ? (
