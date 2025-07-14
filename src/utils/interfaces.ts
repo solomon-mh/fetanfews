@@ -47,6 +47,7 @@ export interface PharmacyDataType {
   operating_hours: string;
   status: "Approved" | "Pending" | "Rejected"; // Restrict possible values
   pivot: MedPharPivot;
+  price: number;
 }
 
 export interface PharmacyDetailProps {
@@ -101,6 +102,8 @@ export interface pharmacyType {
   delivery_available: boolean;
   status: string;
   image: File | null;
+  price?: number;
+  medications: medicationType[];
   pivot: MedPharPivot;
 }
 export interface AddPharmacyModalProps {
@@ -159,6 +162,7 @@ export interface medicationType {
   side_effects: string;
   usage_instructions: string;
   image: string;
+  price: number;
   pharmacies: PharmacyDataType[];
   pivot?: MedPharPivot;
 }
