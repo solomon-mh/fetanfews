@@ -24,6 +24,7 @@ import { RiMedicineBottleLine } from "react-icons/ri";
 import { searchPharmacyMedications } from "../../api/medicationService";
 import defaultPharmacyImage from "../../assets/default-pharmacy.png";
 import { usePharmacyStore } from "../../store/usePharmacyStore";
+import { PharmacyDataType, medicationType } from "../../utils/interfaces";
 
 interface PharmacyDetailPageProps {
   calculateDistance: (
@@ -43,11 +44,11 @@ const PharmacyDetailPage: React.FC<PharmacyDetailPageProps> = ({
 
   const [searchParams] = useSearchParams();
   const pharmacyId = searchParams.get("id");
-  const [pharmacy, setPharmacy] = useState<any>(null);
+  const [pharmacy, setPharmacy] = useState<PharmacyDataType>();
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [searchResults, setSearchResults] = useState<medicationType[]>([]);
   const [isOnsearch, setIsOnsearch] = useState(false);
   const [message, setMessage] = useState("");
   const { pharmacyName } = useParams();
@@ -557,7 +558,7 @@ const PharmacyDetailPage: React.FC<PharmacyDetailPageProps> = ({
           transition={{ delay: 0.8 }}
           className="space-y-8"
         >
-          <div className="bg-white row-span-full col-span-full dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
+          <div className="bg-white my-6 dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
             <div className="p-6 border-b border-gray-200 dark:border-gray-700">
               <h3 className="text-xl font-bold flex items-center gap-2">
                 <FaMapMarkerAlt className="text-indigo-600 dark:text-indigo-400" />
@@ -570,6 +571,10 @@ const PharmacyDetailPage: React.FC<PharmacyDetailPageProps> = ({
                   userCoordinates={userCoordinates}
                   pharmacies={[pharmacy]}
                   userLocationError={userLocation.error}
+                  centerCoordinates={[
+                    Number(pharmacy.latitude),
+                    Number(pharmacy.longitude),
+                  ]}
                 />
               ) : (
                 <div className="h-full flex flex-col items-center justify-center text-center p-6 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
