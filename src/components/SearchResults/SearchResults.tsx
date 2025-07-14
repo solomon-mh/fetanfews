@@ -27,7 +27,7 @@ const SearchResults: React.FC = () => {
   ];
   const [searchResults, setSearchResults] = useState<{
     type: string;
-    data: any[];
+    data: pharmacyType[];
   }>({
     type: "none",
     data: [],
@@ -82,14 +82,14 @@ const SearchResults: React.FC = () => {
   if (sortBy === "distance") {
     sortedResults.sort((a, b) => {
       const distA = calculateDistance(
-        a.latitude,
-        a.longitude,
+        Number(a.latitude),
+        Number(a.longitude),
         userCoordinates[0],
         userCoordinates[1]
       );
       const distB = calculateDistance(
-        b.latitude,
-        b.longitude,
+        Number(b.latitude),
+        Number(b.longitude),
         userCoordinates[0],
         userCoordinates[1]
       );
@@ -116,14 +116,14 @@ const SearchResults: React.FC = () => {
   } else if (sortBy === "price+distance") {
     sortedResults.sort((a, b) => {
       const distA = calculateDistance(
-        a.latitude,
-        a.longitude,
+        Number(a.latitude),
+        Number(a.longitude),
         userCoordinates[0],
         userCoordinates[1]
       );
       const distB = calculateDistance(
-        b.latitude,
-        b.longitude,
+        Number(b.latitude),
+        Number(b.longitude),
         userCoordinates[0],
         userCoordinates[1]
       );
