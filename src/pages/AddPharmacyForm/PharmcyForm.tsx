@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { pharmacyFormSchema } from "../../utils/validateForm";
@@ -9,6 +9,8 @@ import { motion } from "framer-motion";
 import { formFields } from "./formFields";
 import { uploadToCloudinary } from "../../utils/uploadToCloudinary";
 import { useAuth } from "../../contexts/AuthContext";
+import { useGeoLocation } from "../../hooks/useGeoLocation";
+import SnackbarComponent from "../../admin/modals/SnackbarComponent";
 
 interface PharmacyFormValues {
   name: string;
@@ -25,6 +27,13 @@ interface PharmacyFormValues {
 }
 
 const PharmacyForm: React.FC = () => {
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    type: "success" as "success" | "error",
+  });
+  const [loading, setLoading] = useState(false);
+  const userLocation = useGeoLocation();
   const { user } = useAuth();
   const {
     register,
@@ -39,11 +48,26 @@ const PharmacyForm: React.FC = () => {
       email: user?.email ?? "",
     },
   });
+  const [showLocationMessage, setShowLocationMessage] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!userLocation.latitude || !userLocation.longitude) {
+        setShowLocationMessage(true);
+      }
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [userLocation]);
+  const closeSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
+
   watch();
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const onSubmit = async (data: PharmacyFormValues) => {
+    setLoading(true);
     try {
       const [pharmacyImageUrl, licenseImageUrl] = await Promise.all([
         data.image
@@ -60,6 +84,8 @@ const PharmacyForm: React.FC = () => {
         license_image: licenseImageUrl,
         is_verified: false,
         delivery_available: data.delivery_available === "true",
+        latitude: userLocation.latitude,
+        longitude: userLocation.longitude,
       };
 
       setErrorMessage(null);
@@ -84,11 +110,30 @@ const PharmacyForm: React.FC = () => {
             ? (response.data as { detail?: string }).detail
             : undefined) || errorMessage;
       }
-      setErrorMessage(`Failed to register pharmacy: ${errorMessage}`);
-      console.error("Error:", error);
+
+      setSnackbar({
+        open: true,
+        type: "error",
+        message: errorMessage,
+      });
+
+      setErrorMessage(errorMessage);
+    } finally {
+      setLoading(false);
     }
   };
-
+  if (
+    (!userLocation.latitude || !userLocation.longitude) &&
+    showLocationMessage
+  ) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-center my-6 text-red-600 dark:text-red-300 bg-red-50 dark:bg-transparent border border-red-300 dark:border-red-700 px-4 py-3 rounded-md shadow-sm max-w-md mx-auto">
+          Please Allow your Location
+        </p>
+      </div>
+    );
+  }
   return (
     <div className="min-h-screen px-4 py-10 bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white">
       <motion.div
@@ -125,6 +170,7 @@ const PharmacyForm: React.FC = () => {
                 id={id}
                 type={type}
                 placeholder={placeholder}
+                disabled={id === "phone" || id === "email"}
                 {...register(id as keyof PharmacyFormValues)}
                 className="w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -214,10 +260,16 @@ const PharmacyForm: React.FC = () => {
             type="submit"
             className="w-full py-3 rounded-md bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-all dark:bg-blue-500 dark:hover:bg-blue-600"
           >
-            Submit
+            {loading ? " Submitting" : "Submit"}
           </button>
         </motion.form>
       </motion.div>
+      <SnackbarComponent
+        open={snackbar.open}
+        type={snackbar.type}
+        onClose={closeSnackbar}
+        message={snackbar.message}
+      />
     </div>
   );
 };
