@@ -79,10 +79,8 @@ const HomePage: React.FC = () => {
         </p>
       )}
 
-      <h2 className="section-title px-12 dark:text-white dark:bg-gray-800">
-        {selectedCategory
-          ? `Pharmacies Found for "${selectedCategory?.name}"`
-          : "Featured Pharmacies"}
+      <h2 className="section-title italic text-xl font-bold px-12 py-3 dark:text-white dark:bg-gray-800">
+        Featured Pharmacies
       </h2>
       {filteredPharmacies.length === 0 ? (
         <p className="text-center my-6 text-red-600 dark:text-red-300 bg-red-50 dark:bg-transparent border border-red-300 dark:border-red-700 px-4 py-3 rounded-md shadow-sm max-w-md mx-auto">
@@ -97,7 +95,9 @@ const HomePage: React.FC = () => {
         />
       )}
       {/* Map Section */}
-      <h2 className="section-title px-12">Find Pharmacies on Google Map</h2>
+      <h2 className="section-title text-xl italic px-12 py-4">
+        Find Pharmacies on Google Map
+      </h2>
       {userLocation.latitude && userLocation.longitude ? (
         <PharmacyMap
           userCoordinates={userCoordinates}
