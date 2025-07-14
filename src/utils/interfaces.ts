@@ -30,6 +30,7 @@ export interface IMedication {
   name: string;
   price: number;
   pharmacies: PharmacyDataType[];
+  pivot: MedPharPivot;
 }
 export interface PharmacyDataType {
   id: number;
@@ -95,13 +96,13 @@ export interface pharmacyType {
   address: string;
   phone: string;
   operating_hours: string;
-  latitude: string;
-  longitude: string;
+  latitude: number;
+  longitude: number;
   website: string;
   email: string;
   delivery_available: boolean;
   status: string;
-  image: File | null;
+  image: File | string | null;
   price?: number;
   medications: medicationType[];
   pivot: MedPharPivot;
@@ -164,7 +165,7 @@ export interface medicationType {
   image: string;
   price: number;
   pharmacies: PharmacyDataType[];
-  pivot?: MedPharPivot;
+  pivot: MedPharPivot;
 }
 
 export interface pharmacistType {
