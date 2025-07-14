@@ -64,6 +64,7 @@ export const login = async (data: { username: string; password: string }) => {
 export const userRegister = async (data: SignUpData) => {
   try {
     const response = await privateApi.post("/register/", data);
+    localStorage.setItem("auth_token", response.data.token); // or
     return response.data;
   } catch (error: unknown) {
     if (
