@@ -8,7 +8,7 @@ import {
   FaMapMarkerAlt,
   FaChevronLeft,
   FaChevronRight,
-  FaStar,
+  // FaStar,
 } from "react-icons/fa";
 import { RiMedicineBottleLine } from "react-icons/ri";
 
@@ -18,7 +18,7 @@ const PharmacyList: React.FC<PharmacyListProps> = ({
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
-  const [hoveredCard, setHoveredCard] = useState<number | null>(null);
+  const [, setHoveredCard] = useState<number | null>(null);
 
   const userLocation = useGeoLocation();
   const userCoordinates: [number, number] =
@@ -72,7 +72,7 @@ const PharmacyList: React.FC<PharmacyListProps> = ({
 
   return (
     <div className="pharmacies-list-wrapper bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-950 px-4 sm:px-6 lg:px-8 py-12">
-      <div className="max-w-7xl mx-auto">
+      <div className="px-12 lg:px-32 mx-auto">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -130,12 +130,12 @@ const PharmacyList: React.FC<PharmacyListProps> = ({
                       }}
                     />
                     {/* Rating Badge */}
-                    {pharmacy.rating && (
+                    {/* {pharmacy?.rating && (
                       <div className="absolute top-3 left-3 bg-white/90 dark:bg-gray-900/90 px-2 py-1 rounded-full flex items-center gap-1 text-sm font-medium">
                         <FaStar className="text-yellow-500" />
-                        <span>{pharmacy.rating}</span>
+                        <span>{pharmacy?.rating}</span>
                       </div>
-                    )}
+                    )} */}
                   </div>
 
                   {/* Pharmacy Info */}
