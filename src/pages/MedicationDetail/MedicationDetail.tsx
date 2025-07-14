@@ -17,6 +17,7 @@ import {
 } from "react-icons/fa";
 import defaultMedicationImage from "../../assets/default-pill-image.png";
 import { RiMedicineBottleLine } from "react-icons/ri";
+import OrderCard from "../../components/OrderCard";
 
 const MedicationDetail = () => {
   const { pharmacyName } = useParams();
@@ -207,7 +208,7 @@ const MedicationDetail = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
-          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-blue-600 dark:from-indigo-400 dark:to-blue-400">
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-green-500 to-green-600">
             {medication.name}
           </h1>
           <motion.p
@@ -228,32 +229,43 @@ const MedicationDetail = () => {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.4 }}
-            className="flex justify-center lg:justify-end"
+            className=""
           >
-            <div className="relative w-full max-w-md lg:max-w-lg">
+            <div className="relative w-full  max-w-md lg:max-w-lg">
               <motion.div
                 whileHover={{ scale: 1.02 }}
                 className="overflow-hidden rounded-2xl shadow-xl border-4 border-white dark:border-gray-800"
               >
-                <img
-                  src={
-                    medication.image ? medication.image : defaultMedicationImage
-                  }
-                  alt={medication.name}
-                  className="w-full h-auto object-cover"
-                  onError={(e) => {
-                    e.currentTarget.src = defaultMedicationImage;
-                  }}
-                />
+                <div>
+                  <img
+                    src={
+                      medication.image
+                        ? medication.image
+                        : defaultMedicationImage
+                    }
+                    alt={medication.name}
+                    className="w-full h-auto object-cover"
+                    onError={(e) => {
+                      e.currentTarget.src = defaultMedicationImage;
+                    }}
+                  />
+                </div>
               </motion.div>
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.8 }}
-                className="absolute lg:relative lg:w-fit lg:px-3 -bottom-4 -right-4 bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-lg"
+                className="absolute lg:relative lg:w-fit lg:px-3 -bottom-4 -right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg"
               >
                 <span className="font-bold">{medication.pivot.price} Birr</span>
               </motion.div>
+            </div>
+            <div className="delivery my-8">
+              <OrderCard
+                medicationName={medication.name}
+                pharmacyName={pharmacyName ?? ""}
+                prescriptionRequired={medication.prescription_required}
+              />
             </div>
           </motion.div>
 
@@ -265,7 +277,7 @@ const MedicationDetail = () => {
             className="space-y-6"
           >
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6">
-              <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+              <h2 className="text-xl dark:text-white font-bold mb-4 flex items-center gap-2">
                 <FaPills className="text-indigo-600 dark:text-indigo-400" />
                 Medication Details
               </h2>
@@ -301,7 +313,7 @@ const MedicationDetail = () => {
                 transition={{ delay: 1 }}
                 className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6"
               >
-                <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+                <h2 className="text-xl dark:text-white font-bold mb-4 flex items-center gap-2">
                   <FaBookMedical className="text-indigo-600 dark:text-indigo-400" />
                   Important Information
                 </h2>
