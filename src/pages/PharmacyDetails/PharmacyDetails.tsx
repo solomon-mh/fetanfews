@@ -52,7 +52,7 @@ const PharmacyDetailPage: React.FC<PharmacyDetailPageProps> = ({
   const [message, setMessage] = useState("");
   const { pharmacyName } = useParams();
   const [triggerSearch, setTriggerSearch] = useState(false);
-  const [searchSubmitted, setSearchSubmitted] = useState(false);
+  const [, setSearchSubmitted] = useState(false);
 
   const userLocation = useGeoLocation();
   const userCoordinates: [number, number] =
@@ -72,7 +72,7 @@ const PharmacyDetailPage: React.FC<PharmacyDetailPageProps> = ({
           setError("Pharmacy ID is not defined.");
           setLoading(false);
         }
-      } catch (err: any) {
+      } catch {
         setError("Failed to fetch pharmacy details.");
         setLoading(false);
       }
@@ -135,7 +135,7 @@ const PharmacyDetailPage: React.FC<PharmacyDetailPageProps> = ({
         } else {
           setError("Pharmacy ID is not defined.");
         }
-      } catch (err) {
+      } catch {
         setError("An error occurred while searching. Please try again.");
       }
 
@@ -145,7 +145,6 @@ const PharmacyDetailPage: React.FC<PharmacyDetailPageProps> = ({
 
     searchMedications();
   }, [searchTerm, pharmacyId, triggerSearch]);
-
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setError("");
     setMessage("");
@@ -205,7 +204,7 @@ const PharmacyDetailPage: React.FC<PharmacyDetailPageProps> = ({
       transition={{ duration: 0.5 }}
       className="bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-950 min-h-screen"
     >
-      <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 py-12">
         {/* Pharmacy Header */}
         <motion.div
           initial={{ y: -20, opacity: 0 }}
@@ -219,7 +218,7 @@ const PharmacyDetailPage: React.FC<PharmacyDetailPageProps> = ({
               className="relative overflow-hidden rounded-xl h-64 md:h-full"
             >
               <img
-                src={`http://127.0.0.1:8000${pharmacy.image}`}
+                src={pharmacy.image}
                 alt={pharmacy.name}
                 className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
                 onError={(e) => {
@@ -462,7 +461,7 @@ const PharmacyDetailPage: React.FC<PharmacyDetailPageProps> = ({
                           ).map((med, index) => {
                             const matchedPharmacy = (
                               med?.pharmacies || []
-                            ).find((p: any) => p.id === pharmacy.id);
+                            ).find((p: { id: number }) => p.id === pharmacy.id);
                             return (
                               <motion.tr
                                 key={med.id || index}
@@ -475,7 +474,12 @@ const PharmacyDetailPage: React.FC<PharmacyDetailPageProps> = ({
                                   {med.name}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                  {matchedPharmacy?.price ? (
+                                  {searchResults.length > 0 &&
+                                  med?.pivot?.price ? (
+                                    <span className="font-semibold text-green-600 dark:text-green-400">
+                                      {med.pivot.price} Birr
+                                    </span>
+                                  ) : matchedPharmacy?.price ? (
                                     <span className="font-semibold text-green-600 dark:text-green-400">
                                       {matchedPharmacy.price} Birr
                                     </span>
@@ -507,82 +511,80 @@ const PharmacyDetailPage: React.FC<PharmacyDetailPageProps> = ({
             </motion.div>
           </div>
 
-          {/* Right Column - Map */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.8 }}
-            className="space-y-8"
-          >
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
-              <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-                <h3 className="text-xl font-bold flex items-center gap-2">
-                  <FaMapMarkerAlt className="text-indigo-600 dark:text-indigo-400" />
-                  Pharmacy Location
-                </h3>
-              </div>
-              <div className="p-4 h-96">
-                {userLocation.latitude && userLocation.longitude ? (
-                  <PharmacyMap
-                    userCoordinates={userCoordinates}
-                    pharmacies={[pharmacy]}
-                    userLocationError={userLocation.error}
-                  />
-                ) : (
-                  <div className="h-full flex flex-col items-center justify-center text-center p-6 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
-                    <FaMapMarkerAlt className="text-4xl text-yellow-500 dark:text-yellow-400 mb-3" />
-                    <h4 className="font-medium text-yellow-800 dark:text-yellow-200 mb-1">
-                      Location Services Required
-                    </h4>
-                    <p className="text-sm text-yellow-700 dark:text-yellow-300">
-                      Please enable location services to view the pharmacy on
-                      map
-                    </p>
-                  </div>
-                )}
-              </div>
+          <div className="bg-white h-64 dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+              <h3 className="text-xl font-bold flex items-center gap-2">
+                <FaTruck className="text-indigo-600 dark:text-indigo-400" />
+                Delivery Information
+              </h3>
             </div>
-
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
-              <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-                <h3 className="text-xl font-bold flex items-center gap-2">
-                  <FaTruck className="text-indigo-600 dark:text-indigo-400" />
-                  Delivery Information
-                </h3>
-              </div>
-              <div className="p-6">
-                {pharmacy.delivery_available ? (
-                  <div className="space-y-3">
-                    <p className="text-green-600 dark:text-green-400 font-medium">
-                      ✓ Delivery Available
-                    </p>
-                    <p className="text-gray-600 dark:text-gray-300">
-                      This pharmacy offers delivery services within a{" "}
-                      {calculateDistance(
-                        pharmacy.latitude,
-                        pharmacy.longitude,
-                        userCoordinates[0],
-                        userCoordinates[1]
-                      ).toFixed(2)}{" "}
-                      km radius.
-                    </p>
-                    <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg">
-                      <p className="text-sm text-blue-700 dark:text-blue-300">
-                        Delivery hours: {pharmacy.operating_hours}
-                      </p>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="text-center py-6">
-                    <p className="text-gray-600 dark:text-gray-300">
-                      This pharmacy currently does not offer delivery services.
+            <div className="p-6">
+              {pharmacy.delivery_available ? (
+                <div className="space-y-3">
+                  <p className="text-green-600 dark:text-green-400 font-medium">
+                    ✓ Delivery Available
+                  </p>
+                  <p className="text-gray-600 dark:text-gray-300">
+                    This pharmacy offers delivery services within a{" "}
+                    {calculateDistance(
+                      pharmacy.latitude,
+                      pharmacy.longitude,
+                      userCoordinates[0],
+                      userCoordinates[1]
+                    ).toFixed(2)}{" "}
+                    km radius.
+                  </p>
+                  <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg">
+                    <p className="text-sm text-blue-700 dark:text-blue-300">
+                      Delivery hours: {pharmacy.operating_hours}
                     </p>
                   </div>
-                )}
-              </div>
+                </div>
+              ) : (
+                <div className="text-center py-6">
+                  <p className="text-gray-600 dark:text-gray-300">
+                    This pharmacy currently does not offer delivery services.
+                  </p>
+                </div>
+              )}
             </div>
-          </motion.div>
+          </div>
         </div>
+        {/* Right Column - Map */}
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.8 }}
+          className="space-y-8"
+        >
+          <div className="bg-white row-span-full col-span-full dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+              <h3 className="text-xl font-bold flex items-center gap-2">
+                <FaMapMarkerAlt className="text-indigo-600 dark:text-indigo-400" />
+                Pharmacy Location
+              </h3>
+            </div>
+            <div className="p-4 h-96">
+              {userLocation.latitude && userLocation.longitude ? (
+                <PharmacyMap
+                  userCoordinates={userCoordinates}
+                  pharmacies={[pharmacy]}
+                  userLocationError={userLocation.error}
+                />
+              ) : (
+                <div className="h-full flex flex-col items-center justify-center text-center p-6 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+                  <FaMapMarkerAlt className="text-4xl text-yellow-500 dark:text-yellow-400 mb-3" />
+                  <h4 className="font-medium text-yellow-800 dark:text-yellow-200 mb-1">
+                    Location Services Required
+                  </h4>
+                  <p className="text-sm text-yellow-700 dark:text-yellow-300">
+                    Please enable location services to view the pharmacy on map
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </motion.div>
       </div>
     </motion.div>
   );
