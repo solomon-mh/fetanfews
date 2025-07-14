@@ -230,7 +230,7 @@ const NearbyPharmacies: React.FC = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.4 }}
-        className="px-12 md:px-24 mx-auto"
+        className="lg:px-24 mx-auto"
       >
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-20">
