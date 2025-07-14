@@ -198,7 +198,7 @@ const Header = () => {
                 >
                   <div className="flex items-center gap-2">
                     <FaUserCircle className="text-green-600 dark:text-lime-400" />
-                    <span>{user.first_name}</span>
+                    <span className="dark:text-white">{user.first_name}</span>
                   </div>
                   <button
                     onClick={handleLogout}
