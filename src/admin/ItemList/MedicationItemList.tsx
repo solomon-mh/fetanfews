@@ -9,6 +9,7 @@ import { MdWarning, MdInventory } from "react-icons/md";
 import { useAuth } from "../../contexts/AuthContext";
 import { getPharmacistsPharmacy } from "../../api/pharmacyService";
 import { usePharmacyStore } from "../../store/usePharmacyStore";
+import { Loader } from "../../components/Loader/Loader";
 
 interface ItemListsProps {
   type: string;
@@ -76,11 +77,7 @@ const MedItemLists: React.FC<ItemListsProps> = ({
   }, [pharmacyMed, user?.role]);
 
   if (loading) {
-    return (
-      <p className="text-center font-semibold text-gray-500 dark:text-gray-300">
-        Loading...
-      </p>
-    );
+    return <Loader />;
   }
 
   let data;
