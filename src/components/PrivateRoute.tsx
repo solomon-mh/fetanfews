@@ -1,6 +1,7 @@
 import React from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import { Loader } from "./Loader/Loader";
 interface PrivateRouteProps {
   children: React.ReactNode;
   requiredRole: "user" | "admin";
@@ -14,7 +15,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({
 
   const location = useLocation();
   if (loading) {
-    return <div className="py-44 text-5xl">Loading...</div>;
+    return <Loader />;
   }
   // If no user is found, redirect to login
   if (!user) {
