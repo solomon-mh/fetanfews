@@ -1,12 +1,7 @@
 import { create } from "zustand";
 import { IMedication, medicationType } from "../utils/interfaces";
+import { createJSONStorage, persist } from "zustand/middleware";
 
-// export interface IMedication {
-//   id: number;
-//   name: string;
-//   price: number;
-//   pharmacies: [];
-// }
 interface PharmacyStore {
   medications: IMedication[];
   pharmacyMed: medicationType[];
@@ -15,10 +10,20 @@ interface PharmacyStore {
   clearMedications: () => void;
 }
 
-export const usePharmacyStore = create<PharmacyStore>((set) => ({
-  medications: [],
-  pharmacyMed: [],
-  setMedications: (meds) => set({ medications: meds }),
-  setPharmacyMed: (meds) => set({ pharmacyMed: meds }),
-  clearMedications: () => set({ medications: [] }),
-}));
+export const usePharmacyStore = create<PharmacyStore>()(
+  persist(
+    (set) => ({
+      medications: [],
+      pharmacyMed: [],
+      setMedications: (meds: IMedication[]) =>
+        set((state) => ({ ...state, medications: meds })),
+      setPharmacyMed: (meds: medicationType[]) =>
+        set((state) => ({ ...state, pharmacyMed: meds })),
+      clearMedications: () => set((state) => ({ ...state, medications: [] })),
+    }),
+    {
+      name: "pharmacy-store",
+      storage: createJSONStorage(() => localStorage),
+    }
+  )
+);
