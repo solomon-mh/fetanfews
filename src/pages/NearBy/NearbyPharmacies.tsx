@@ -20,6 +20,7 @@ const NearbyPharmacies: React.FC = () => {
   }>({ lower: 0, upper: 5 });
   const [error, setError] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [showNotFound, setShowNotFound] = useState(false);
 
   const userLocation = useGeoLocation();
   const userCoordinates: [number, number] = React.useMemo(
@@ -103,6 +104,11 @@ const NearbyPharmacies: React.FC = () => {
     fetchNearbyPharmacies(selectedRange.lower, selectedRange.upper);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedRange, userCoordinates]);
+  useEffect(() => {
+    setTimeout(() => {
+      setShowNotFound(true);
+    }, 2300);
+  }, []);
 
   if (error) {
     return (
@@ -175,7 +181,7 @@ const NearbyPharmacies: React.FC = () => {
                 }`}
               />
             </motion.span>
-            <span className="text-sm font-medium">Refresh</span>
+            <span className="text-sm font-medium dark:text-white">Refresh</span>
           </motion.button>
         </div>
 
@@ -274,34 +280,36 @@ const NearbyPharmacies: React.FC = () => {
             </AnimatePresence>
           </>
         ) : (
-          <motion.div
-            initial={{ scale: 0.95, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="flex flex-col items-center justify-center p-10 rounded-2xl border-2 border-dashed border-gray-300 dark:border-gray-600 bg-white/50 dark:bg-gray-800/50 text-center shadow-sm"
-          >
+          showNotFound && (
             <motion.div
-              animate={{ y: [0, -10, 0] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="mb-6"
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="flex flex-col items-center justify-center p-10 rounded-2xl border-2 border-dashed border-gray-300 dark:border-gray-600 bg-white/50 dark:bg-gray-800/50 text-center shadow-sm"
             >
-              <FiMapPin className="text-5xl text-gray-400 dark:text-gray-500" />
+              <motion.div
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="mb-6"
+              >
+                <FiMapPin className="text-5xl text-gray-400 dark:text-gray-500" />
+              </motion.div>
+              <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">
+                No Pharmacies Found
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300 max-w-md mb-4">
+                We couldn't find any pharmacies within {selectedRange.lower}-
+                {selectedRange.upper} km of your location.
+              </p>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setSelectedRange({ lower: 0, upper: 10000 })}
+                className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 transition-colors"
+              >
+                Show All Pharmacies
+              </motion.button>
             </motion.div>
-            <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">
-              No Pharmacies Found
-            </h3>
-            <p className="text-gray-600 dark:text-gray-300 max-w-md mb-4">
-              We couldn't find any pharmacies within {selectedRange.lower}-
-              {selectedRange.upper} km of your location.
-            </p>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setSelectedRange({ lower: 0, upper: 10000 })}
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 transition-colors"
-            >
-              Show All Pharmacies
-            </motion.button>
-          </motion.div>
+          )
         )}
       </motion.div>
     </motion.div>
