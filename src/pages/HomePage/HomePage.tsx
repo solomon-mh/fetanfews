@@ -52,6 +52,7 @@ const HomePage: React.FC = () => {
         setShowError(false);
       } catch (err) {
         setError("Failed to fetch pharmacies.");
+        setShowError(true);
       } finally {
         setLoading(false);
         setShowError(false);
@@ -60,11 +61,6 @@ const HomePage: React.FC = () => {
 
     getPharmacies();
   }, [setError]);
-  useEffect(() => {
-    setTimeout(() => {
-      setShowError(true);
-    }, 2400);
-  }, []);
   // Default coordinates for the map if geolocation fails
   const userCoordinates: [number, number] =
     userLocation.latitude && userLocation.longitude
@@ -89,7 +85,7 @@ const HomePage: React.FC = () => {
       <h2 className="section-title italic text-xl font-bold px-12 py-3 dark:text-white dark:bg-gray-800">
         Featured Pharmacies
       </h2>
-      {filteredPharmacies.length === 0 ? (
+      {filteredPharmacies.length === 0 && showError ? (
         <p className="text-center my-6 text-red-600 dark:text-red-300 bg-red-50 dark:bg-transparent border border-red-300 dark:border-red-700 px-4 py-3 rounded-md shadow-sm max-w-md mx-auto">
           No pharmacy found for this category.
         </p>
