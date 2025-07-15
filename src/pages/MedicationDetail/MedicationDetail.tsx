@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useParams, useSearchParams } from "react-router-dom";
 import {
-  addPhaMostSearchedMedications,
+  addMostSearchedMedications,
   getPharmacyMedicationDetail,
 } from "../../api/medicationService";
 import {
@@ -79,7 +79,7 @@ const MedicationDetail = () => {
     const trackSearch = async () => {
       try {
         if (medication?.name && pharmacyId) {
-          await addPhaMostSearchedMedications({
+          await addMostSearchedMedications({
             name: medication.name,
             pharmacy_id: Number(pharmacyId),
           });
