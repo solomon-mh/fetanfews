@@ -69,8 +69,13 @@ export const fetchPharmacyMedicationCounts = async (id: number) => {
 
 export const fetchMostSearchedMedications = async () => {
   try {
-    const response = await axios.get(
-      `${API_BASE_URL}/pharmacies/most-searched-medications/`
+    const response = await publicApi.get(
+      `/pharmacies/most-searched-medications/`,
+      {
+        params: {
+          global: 1,
+        },
+      }
     );
     return response.data;
   } catch (error) {
@@ -79,7 +84,7 @@ export const fetchMostSearchedMedications = async () => {
   }
 };
 
-export const addPhaMostSearchedMedications = async (data: any) => {
+export const addMostSearchedMedications = async (data: any) => {
   try {
     const response = await publicApi.post(
       "/pharmacies/most-searched-medications/",
@@ -91,6 +96,7 @@ export const addPhaMostSearchedMedications = async (data: any) => {
     throw error;
   }
 };
+
 export const getPhaMostSearchedMedications = async (pharmacist_id: number) => {
   try {
     const response = await privateApi.get(
