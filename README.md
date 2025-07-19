@@ -44,6 +44,6 @@ fetanfews is a location based pharmacy finder that allows user to locate medicat
   <img src="./src/assets/fetanfews/reports.png" width="300"/>
 </div>
 
-##🤝 Contributing
+## 🤝Contributing
 
 Pull requests are welcome! For major changes, please open an issue first to discuss what you'd like to change.
