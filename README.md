@@ -5,11 +5,11 @@ fetanfews is a location based pharmacy finder that allows user to locate medicat
 ## 🔍 Features
 
 - 🌐 Map-based pharmacy search
-- 🏥 View pharmacy details, location, and contact info
-- 💊 See available medicines and descriptions
-- 🧑‍💼 Admin panel for managing reports and users
-- 🔐 Secure authentication with Firebase
-- 📱 Responsive UI for both mobile and desktop
+- View pharmacy details, location, and contact info
+- See available medicines and descriptions
+- Admin panel for managing reports and users
+- Secure authentication with Firebase
+- Responsive UI for both mobile and desktop
 
 ---
 
