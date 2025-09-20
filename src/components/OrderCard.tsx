@@ -1,6 +1,7 @@
 // OrderCard.tsx (or inside a component file)
 import React, { useState } from "react";
 import { UploadCloud, X } from "lucide-react"; // optional, install lucide-react if not present
+import { BaseUrl } from "../utils/BaseUrl";
 
 interface OrderCardProps {
   medicationName: string;
@@ -26,6 +27,24 @@ const OrderCard: React.FC<OrderCardProps> = ({
   };
   const clearPreview = () => setPreviewUrl(null);
 
+  const handlePayment = async () => {
+    const email = "solomon@gmail.com";
+    const current_url = window.location.href;
+    const response = await fetch(`${BaseUrl}/pay`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, current_url }),
+    });
+
+    const data = await response.json();
+
+    if (data.status === "success") {
+      window.location.href = data.checkout_url; // redirect to Chapa checkout
+    } else {
+      alert("Payment initialization failed");
+    }
+  };
+
   return (
     <div className="max-w-xl  p-4 rounded-2xl shadow-lg bg-white dark:bg-gray-900 border dark:border-gray-700">
       {/* Order Card */}
@@ -41,9 +60,9 @@ const OrderCard: React.FC<OrderCardProps> = ({
         </p>
         <button
           className="mt-3 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg shadow transition duration-200"
-          disabled
+          onClick={handlePayment}
         >
-          Order (Coming Soon)
+          Order
         </button>
       </div>
 
