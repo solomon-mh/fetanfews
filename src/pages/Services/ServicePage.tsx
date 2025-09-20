@@ -298,7 +298,7 @@ export default function ServicesPage() {
         viewport={{ once: true }}
         className="relative max-w-4xl mx-auto rounded-2xl overflow-hidden"
       >
-        <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-blue-600 opacity-90 dark:opacity-100"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-gray-600 to-gray-600 opacity-90 dark:opacity-100"></div>
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNwYXR0ZXJuKSIvPjwvc3ZnPg==')] opacity-30"></div>
 
         <div className="relative z-10 p-10 text-center space-y-6">

@@ -274,18 +274,20 @@ export default function AboutUsPage() {
       </section>
 
       {/* CTA Footer */}
-      <section className="py-20 px-6 bg-gradient-to-r from-indigo-600 to-blue-600 text-white">
+      <section className="relative py-20 px-6 dark:text-white ">
+        <div className="absolute inset-0 bg-gradient-to-r from-gray-600 to-gray-600 opacity-50 dark:opacity-40 z-0"></div>
+        <div className="absolute inset-0 z-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNwYXR0ZXJuKSIvPjwvc3ZnPg==')] dark:opacity-30"></div>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="max-w-4xl mx-auto text-center"
+          className="max-w-4xl mx-auto text-center z-20"
         >
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">
+          <h2 className="text-3xl md:text-4xl font-bold mb-6 z-12">
             Ready to Transform Your Pharmacy?
           </h2>
-          <p className="text-xl text-indigo-100 mb-8">
+          <p className="text-xl dark:text-indigo-100 mb-8">
             Join hundreds of pharmacies revolutionizing their operations with
             our platform.
           </p>
